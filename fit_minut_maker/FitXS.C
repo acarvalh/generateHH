@@ -13,7 +13,9 @@
 #include "TH2.h"
 #include "TF1.h"
 #include "TF2.h"
+#include "TF3.h"
 #include "TH1.h"
+#include "TH3.h"
 #include "TH1D.h"
 #include "TProfile.h"
 #include "TStyle.h"
@@ -62,12 +64,12 @@ using namespace std;
 static int Npoints=1431;
 static int nmin;
 static int nmax;
-static double cross_section[1500];
-static double par0[1500];
-static double par1[1500];
-static double par2[1500];
-static double par3[1500];
-static double par4[1500];
+static double cross_section[1800];
+static double par0[1800];
+static double par1[1800];
+static double par2[1800];
+static double par3[1800];
+static double par4[1800];
 
 extern "C" void Likelihood(int& npar, double* grad, double& fval, double* xval, int flag) {
   //  cout << "In likelihood" << endl;
@@ -108,7 +110,7 @@ extern "C" void Likelihood(int& npar, double* grad, double& fval, double* xval, 
        (A13*kl*cg+A14*c2g)*kt*kl+A15*cg*c2g*kl);
     double error = 0.1*cross_section[i]; // 0.102*cross_section[i];
     flike += -0.5*pow((xs-cross_section[i])/error,2);
-    
+    /*
     // Add penalty term
     for (int ikt=0; ikt<6; ikt++) {
       double kt=0.5+ikt*0.4;
@@ -134,13 +136,13 @@ extern "C" void Likelihood(int& npar, double* grad, double& fval, double* xval, 
 	  }	  
 	}
       }
-    }
+    }*/
   }
   fval = -flike;
 }
 
 
-void FitXS (int nminx, int nmaxx) {
+void FitXS (int nminx = 0, int nmaxx = 861, int nmintest = 0, int nmaxtest = 1708) {
     ////////////////////////////////////////////////////
     // ftp://root.cern.ch/root/doc/ROOTUsersGuideHTML/ch09s05.html
     TStyle *defaultStyle = new TStyle("defaultStyle","Default Style");
@@ -156,8 +158,8 @@ void FitXS (int nminx, int nmaxx) {
     defaultStyle->SetPadColor(0);
     defaultStyle->SetPadTopMargin(0.08);
     defaultStyle->SetPadBottomMargin(0.16);
-    //defaultStyle->SetPadRightMargin(2.8);
-    //defaultStyle->SetPadLeftMargin(0.16);
+    defaultStyle->SetPadRightMargin(2.8);
+    defaultStyle->SetPadLeftMargin(0.16);
     /////// canvas /////////
     defaultStyle->SetCanvasBorderMode(1);
     defaultStyle->SetCanvasColor(0);
@@ -206,7 +208,7 @@ void FitXS (int nminx, int nmaxx) {
     //    defaultStyle->SetAxisColor(1, "XYZ");
     defaultStyle->SetStripDecimals(kTRUE);
     defaultStyle->SetTickLength(0.03, "XYZ");
-    defaultStyle->SetNdivisions(5, "XYZ");
+    defaultStyle->SetNdivisions(7, "XYZ");
     //    defaultStyle->SetPadTickX(1);   // To get tick marks on the opposite side of the frame
     //    defaultStyle->SetPadTickY(1);
     defaultStyle->cd();
@@ -219,7 +221,7 @@ void FitXS (int nminx, int nmaxx) {
   if (nmax>Npoints) nmax=Npoints;
   // Read in the cross section values and the parameters space points
   ifstream XSvals;
-  XSvals.open("all_CX.ascii");
+  XSvals.open("all_CX_all20k.ascii");
   for (int i=nmin; i<nmax; i++) {
     XSvals >> par0[i] >> par1[i] >> par2[i] >> par3[i] >> par4[i] >> cross_section[i];
     //cout << "For point i = " << i << "pars are " << par0[i] << " " << par1[i] << " " << par2[i] 
@@ -275,9 +277,12 @@ void FitXS (int nminx, int nmaxx) {
   // --------------
   gROOT->Time();
     cout<<endl<<" Making plots "<<endl;
-    cout<<"$A_1$ = "<<a[0]<<" & $A_2$ = "<<a[1]<<" & $A_3$ = "<<a[2]<<" & $A_4$ = "<<a[3]<<" & $A_5$ = "<<a[4]<< " \\ "<<endl;
-    cout<<"$A_6$ = "<<a[5]<<" $A_7$ =  "<<a[6]<<" & $A_8$ =  "<<a[7]<<" & $A_9$ =  "<<a[8]<<" & $A_{10}$ =  "<<a[9]<< " \\ "<<endl;
-    cout<<"$A_{11}$ =  "<<a[10]<<"& $A_{12}$ = "<<a[11]<<" & $A_{13}$ =  "<<a[12]<<" & $A_{14}$ =  "<<a[13]<<" & $A_{15}$ =  "<<a[14]<< " \\ "<<endl;
+    cout<<"$A_1$ = "<<a[0]<<" $\\pm$ "<<err[0]<<" & $A_4$ = "<<a[3]<<" $\\pm$ "<<err[3]<<" & $A_7$ = "<<a[6]<<" $\\pm$ "<<err[6]<<" & $A_{10}$ = "<<a[9]<<" $\\pm$ "<<err[9]<<" & $A_{13}$ = "<<a[12]<<" $\\pm$ "<<err[12]<< " \\\ "<<endl;
+    cout<<"$A_2$ = "<<a[1]<<" $\\pm$ "<<err[1]<<" & $A_5$ = "<<a[4]<<" $\\pm$ "<<err[4]<<" & $A_8$ = "<<a[7]<<" $\\pm$ "<<err[7]<<" & $A_{11}$ = "<<a[10]<<" $\\pm$ "<<err[10]<<" & $A_{14}$ = "<<a[13]<<" $\\pm$ "<<err[13]<< " \\\ "<<endl;
+    cout<<"$A_3$ = "<<a[2]<<" $\\pm$ "<<err[2]<<" & $A_6$ = "<<a[5]<<" $\\pm$ "<<err[5]<<" & $A_9$ = "<<a[8]<<" $\\pm$ "<<err[8]<<" & $A_{12}$ = "<<a[11]<<" $\\pm$ "<<err[11]<<" & $A_{15}$ = "<<a[14]<<" $\\pm$ "<<err[14]<< " \\\ "<<endl;
+    cout<<endl<<" To mathematica: "<<endl;
+    cout<<"{"<<a[0]<<","<<a[1]<<","<<a[2]<<","<<a[3]<<","<<a[4]<<","<<a[5]<<","<<a[6]<<","<<a[7]<<","<<a[8]<<","<<a[9]<<","<<a[10]<<","<<a[11]<<","<<a[12]<<","<<a[13]<<","<<a[14]<<"}"<<endl;
+
     /////////////////
     // plot the CX 
     ////////////////
@@ -442,6 +447,7 @@ void FitXS (int nminx, int nmaxx) {
     cout<<"teste funcao cg , c2g : -1,1  "<<  l1->Eval(-1,1)<<endl;
     cout<<"teste funcao cg , c2g : 1,-1  "<<  l1->Eval(-1,1)<<endl;
     cout<<" "<<endl;
+    
     ////////////////////////////////
     kt5d=1.0;
     kl5d=0.0;
@@ -809,8 +815,171 @@ void FitXS (int nminx, int nmaxx) {
     //text->SetTextColor(0);
     text->DrawLatex(-3.,0.7,"#kappa_{#lambda} = -10, c_{g}  = c_{2} = 0");  
     c1->SaveAs("C2Fit.pdf");
+    c1->Close();
+    //////////////////////////////////////////////////
+    //
+    // do histrograms with errors
+    //
+    // plot (point - fit)/fit between int nmintest, int nmaxtest
+    // do by the planes
+    //////////////////////////////////////////////////
+    // take the fit
+    // need to be done by planes
+    //c1->Clear();
+    // a
+    TGraph2D *g2 = new TGraph2D(117);//(118);
+    g2->SetMarkerStyle(20);
+    g2->SetMarkerSize(2);
+    g2->SetTitle("0");
+    int j=0;
+    for (unsigned int ij = 0; ij < 1708; ij++) if( par1[ij] ==1 && par0[ij] ==1 && par2[ij]==0 && cross_section[ij] >0.0001) {
+        double fit = 0.013531*(fg2->Eval(par3[ij], par4[ij]));
+        cout<<j<<" "<< par3[ij]<<" "<< par4[ij]<<" "<<fit <<" "<< cross_section[ij]<<" diff: " <<(fit - cross_section[ij])/fit<< endl;
+        g2->SetPoint(j, par3[ij], par4[ij], 100*(fit - cross_section[ij])/fit); 
+        j++;
+        //Differences2->Fill(par3[i], par4[i], (fit - cross_section[i])/fit); 
+    }
+    // b 
+    ////////////////////////////////
+    int ktb=1.0;
+    int klb=1.0;
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt ==> cg = c2g
+    TF2 *pb = new TF2("pb","([0]*[15]**4 + [1]*x**2 + [2]*[15]**2*[16]**2 + [3]*y**2*[16]**2 +  [4]*y**2 + [5]*x*[15]**2 + [6]*[15]*[16]*[15]**2 + [7]*[15]*[16]*x + [8]*y*[16]*x + [9]*x*y + [10]*y*[16]*[15]**2 + [11]*y*[15]**2 + [12]*[16]*y*[15]*[16] + [13]*y*[15]*[16] + [14]*y*y*[16])/[17]",-4,4,-1,1);
+    pb->SetParameter(0,a[0]);
+    pb->SetParameter(1,a[1]);
+    pb->SetParameter(2,a[2]);    
+    pb->SetParameter(3,a[3]);
+    pb->SetParameter(4,a[4]);
+    pb->SetParameter(5,a[5]); 
+    pb->SetParameter(6,a[6]);
+    pb->SetParameter(7,a[7]);
+    pb->SetParameter(8,a[8]); 
+    pb->SetParameter(9,a[9]);
+    pb->SetParameter(10,a[10]);
+    pb->SetParameter(11,a[11]); 
+    pb->SetParameter(12,a[12]);    
+    pb->SetParameter(13,a[13]);
+    pb->SetParameter(14,a[14]);
+    pb->SetTitle("");
+    pb->SetParameter(15,ktb); //==> c2g ==>kt
+    pb->SetParameter(16,klb);
+    //l5->SetParameter(17,cg); //==> cg
+    pb->SetParameter(17,norm);//0.013531
+    pb->SetMinimum(0);
+    TGraph2D *gb = new TGraph2D(132);//(118);
+    gb->SetMarkerStyle(20);
+    gb->SetMarkerSize(2);
+    gb->SetTitle("0");
+    int jb=0;
+    for (unsigned int ijb = 0; ijb < 408; ijb++) if( par1[ijb] ==1 && par0[ijb] ==1 && par3[ijb] == par4[ijb] && cross_section[ijb] >0.0001) {
+        double fitb = 0.013531*(pb->Eval(par2[ijb], par3[ijb]));
+        cout<<jb<<" "<<ijb<<" "<< par2[ijb]<<" "<< par4[ijb]<<" "<<fitb <<" "<< cross_section[ijb]<<" diff: " <<(fitb - cross_section[ijb])/fitb<< endl;
+        if (abs((fitb - cross_section[ijb])/fitb) > 0.1) cout<<"here"<<endl;
+        gb->SetPoint(jb, par2[ijb], par4[ijb], 100*((fitb - cross_section[ijb])/fitb)); 
+        jb++;
+        //Differences2->Fill(par3[i], par4[i], (fit - cross_section[i])/fit); 
+    }
+    //////////////////////////////////////////////
+    // c
+    ////////////////////////////////
+    int ktc=1.0;
+    int c2c=0.0;//==>c2
+    // cg ===> x ==> c2 =//=>kl
+    // c2g ===> y ==> kt ==> cg = c2g 
+    TF2 *pc = new TF2("pb","([0]*[15]**4 + [1]*[16]**2 + [2]*[15]**2*x**2 + [3]*y**2*x**2 +  [4]*y**2 + [5]*[16]*[15]**2 + [6]*[15]*x*[15]**2 + [7]*[15]*x*[16] + [8]*y*x*[16] + [9]*[16]*y + [10]*y*x*[15]**2 + [11]*y*[15]**2 + [12]*x*y*[15]*x + [13]*y*[15]*x + [14]*y*y*x)/[17]",-5,5,-1,1);
+    pc->SetParameter(0,a[0]);
+    pc->SetParameter(1,a[1]);
+    pc->SetParameter(2,a[2]);    
+    pc->SetParameter(3,a[3]);
+    pc->SetParameter(4,a[4]);
+    pc->SetParameter(5,a[5]); 
+    pc->SetParameter(6,a[6]);
+    pc->SetParameter(7,a[7]);
+    pc->SetParameter(8,a[8]); 
+    pc->SetParameter(9,a[9]);
+    pc->SetParameter(10,a[10]);
+    pc->SetParameter(11,a[11]); 
+    pc->SetParameter(12,a[12]);    
+    pc->SetParameter(13,a[13]);
+    pc->SetParameter(14,a[14]);
+    pc->SetTitle("");
+    pc->SetParameter(15,ktc); //==> c2g ==>kt
+    pc->SetParameter(16,c2c);// ==>c2
+    //l5->SetParameter(17,cg); //==> cg
+    pc->SetParameter(17,norm);//0.013531
+    pc->SetMinimum(0);
+    TGraph2D *gc = new TGraph2D(125);//(118);
+    gc->SetMarkerStyle(20);
+    gc->SetMarkerSize(2);
+    gc->SetTitle("0");
+    int jc=0;
+    for (unsigned int ijb = 0; ijb < 861; ijb++) if( par1[ijb] ==1 && par2[ijb] ==0 && par3[ijb] == par4[ijb] && abs(par0[ijb]) <6 && cross_section[ijb] >0.0001) {
+        double fitc = 0.013531*(pc->Eval(par0[ijb], par3[ijb]));
+        cout<<jb<<" "<<ijb<<" "<< par0[ijb]<<" "<< par4[ijb]<<" "<<fitc <<" "<< cross_section[ijb]<<" diff: " <<(fitc - cross_section[ijb])/fitc<< endl;
+        if (abs((fitc - cross_section[ijb])/fitc) > 0.1) cout<<"here"<<endl;
+        gc->SetPoint(jc, par0[ijb], par4[ijb], 100*((fitc - cross_section[ijb])/fitc)); 
+        jc++;
+        //Differences2->Fill(par3[i], par4[i], (fit - cross_section[i])/fit); 
+    }
+    //////////////////////////////////
+    // d -- SM plane
+    //SM0->Eval(1,1)
+    // cg ===> x  ===> kl
+    // c2g ===> y ===> kt
+    TGraph2D *gSM = new TGraph2D(112);//(118);
+    gSM->SetMarkerStyle(20);
+    gSM->SetMarkerSize(2);
+    gSM->SetTitle("0");
+    int jSM=0;
+    for (unsigned int ii = 0; ii < 1708; ii++) if( par2[ii] ==0 && par3[ii] ==0 && par4[ii]==0 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+        double fitSM = 0.013531*(SM0->Eval(par0[ii], par1[ii]));
+        //{
+        //cout<<jSM<<" "<<ii<<" " << par0[ii]<<" "<< par1[ii]<<" "<<fitSM <<" "<< cross_section[ii]<<" diff: " <<(fitSM - cross_section[ii])/fitSM<< endl;
+        if (abs((fitSM - cross_section[ii])/fitSM) > 0.1) cout<<"here"<<endl;
+        gSM->SetPoint(jSM, par0[ii], par1[ii], 100*(fitSM - cross_section[ii])/fitSM); 
+        jSM++;
+        //}
+        //Differences2->Fill(par3[i], par4[i], (fit - cross_section[i])/fit); 
+    }    
+ 
+    // rest square
+    TCanvas *c2 = new TCanvas("c2","Surfaces Drawing Options",2000,450);
+    c2->Divide(4,1);   
+    c2->cd(1);
+    //c2->cd();
+    c2_1->SetTheta(90.0-0.001);
+    c2_1->SetPhi(0.0+0.001);
+    g2->Draw("Pcolz");
+    c2->cd(2);
+    c2_2->SetTheta(90.0-0.001);
+    c2_2->SetPhi(0.0+0.001);
+    gSM->Draw("Pcolz");
+    c2->cd(3);
+    c2_3->SetTheta(90.0-0.001);
+    c2_3->SetPhi(0.0+0.001);
+    gb->Draw("Pcolz");
+    c2->SaveAs("DiffSMplane.pdf");
+    c2->cd(4);
+    c2_4->SetTheta(90.0-0.001);
+    c2_4->SetPhi(0.0+0.001);
+    gc->Draw("Pcolz");
+    c2->SaveAs("DiffSMplane_861tofit.pdf");
+    /*  TGraph *gall = new TGraph(nmaxx - nminx);
+    gall->SetMarkerStyle(20);
+    gall->SetMarkerSize(2);
+    gall->SetTitle("0");
+    for (unsigned int i = 0; i < nmaxx - nminx; i++) if( par1[i] ==1 && par0[i] ==1 && par2[i]==0 ) {
+        double fit = fg2->Eval(par3[i], par4[i]);
+        cout<< par3[i]<<" "<< par4[i]<<" "<< (fit - cross_section[i])/fit<< endl;
+        g2->SetPoint(i, par3[i], par4[i], (fit - cross_section[i])/fit); 
+        //Differences2->Fill(par3[i], par4[i], (fit - cross_section[i])/fit); 
+    }*/
     
 
+
+
+    
 }
 
 
