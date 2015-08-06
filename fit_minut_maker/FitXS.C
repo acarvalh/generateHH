@@ -142,7 +142,7 @@ extern "C" void Likelihood(int& npar, double* grad, double& fval, double* xval, 
 }
 
 
-void FitXS (int nminx = 0, int nmaxx = 861, int nmintest = 0, int nmaxtest = 1708) {
+void FitXS (int nminx = 0, int nmaxx = 892, int nmintest = 0, int nmaxtest = 1708) {
     ////////////////////////////////////////////////////
     // ftp://root.cern.ch/root/doc/ROOTUsersGuideHTML/ch09s05.html
     TStyle *defaultStyle = new TStyle("defaultStyle","Default Style");
@@ -286,7 +286,7 @@ void FitXS (int nminx = 0, int nmaxx = 861, int nmintest = 0, int nmaxtest = 170
     /////////////////
     // plot the CX 
     ////////////////
-    // 
+    // plane b
     double norm = 1;// 0.013531;// 
     double kt5d=1.0;
     double kl5d=1.0;
@@ -294,7 +294,7 @@ void FitXS (int nminx = 0, int nmaxx = 861, int nmintest = 0, int nmaxtest = 170
     double mincg = -2.99, maxcg=2.99;
     // cg ===> x 
     // c2g ===> y
-    TF2 *fg2 = new TF2("fg","([0]*[15]**4 + [1]*[17]**2 + [2]*[15]**2*[16]**2 + [3]*x**2*[16]**2 +  [4]*y**2 + [5]*[17]*[15]**2 + [6]*[15]*[16]*[15]**2 + [7]*[15]*[16]*[17] + [8]*x*[16]*[17] + [9]*[17]*y + [10]*x*[16]*[15]**2 + [11]*y*[15]**2 + [12]*[16]*x*[15]*[16] + [13]*y*[15]*[16] + [14]*x*y*[16])/[18]",mincg,maxcg,mincg,maxcg);
+    TF2 *fg2 = new TF2("fg","(([0]*[15]**4 + [1]*[17]**2 + [2]*[15]**2*[16]**2 + [3]*x**2*[16]**2 +  [4]*y**2 + [5]*[17]*[15]**2 + [6]*[15]*[16]*[15]**2 + [7]*[15]*[16]*[17] + [8]*x*[16]*[17] + [9]*[17]*y + [10]*x*[16]*[15]**2 + [11]*y*[15]**2 + [12]*[16]*x*[15]*[16] + [13]*y*[15]*[16] + [14]*x*y*[16])/[18])",mincg,maxcg,mincg,maxcg);
     fg2->SetParameter(0,a[0]);
     fg2->SetParameter(1,a[1]);
     fg2->SetParameter(2,a[2]);    
@@ -316,6 +316,8 @@ void FitXS (int nminx = 0, int nmaxx = 861, int nmintest = 0, int nmaxtest = 170
     fg2->SetParameter(17,c25d);
     fg2->SetParameter(18,norm); //0.013531
     fg2->SetMinimum(0);
+    fg2->SetContour(100);
+    // 
     ////////////////////////////////
     kt5d=1.0;
     kl5d=10.0;
@@ -406,6 +408,7 @@ void FitXS (int nminx = 0, int nmaxx = 861, int nmintest = 0, int nmaxtest = 170
     SM0->SetParameter(17,c25d);
     SM0->SetParameter(18,norm);// 0.013531
     SM0->SetMinimum(0);
+    SM0->SetContour(200);
     //
     cout<<endl<<"Value of the formula in SM point: 0.013531 pb "<<endl;
     cout<<"teste funcao kl , kt : 1,1 "<< SM0->Eval(1,1)<<endl;
@@ -864,9 +867,10 @@ void FitXS (int nminx = 0, int nmaxx = 861, int nmintest = 0, int nmaxtest = 170
     pb->SetTitle("");
     pb->SetParameter(15,ktb); //==> c2g ==>kt
     pb->SetParameter(16,klb);
+    pb->SetContour(200);
     //l5->SetParameter(17,cg); //==> cg
     pb->SetParameter(17,norm);//0.013531
-    pb->SetMinimum(0);
+    //pb->SetMinimum(0);
     TGraph2D *gb = new TGraph2D(132);//(118);
     gb->SetMarkerStyle(20);
     gb->SetMarkerSize(2);
@@ -908,7 +912,8 @@ void FitXS (int nminx = 0, int nmaxx = 861, int nmintest = 0, int nmaxtest = 170
     pc->SetParameter(16,c2c);// ==>c2
     //l5->SetParameter(17,cg); //==> cg
     pc->SetParameter(17,norm);//0.013531
-    pc->SetMinimum(0);
+    //pc->SetMinimum(0);
+    pc->SetContour(200);
     TGraph2D *gc = new TGraph2D(125);//(118);
     gc->SetMarkerStyle(20);
     gc->SetMarkerSize(2);
@@ -951,20 +956,26 @@ void FitXS (int nminx = 0, int nmaxx = 861, int nmintest = 0, int nmaxtest = 170
     c2_1->SetTheta(90.0-0.001);
     c2_1->SetPhi(0.0+0.001);
     g2->Draw("Pcolz");
+    fg2->Draw("cont3SAME");
     c2->cd(2);
     c2_2->SetTheta(90.0-0.001);
     c2_2->SetPhi(0.0+0.001);
     gSM->Draw("Pcolz");
+    SM0->Draw("cont3SAME");
     c2->cd(3);
     c2_3->SetTheta(90.0-0.001);
     c2_3->SetPhi(0.0+0.001);
     gb->Draw("Pcolz");
+    pb->Draw("cont3SAME");
     c2->SaveAs("DiffSMplane.pdf");
     c2->cd(4);
     c2_4->SetTheta(90.0-0.001);
     c2_4->SetPhi(0.0+0.001);
     gc->Draw("Pcolz");
+    pc->Draw("cont3SAME");
     c2->SaveAs("DiffSMplane_861tofit.pdf");
+    //////////////////////////////////////////////
+    
     /*  TGraph *gall = new TGraph(nmaxx - nminx);
     gall->SetMarkerStyle(20);
     gall->SetMarkerSize(2);
