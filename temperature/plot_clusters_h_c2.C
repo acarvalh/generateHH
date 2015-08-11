@@ -40,9 +40,9 @@ void plot_clusters_h_c2(int Nclu=13) {
     defaultStyle->SetPadBorderSize(1);
     defaultStyle->SetPadColor(0);
     defaultStyle->SetPadTopMargin(0.18);
-    defaultStyle->SetPadBottomMargin(0.2);
-    defaultStyle->SetPadLeftMargin(0.18);
-    defaultStyle->SetPadRightMargin(1.18);
+    defaultStyle->SetPadBottomMargin(0.28);
+    defaultStyle->SetPadLeftMargin(0.28);
+    defaultStyle->SetPadRightMargin(1.28);
     /////// canvas /////////
     defaultStyle->SetCanvasBorderMode(1);
     defaultStyle->SetCanvasColor(0);
@@ -59,7 +59,7 @@ void plot_clusters_h_c2(int Nclu=13) {
     //defaultStyle->SetLabelFont(46,"XY");
     /////// title //////////
     //defaultStyle->SetTitleW(0.6);
-    //defaultStyle->GetTitleBorderSize(0);
+    defaultStyle->SetTitleBorderSize(0);
     //  defaultStyle->SetTitleOffset(1.1,"X");
     //  defaultStyle->SetTitleSize(0.01,"X");
     //  defaultStyle->SetTitleOffset(1.25,"Y");
@@ -68,30 +68,32 @@ void plot_clusters_h_c2(int Nclu=13) {
     /////// various ////////
     defaultStyle->SetNdivisions(303,"Y");
     defaultStyle->SetTitleFillColor(0);//SetTitleFillStyle(0, "Z");
-    defaultStyle->SetTitleX(0.4);
+    //defaultStyle->SetTitleW(0.5);
     //defaultStyle->SetTitleY(0.1);
-    //defaultStyle->SetTitleBorderSize(-0.1);  // For the axis titles:
+    defaultStyle->SetTitleBorderSize(-0.1);  // For the axis titles:
     
     //    defaultStyle->SetTitleColor(1, "XYZ");
     //    defaultStyle->SetTitleFont(42, "XYZ");
-    defaultStyle->SetTitleSize(0.1, "XYZ");
-    
+    defaultStyle->SetTitleSize(0.13, "XYZ");
+    //defaultStyle->SetTitleOffset(0.03);    
     // defaultStyle->SetTitleYSize(Float_t size = 0.02);
     //defaultStyle->SetTitleXOffset(0.9);
     //defaultStyle->SetTitleYOffset(1.05);
     // defaultStyle->SetTitleOffset(1.1, "Y"); // Another way to set the Offset
     
     // For the axis labels:
-    defaultStyle->SetLabelColor(1, "XYZ");
+    //defaultStyle->SetLabelColor(1, "XYZ");
     //defaultStyle->SetLabelFont(46, "XYZ");
-    // defaultStyle->SetLabelOffset(0.007, "XYZ");
-    defaultStyle->SetLabelSize(0.08, "XYZ");
+    defaultStyle->SetLabelOffset(0.03, "XYZ");
+    defaultStyle->SetLabelSize(0.1, "XYZ");
     
     // For the axis:
     //    defaultStyle->SetAxisColor(1, "XYZ");
     defaultStyle->SetStripDecimals(kTRUE);
     defaultStyle->SetTickLength(0.03, "XYZ");
-    defaultStyle->SetNdivisions(510, "XYZ");
+    defaultStyle->SetNdivisions(5, "Y");
+    defaultStyle->SetNdivisions(7, "X");
+    defaultStyle->SetNdivisions(7, "Z");    
     defaultStyle->cd();
     //////////////////////////////////////////////
     // here I want isolines of cross section
@@ -106,6 +108,7 @@ void plot_clusters_h_c2(int Nclu=13) {
     // c2 ===> x 
     // kt ===> y
     // doing all in the same canvas I need to have several functions :-(
+    // as contino1
     TF2 *f15 = new TF2("f15","log(x*x + ([1]*y*y)**2 + ([2]*y*[3])**2 + [4]*x*[1]*y*y + [5]*[1]*y*y*[2]*y*[3] + [6]*x*[2]*y*[3])",-3.2,3.2,0.3,2.7);
     TF2 *f125 = new TF2("f125","log(x*x + ([1]*y*y)**2 + ([2]*y*[3])**2 + [4]*x*[1]*y*y + [5]*[1]*y*y*[2]*y*[3] + [6]*x*[2]*y*[3])",-3.2,3.2,0.3,2.7);    
     TF2 *f10 = new TF2("f10","log(x*x + ([1]*y*y)**2 + ([2]*y*[3])**2 + [4]*x*[1]*y*y + [5]*[1]*y*y*[2]*y*[3] + [6]*x*[2]*y*[3])",-3.2,3.2,0.3,2.7);
@@ -217,7 +220,7 @@ void plot_clusters_h_c2(int Nclu=13) {
     fm15->SetParameter(5,A2);
     fm15->SetParameter(6,A3);    
     fm15->SetContour(10);
-    fm15->SetLineColor(1);
+    fm15->SetLineColor(18);
     //
     fm125->SetParameter(0,xs0);
     fm125->SetParameter(1,alpha);
@@ -273,6 +276,417 @@ void plot_clusters_h_c2(int Nclu=13) {
     fm24->SetContour(10);
     fm24->SetLineColor(18);    
     ////////////////////////////////////////////////////
+    // as our fit
+    // with 861 points
+    double a[15] = {2.19565, 10.4153, 0.303507, 0.120167, 1.46108, -8.8842, -1.46282, 2.9955, 3.31497, -3.34163, -0.721797, 1.98807, 0.352199, -0.89178, -0.592545};
+    double kt5d=1.0;
+    double kl5d=-10;
+    double c25d=0.0;
+    double c2g5d=0, cg5d=0;
+    double norm =1.;
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    TF2 *fgm105d = new TF2("fgm105d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fgm105d->SetParameter(0,a[0]);
+    fgm105d->SetParameter(1,a[1]);
+    fgm105d->SetParameter(2,a[2]);    
+    fgm105d->SetParameter(3,a[3]);
+    fgm105d->SetParameter(4,a[4]);
+    fgm105d->SetParameter(5,a[5]); 
+    fgm105d->SetParameter(6,a[6]);
+    fgm105d->SetParameter(7,a[7]);
+    fgm105d->SetParameter(8,a[8]); 
+    fgm105d->SetParameter(9,a[9]);
+    fgm105d->SetParameter(10,a[10]);
+    fgm105d->SetParameter(11,a[11]); 
+    fgm105d->SetParameter(12,a[12]);    
+    fgm105d->SetParameter(13,a[13]);
+    fgm105d->SetParameter(14,a[14]);
+    fgm105d->SetTitle("");
+    fgm105d->SetParameter(15,c2g5d); //==> c2g
+    fgm105d->SetParameter(16,kl5d);
+    fgm105d->SetParameter(17,cg5d); //==> cg
+    fgm105d->SetParameter(18,norm);//0.013531
+    fgm105d->SetMinimum(0);
+    fgm105d->SetLineColor(26); 
+    //////////////////////////////////////////////
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    kl5d=10;
+    TF2 *fg105d = new TF2("fgm105d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fg105d->SetParameter(0,a[0]);
+    fg105d->SetParameter(1,a[1]);
+    fg105d->SetParameter(2,a[2]);    
+    fg105d->SetParameter(3,a[3]);
+    fg105d->SetParameter(4,a[4]);
+    fg105d->SetParameter(5,a[5]); 
+    fg105d->SetParameter(6,a[6]);
+    fg105d->SetParameter(7,a[7]);
+    fg105d->SetParameter(8,a[8]); 
+    fg105d->SetParameter(9,a[9]);
+    fg105d->SetParameter(10,a[10]);
+    fg105d->SetParameter(11,a[11]); 
+    fg105d->SetParameter(12,a[12]);    
+    fg105d->SetParameter(13,a[13]);
+    fg105d->SetParameter(14,a[14]);
+    fg105d->SetTitle("");
+    fg105d->SetParameter(15,c2g5d); //==> c2g
+    fg105d->SetParameter(16,kl5d);
+    fg105d->SetParameter(17,cg5d); //==> cg
+    fg105d->SetParameter(18,norm);//0.013531
+    fg105d->SetMinimum(0);
+    fg105d->SetLineColor(26);
+    //////////////////////////////////////////////
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    kl5d=-15;
+    TF2 *fgm155d = new TF2("fgm155d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fgm155d->SetParameter(0,a[0]);
+    fgm155d->SetParameter(1,a[1]);
+    fgm155d->SetParameter(2,a[2]);    
+    fgm155d->SetParameter(3,a[3]);
+    fgm155d->SetParameter(4,a[4]);
+    fgm155d->SetParameter(5,a[5]); 
+    fgm155d->SetParameter(6,a[6]);
+    fgm155d->SetParameter(7,a[7]);
+    fgm155d->SetParameter(8,a[8]); 
+    fgm155d->SetParameter(9,a[9]);
+    fgm155d->SetParameter(10,a[10]);
+    fgm155d->SetParameter(11,a[11]); 
+    fgm155d->SetParameter(12,a[12]);    
+    fgm155d->SetParameter(13,a[13]);
+    fgm155d->SetParameter(14,a[14]);
+    fgm155d->SetTitle("");
+    fgm155d->SetParameter(15,c2g5d); //==> c2g
+    fgm155d->SetParameter(16,kl5d);
+    fgm155d->SetParameter(17,cg5d); //==> cg
+    fgm155d->SetParameter(18,norm);//0.013531
+    fgm155d->SetMinimum(0);
+    fgm155d->SetLineColor(26); 
+    //////////////////////////////////////////////
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    kl5d=15;
+    TF2 *fg155d = new TF2("fg155d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fg155d->SetParameter(0,a[0]);
+    fg155d->SetParameter(1,a[1]);
+    fg155d->SetParameter(2,a[2]);    
+    fg155d->SetParameter(3,a[3]);
+    fg155d->SetParameter(4,a[4]);
+    fg155d->SetParameter(5,a[5]); 
+    fg155d->SetParameter(6,a[6]);
+    fg155d->SetParameter(7,a[7]);
+    fg155d->SetParameter(8,a[8]); 
+    fg155d->SetParameter(9,a[9]);
+    fg155d->SetParameter(10,a[10]);
+    fg155d->SetParameter(11,a[11]); 
+    fg155d->SetParameter(12,a[12]);    
+    fg155d->SetParameter(13,a[13]);
+    fg155d->SetParameter(14,a[14]);
+    fg155d->SetTitle("");
+    fg155d->SetParameter(15,c2g5d); //==> c2g
+    fg155d->SetParameter(16,kl5d);
+    fg155d->SetParameter(17,cg5d); //==> cg
+    fg155d->SetParameter(18,norm);//0.013531
+    fg155d->SetMinimum(0);
+    fg155d->SetLineColor(26);
+    //////////////////////////////////////////////
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    kl5d=-7.5;
+    TF2 *fgm855d = new TF2("fgm755d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fgm755d->SetParameter(0,a[0]);
+    fgm755d->SetParameter(1,a[1]);
+    fgm755d->SetParameter(2,a[2]);    
+    fgm755d->SetParameter(3,a[3]);
+    fgm755d->SetParameter(4,a[4]);
+    fgm755d->SetParameter(5,a[5]); 
+    fgm755d->SetParameter(6,a[6]);
+    fgm755d->SetParameter(7,a[7]);
+    fgm755d->SetParameter(8,a[8]); 
+    fgm755d->SetParameter(9,a[9]);
+    fgm755d->SetParameter(10,a[10]);
+    fgm755d->SetParameter(11,a[11]); 
+    fgm755d->SetParameter(12,a[12]);    
+    fgm755d->SetParameter(13,a[13]);
+    fgm755d->SetParameter(14,a[14]);
+    fgm755d->SetTitle("");
+    fgm755d->SetParameter(15,c2g5d); //==> c2g
+    fgm755d->SetParameter(16,kl5d);
+    fgm755d->SetParameter(17,cg5d); //==> cg
+    fgm755d->SetParameter(18,norm);//0.013531
+    fgm755d->SetMinimum(0);
+    fgm755d->SetLineColor(26); 
+    //////////////////////////////////////////////
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    kl5d=7.5;
+    TF2 *fg755d = new TF2("fg755d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fg755d->SetParameter(0,a[0]);
+    fg755d->SetParameter(1,a[1]);
+    fg755d->SetParameter(2,a[2]);    
+    fg755d->SetParameter(3,a[3]);
+    fg755d->SetParameter(4,a[4]);
+    fg755d->SetParameter(5,a[5]); 
+    fg755d->SetParameter(6,a[6]);
+    fg755d->SetParameter(7,a[7]);
+    fg755d->SetParameter(8,a[8]); 
+    fg755d->SetParameter(9,a[9]);
+    fg755d->SetParameter(10,a[10]);
+    fg755d->SetParameter(11,a[11]); 
+    fg755d->SetParameter(12,a[12]);    
+    fg755d->SetParameter(13,a[13]);
+    fg755d->SetParameter(14,a[14]);
+    fg755d->SetTitle("");
+    fg755d->SetParameter(15,c2g5d); //==> c2g
+    fg755d->SetParameter(16,kl5d);
+    fg755d->SetParameter(17,cg5d); //==> cg
+    fg755d->SetParameter(18,norm);//0.013531
+    fg755d->SetMinimum(0);
+    fg755d->SetLineColor(26);
+    //////////////////////////////////////////////
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    kl5d=-12.5;
+    TF2 *fgm1255d = new TF2("fgm1255d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fgm1255d->SetParameter(0,a[0]);
+    fgm1255d->SetParameter(1,a[1]);
+    fgm1255d->SetParameter(2,a[2]);    
+    fgm1255d->SetParameter(3,a[3]);
+    fgm1255d->SetParameter(4,a[4]);
+    fgm1255d->SetParameter(5,a[5]); 
+    fgm1255d->SetParameter(6,a[6]);
+    fgm1255d->SetParameter(7,a[7]);
+    fgm1255d->SetParameter(8,a[8]); 
+    fgm1255d->SetParameter(9,a[9]);
+    fgm1255d->SetParameter(10,a[10]);
+    fgm1255d->SetParameter(11,a[11]); 
+    fgm1255d->SetParameter(12,a[12]);    
+    fgm1255d->SetParameter(13,a[13]);
+    fgm1255d->SetParameter(14,a[14]);
+    fgm1255d->SetTitle("");
+    fgm1255d->SetParameter(15,c2g5d); //==> c2g
+    fgm1255d->SetParameter(16,kl5d);
+    fgm1255d->SetParameter(17,cg5d); //==> cg
+    fgm1255d->SetParameter(18,norm);//0.013531
+    fgm1255d->SetMinimum(0);
+    fgm1255d->SetLineColor(26); 
+    //////////////////////////////////////////////
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    kl5d=12.5;
+    TF2 *fg1255d = new TF2("fg1255d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fg1255d->SetParameter(0,a[0]);
+    fg1255d->SetParameter(1,a[1]);
+    fg1255d->SetParameter(2,a[2]);    
+    fg1255d->SetParameter(3,a[3]);
+    fg1255d->SetParameter(4,a[4]);
+    fg1255d->SetParameter(5,a[5]); 
+    fg1255d->SetParameter(6,a[6]);
+    fg1255d->SetParameter(7,a[7]);
+    fg1255d->SetParameter(8,a[8]); 
+    fg1255d->SetParameter(9,a[9]);
+    fg1255d->SetParameter(10,a[10]);
+    fg1255d->SetParameter(11,a[11]); 
+    fg1255d->SetParameter(12,a[12]);    
+    fg1255d->SetParameter(13,a[13]);
+    fg1255d->SetParameter(14,a[14]);
+    fg1255d->SetTitle("");
+    fg1255d->SetParameter(15,c2g5d); //==> c2g
+    fg1255d->SetParameter(16,kl5d);
+    fg1255d->SetParameter(17,cg5d); //==> cg
+    fg1255d->SetParameter(18,norm);//0.013531
+    fg1255d->SetMinimum(0);
+    fg1255d->SetLineColor(26);
+    //////////////////////////////////////////////
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    kl5d=-5;
+    TF2 *fgm55d = new TF2("fgm55d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fgm55d->SetParameter(0,a[0]);
+    fgm55d->SetParameter(1,a[1]);
+    fgm55d->SetParameter(2,a[2]);    
+    fgm55d->SetParameter(3,a[3]);
+    fgm55d->SetParameter(4,a[4]);
+    fgm55d->SetParameter(5,a[5]); 
+    fgm55d->SetParameter(6,a[6]);
+    fgm55d->SetParameter(7,a[7]);
+    fgm55d->SetParameter(8,a[8]); 
+    fgm55d->SetParameter(9,a[9]);
+    fgm55d->SetParameter(10,a[10]);
+    fgm55d->SetParameter(11,a[11]); 
+    fgm55d->SetParameter(12,a[12]);    
+    fgm55d->SetParameter(13,a[13]);
+    fgm55d->SetParameter(14,a[14]);
+    fgm55d->SetTitle("");
+    fgm55d->SetParameter(15,c2g5d); //==> c2g
+    fgm55d->SetParameter(16,kl5d);
+    fgm55d->SetParameter(17,cg5d); //==> cg
+    fgm55d->SetParameter(18,norm);//0.013531
+    fgm55d->SetMinimum(0);
+    fgm55d->SetLineColor(26); 
+    //////////////////////////////////////////////
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    kl5d=5;
+    TF2 *fg55d = new TF2("fg55d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fg55d->SetParameter(0,a[0]);
+    fg55d->SetParameter(1,a[1]);
+    fg55d->SetParameter(2,a[2]);    
+    fg55d->SetParameter(3,a[3]);
+    fg55d->SetParameter(4,a[4]);
+    fg55d->SetParameter(5,a[5]); 
+    fg55d->SetParameter(6,a[6]);
+    fg55d->SetParameter(7,a[7]);
+    fg55d->SetParameter(8,a[8]); 
+    fg55d->SetParameter(9,a[9]);
+    fg55d->SetParameter(10,a[10]);
+    fg55d->SetParameter(11,a[11]); 
+    fg55d->SetParameter(12,a[12]);    
+    fg55d->SetParameter(13,a[13]);
+    fg55d->SetParameter(14,a[14]);
+    fg55d->SetTitle("");
+    fg55d->SetParameter(15,c2g5d); //==> c2g
+    fg55d->SetParameter(16,kl5d);
+    fg55d->SetParameter(17,cg5d); //==> cg
+    fg55d->SetParameter(18,norm);//0.013531
+    fg55d->SetMinimum(0);
+    fg55d->SetLineColor(26);
+    //////////////////////////////////////////////
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    kl5d=-3.5;
+    TF2 *fgm355d = new TF2("fgm355d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fgm355d->SetParameter(0,a[0]);
+    fgm355d->SetParameter(1,a[1]);
+    fgm355d->SetParameter(2,a[2]);    
+    fgm355d->SetParameter(3,a[3]);
+    fgm355d->SetParameter(4,a[4]);
+    fgm355d->SetParameter(5,a[5]); 
+    fgm355d->SetParameter(6,a[6]);
+    fgm355d->SetParameter(7,a[7]);
+    fgm355d->SetParameter(8,a[8]); 
+    fgm355d->SetParameter(9,a[9]);
+    fgm355d->SetParameter(10,a[10]);
+    fgm355d->SetParameter(11,a[11]); 
+    fgm355d->SetParameter(12,a[12]);    
+    fgm355d->SetParameter(13,a[13]);
+    fgm355d->SetParameter(14,a[14]);
+    fgm355d->SetTitle("");
+    fgm355d->SetParameter(15,c2g5d); //==> c2g
+    fgm355d->SetParameter(16,kl5d);
+    fgm355d->SetParameter(17,cg5d); //==> cg
+    fgm355d->SetParameter(18,norm);//0.013531
+    fgm355d->SetMinimum(0);
+    fgm355d->SetLineColor(26); 
+    //////////////////////////////////////////////
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    kl5d=3.5;
+    TF2 *fg355d = new TF2("fg355d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fg355d->SetParameter(0,a[0]);
+    fg355d->SetParameter(1,a[1]);
+    fg355d->SetParameter(2,a[2]);    
+    fg355d->SetParameter(3,a[3]);
+    fg355d->SetParameter(4,a[4]);
+    fg355d->SetParameter(5,a[5]); 
+    fg355d->SetParameter(6,a[6]);
+    fg355d->SetParameter(7,a[7]);
+    fg355d->SetParameter(8,a[8]); 
+    fg355d->SetParameter(9,a[9]);
+    fg355d->SetParameter(10,a[10]);
+    fg355d->SetParameter(11,a[11]); 
+    fg355d->SetParameter(12,a[12]);    
+    fg355d->SetParameter(13,a[13]);
+    fg355d->SetParameter(14,a[14]);
+    fg355d->SetTitle("");
+    fg355d->SetParameter(15,c2g5d); //==> c2g
+    fg355d->SetParameter(16,kl5d);
+    fg355d->SetParameter(17,cg5d); //==> cg
+    fg355d->SetParameter(18,norm);//0.013531
+    fg355d->SetMinimum(0);
+    fg355d->SetLineColor(26);
+    //////////////////////////////////////////////
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    kl5d=-2.4;
+    TF2 *fgm245d = new TF2("fgm245d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fgm245d->SetParameter(0,a[0]);
+    fgm245d->SetParameter(1,a[1]);
+    fgm245d->SetParameter(2,a[2]);    
+    fgm245d->SetParameter(3,a[3]);
+    fgm245d->SetParameter(4,a[4]);
+    fgm245d->SetParameter(5,a[5]); 
+    fgm245d->SetParameter(6,a[6]);
+    fgm245d->SetParameter(7,a[7]);
+    fgm245d->SetParameter(8,a[8]); 
+    fgm245d->SetParameter(9,a[9]);
+    fgm245d->SetParameter(10,a[10]);
+    fgm245d->SetParameter(11,a[11]); 
+    fgm245d->SetParameter(12,a[12]);    
+    fgm245d->SetParameter(13,a[13]);
+    fgm245d->SetParameter(14,a[14]);
+    fgm245d->SetTitle("");
+    fgm245d->SetParameter(15,c2g5d); //==> c2g
+    fgm245d->SetParameter(16,kl5d);
+    fgm245d->SetParameter(17,cg5d); //==> cg
+    fgm245d->SetParameter(18,norm);//0.013531
+    fgm245d->SetMinimum(0);
+    fgm245d->SetLineColor(26); 
+    //////////////////////////////////////////////
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    kl5d=2.4;
+    TF2 *fg245d = new TF2("fg255d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fg245d->SetParameter(0,a[0]);
+    fg245d->SetParameter(1,a[1]);
+    fg245d->SetParameter(2,a[2]);    
+    fg245d->SetParameter(3,a[3]);
+    fg245d->SetParameter(4,a[4]);
+    fg245d->SetParameter(5,a[5]); 
+    fg245d->SetParameter(6,a[6]);
+    fg245d->SetParameter(7,a[7]);
+    fg245d->SetParameter(8,a[8]); 
+    fg245d->SetParameter(9,a[9]);
+    fg245d->SetParameter(10,a[10]);
+    fg245d->SetParameter(11,a[11]); 
+    fg245d->SetParameter(12,a[12]);    
+    fg245d->SetParameter(13,a[13]);
+    fg245d->SetParameter(14,a[14]);
+    fg245d->SetTitle("");
+    fg245d->SetParameter(15,c2g5d); //==> c2g
+    fg245d->SetParameter(16,kl5d);
+    fg245d->SetParameter(17,cg5d); //==> cg
+    fg245d->SetParameter(18,norm);//0.013531
+    fg245d->SetMinimum(0);
+    fg245d->SetLineColor(26);
+    //////////////////////////////////////////////
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt
+    kl5d=1;
+    TF2 *fg15d = new TF2("fg15d","log(([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18])",-4,4,0.5,2.5);
+    fg15d->SetParameter(0,a[0]);
+    fg15d->SetParameter(1,a[1]);
+    fg15d->SetParameter(2,a[2]);    
+    fg15d->SetParameter(3,a[3]);
+    fg15d->SetParameter(4,a[4]);
+    fg15d->SetParameter(5,a[5]); 
+    fg15d->SetParameter(6,a[6]);
+    fg15d->SetParameter(7,a[7]);
+    fg15d->SetParameter(8,a[8]); 
+    fg15d->SetParameter(9,a[9]);
+    fg15d->SetParameter(10,a[10]);
+    fg15d->SetParameter(11,a[11]); 
+    fg15d->SetParameter(12,a[12]);    
+    fg15d->SetParameter(13,a[13]);
+    fg15d->SetParameter(14,a[14]);
+    fg15d->SetTitle("");
+    fg15d->SetParameter(15,c2g5d); //==> c2g
+    fg15d->SetParameter(16,kl5d);
+    fg15d->SetParameter(17,cg5d); //==> cg
+    fg15d->SetParameter(18,norm);//0.013531
+    fg15d->SetMinimum(0);
+    fg15d->SetLineColor(26);    
     //////////////////////////////////////////////
     // This is to plot the c2 X kt plane , the minimal cg and c2g
     // no isolines of cross sections !
@@ -425,6 +839,12 @@ void plot_clusters_h_c2(int Nclu=13) {
             head[i]=head10[i];
         }
     }// close do heads
+    //////////////////////////////////////////
+    TGraph2D *gm105d = new TGraph2D(44);//(118);
+    gm105d->SetMarkerStyle(20);
+    gm105d->SetMarkerSize(2);
+    gm105d->SetTitle("0");
+    int jm10=0;
     /////////////////////////////////////////
     // fill the histos == only with cgs diff of 0
     int iclu=-1;
@@ -470,6 +890,11 @@ void plot_clusters_h_c2(int Nclu=13) {
         } else if (L[isamp]==-10 && (cg[isamp]==0 && c2g[isamp]==0)) {
             Lm10[iclu]->Fill(c[isamp],y[isamp]);
             for (int j=0; j<Nclu; j++) { if (isamp==head[j]) hL10[iclu]->Fill(c[isamp],y[isamp]);};
+            double fit3d = (fm10->Eval(c[isamp],y[isamp]));
+            double fit5d = 0.013531*(fgm105d->Eval(c[isamp],y[isamp]));
+            gm105d->SetPoint(jm10, c[isamp],y[isamp], 100*(fit3d - fit5d)/(fit3d)); 
+            jm10++;
+            //cout<<jm10<<" "<<isamp<<" "<< c[isamp]<<" "<< y[isamp]<<" "<<fit3d <<" "<< fit5d<<" diff: " <<100*(fit3d - fit5d)/(fit3d)<< endl;
         } else if (L[isamp]==-12.5 && (cg[isamp]==0 && c2g[isamp]==0)) {
             Lm125[iclu]->Fill(c[isamp],y[isamp]);
             for (int j=0; j<Nclu; j++) { if (isamp==head[j]) hL125[iclu]->Fill(c[isamp],y[isamp]);};
@@ -507,6 +932,7 @@ void plot_clusters_h_c2(int Nclu=13) {
         if (iclu==0) {
             L1[iclu]->Draw("P");
             f1->Draw("cont3SAME");
+            fg15d->Draw("cont3SAME");
             L1[iclu]->Draw("PSAME");
         } else {
             L1[iclu]->Draw("PSAME");
@@ -535,6 +961,7 @@ void plot_clusters_h_c2(int Nclu=13) {
         if (iclu==0) {
             L24[iclu]->Draw("P");
             f24->Draw("cont3SAME");
+            fg245d->Draw("cont3SAME");
             L24[iclu]->Draw("PSAME");
         } else {
             L24[iclu]->Draw("PSAME");
@@ -563,6 +990,7 @@ void plot_clusters_h_c2(int Nclu=13) {
         if (iclu==0) {
             L35[iclu]->Draw("P");
             f35->Draw("cont3SAME");
+            fg355d->Draw("cont3SAME");
             L35[iclu]->Draw("PSAME");
         } else {
             L35[iclu]->Draw("PSAME");
@@ -590,6 +1018,7 @@ void plot_clusters_h_c2(int Nclu=13) {
         if (iclu==0) {
             L5[iclu]->Draw("P");
             f5->Draw("cont3SAME");
+            fg55d->Draw("cont3SAME");
             L5[iclu]->Draw("PSAME");
         } else {
             L5[iclu]->Draw("PSAME");
@@ -627,6 +1056,7 @@ void plot_clusters_h_c2(int Nclu=13) {
         if (iclu==0) {
             Lm24[iclu]->Draw("P");
             fm24->Draw("cont3SAME");
+            fgm245d->Draw("cont3SAME");
             Lm24[iclu]->Draw("PSAME");
         } else {
             Lm24[iclu]->Draw("PSAME");
@@ -655,6 +1085,7 @@ void plot_clusters_h_c2(int Nclu=13) {
             //hL15[iclu]->Draw("Y+");
             Lm35[iclu]->Draw("P");
             fm35->Draw("cont3SAME");
+            fgm355d->Draw("cont3SAME");
             Lm35[iclu]->Draw("PSAME");
         } else {
             Lm35[iclu]->Draw("PSAME");
@@ -690,6 +1121,7 @@ void plot_clusters_h_c2(int Nclu=13) {
             Lm5[iclu]->Draw("P");
             kl=-5.0;
             fm5->Draw("cont3SAME");
+            fgm55d->Draw("cont3SAME");
             Lm5[iclu]->Draw("PSAME");
         } else {
             Lm5[iclu]->Draw("PSAME");
@@ -718,6 +1150,7 @@ void plot_clusters_h_c2(int Nclu=13) {
         if (iclu==0) {
             L75[iclu]->Draw("P");
             f75->Draw("cont3SAME");
+            fg755d->Draw("cont3SAME");
             L75[iclu]->Draw("PSAME");
         } else {
             L75[iclu]->Draw("PSAME");
@@ -744,6 +1177,7 @@ void plot_clusters_h_c2(int Nclu=13) {
         if (iclu==0) {
             L10[iclu]->Draw("P");
             f10->Draw("cont3SAME");
+            fg105d->Draw("cont3SAME");
             L10[iclu]->Draw("PSAME");
         } else {
             L10[iclu]->Draw("PSAME");
@@ -772,6 +1206,7 @@ void plot_clusters_h_c2(int Nclu=13) {
         if (iclu==0) {
             L125[iclu]->Draw("P");
             f125->Draw("cont3SAME");
+            fg1255d->Draw("cont3SAME");
             L125[iclu]->Draw("PSAME");
         } else {
             L125[iclu]->Draw("PSAME");
@@ -799,6 +1234,7 @@ void plot_clusters_h_c2(int Nclu=13) {
         if (iclu==0) {
             L15[iclu]->Draw("P");
             f15->Draw("cont3SAME");
+            fg155d->Draw("cont3SAME");
             L15[iclu]->Draw("PSAME");
         } else {
             L15[iclu]->Draw("PSAME");
@@ -825,6 +1261,7 @@ void plot_clusters_h_c2(int Nclu=13) {
         if (iclu==0) {
             Lm75[iclu]->Draw("P");
             fm75->Draw("cont3SAME");
+            fgm755d->Draw("cont3SAME");
             Lm75[iclu]->Draw("PSAME");
         } else {
             Lm75[iclu]->Draw("PSAME");
@@ -850,6 +1287,7 @@ void plot_clusters_h_c2(int Nclu=13) {
         if (iclu==0) {
             Lm10[iclu]->Draw("P");
             fm10->Draw("cont3SAME");
+            fgm105d->Draw("cont3SAME");
             Lm10[iclu]->Draw("PSAME");
         } else {
             Lm10[iclu]->Draw("PSAME");
@@ -875,6 +1313,7 @@ void plot_clusters_h_c2(int Nclu=13) {
         if (iclu==0) {
             Lm125[iclu]->Draw("P");
             fm125->Draw("cont3SAME");
+            fgm1255d->Draw("cont3SAME");            
             Lm125[iclu]->Draw("PSAME");
         } else {
             Lm125[iclu]->Draw("PSAME");
@@ -901,6 +1340,7 @@ void plot_clusters_h_c2(int Nclu=13) {
         if (iclu==0) {
             Lm15[iclu]->Draw("P");   
             fm15->Draw("cont3SAME");
+            fgm155d->Draw("cont3SAME");
             Lm15[iclu]->Draw("PSAME");
         } else {
             Lm15[iclu]->Draw("PSAME");
@@ -915,9 +1355,311 @@ void plot_clusters_h_c2(int Nclu=13) {
     text->DrawLatex(-3.2,2.7,"#kappa_{#lambda} = -15");
     text->Draw("same");
     //////////////////////////////////
-    sprintf(nameplot,"clusters5D_clu_noc2_%d.png",Nclu);    
+    sprintf(nameplot,"clusters5D_clu_noc2_%d_check5d.png",Nclu);    
     C1->Print(nameplot);
-    sprintf(nameplot,"clusters5D_clu_noc2_%d.pdf",Nclu);    
+    sprintf(nameplot,"clusters5D_clu_noc2_%d_check5d.pdf",Nclu);    
     C1->Print(nameplot);
-    
+    ////////////////////////////////////////////
+    //
+    // comparison points / CX
+    //
+    /////////////////////////////////////////////
+    //int nmin=0;
+    //int nmax=899;
+    double cross_section[1800];
+    double par0[1800];
+    double par1[1800];
+    double par2[1800];
+    double par3[1800];
+    double par4[1800];
+    /////////////////////////////////
+    // Read in the cross section values and the parameters space points
+    ifstream XSvals;
+    XSvals.open("/Users/Xanda/Documents/codes/git/generateHH/fit_minut_maker/all_CX_20k_opositecgw.ascii");
+    for (int i=0; i<1023; i++) {
+        XSvals >> par0[i] >> par1[i] >> par2[i] >> par3[i] >> par4[i] >> cross_section[i];
+        //cout << "For point i = " << i << "pars are " << par0[i] << " " << par1[i] << " " << par2[i] 
+        //	 << " " << par3[i] << " " << par4[i] << " and xs is " << cross_section[i] << endl;
+    }
+    ///////////
+    int j15=0,jm15=0,j10=0,jm10=0,j75=0,jm75=0,j35=0,jm35=0,j24=0,jm24=0,j125=0,jm125=0,j1=0,j5=0,jm5=0;
+    TGraph2D *g15 = new TGraph2D(41);//(118);
+    g15->SetMarkerStyle(20);
+    g15->SetMarkerSize(1.7);
+    g15->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = 15}  ; c_{2} ; #kappa_{t}");
+    //
+    TGraph2D *gm15 = new TGraph2D(42);//(118);
+    gm15->SetMarkerStyle(20);
+    gm15->SetMarkerSize(1.7);
+    gm15->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = -15}  ; c_{2} ; #kappa_{t} ");
+    //gm15->GetXaxis()->SetTitle("c_{2}");
+    //gm15->GetYaxis()->SetTitle("#kappa_{t}");
+    //
+    TGraph2D *g10 = new TGraph2D(41);//(118);
+    g10->SetMarkerStyle(20);
+    g10->SetMarkerSize(1.7);
+    g10->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = 10}  ; c_{2} ; #kappa_{t} ");
+    //
+    TGraph2D *gm10 = new TGraph2D(41);//(118);
+    gm10->SetMarkerStyle(20);
+    gm10->SetMarkerSize(1.7);
+    gm10->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = -10}  ; c_{2} ; #kappa_{t} ");
+    //
+    TGraph2D *g75 = new TGraph2D(41);//(118);
+    g75->SetMarkerStyle(20);
+    g75->SetMarkerSize(1.7);
+    g75->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = 7.5}  ; c_{2} ; #kappa_{t} ");
+    //
+    TGraph2D *gm75 = new TGraph2D(41);//(118);
+    gm75->SetMarkerStyle(20);
+    gm75->SetMarkerSize(1.7);
+    gm75->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = -7.5}  ; c_{2} ; #kappa_{t} ");
+    //
+    TGraph2D *g35 = new TGraph2D(56);//(118);
+    g35->SetMarkerStyle(20);
+    g35->SetMarkerSize(1.7);
+    g35->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = 3.5}  ; c_{2} ; #kappa_{t} ");
+    //
+    TGraph2D *gm35 = new TGraph2D(51);//(118);
+    gm35->SetMarkerStyle(20);
+    gm35->SetMarkerSize(1.7);
+    gm35->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = -3.5}  ; c_{2} ; #kappa_{t} ");
+    //
+    TGraph2D *g125 = new TGraph2D(41);//(118);
+    g125->SetMarkerStyle(20);
+    g125->SetMarkerSize(1.7);
+    g125->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = 12.5}  ; c_{2} ; #kappa_{t} ");
+    //
+    TGraph2D *gm125 = new TGraph2D(40);//(118);
+    gm125->SetMarkerStyle(20);
+    gm125->SetMarkerSize(1.7);
+    gm125->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = -12.5}  ; c_{2} ; #kappa_{t} ");
+    //
+    TGraph2D *g5 = new TGraph2D(62);//(118);
+    g5->SetMarkerStyle(20);
+    g5->SetMarkerSize(1.7);
+    g5->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = 5}  ; c_{2} ; #kappa_{t} ");
+    //
+    TGraph2D *gm5 = new TGraph2D(47);//(118);
+    gm5->SetMarkerStyle(20);
+    gm5->SetMarkerSize(1.7);
+    gm5->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = -5} ; c_{2} ; #kappa_{t} ");
+    //
+    TGraph2D *g24 = new TGraph2D(46);//(118);
+    g24->SetMarkerStyle(20);
+    g24->SetMarkerSize(1.7);
+    g24->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = 2.4}  ; c_{2} ; #kappa_{t} ");
+    //
+    TGraph2D *gm24 = new TGraph2D(46);//(118);
+    gm24->SetMarkerStyle(20);
+    gm24->SetMarkerSize(1.7);
+    gm24->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = -2.4} ; c_{2} ; #kappa_{t} ");
+    //
+    TGraph2D *g1 = new TGraph2D(58);//(118);
+    g1->SetMarkerStyle(20);
+    g1->SetMarkerSize(1.7);
+    g1->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = 1} ; c_{2} ; #kappa_{t} ");
+    //
+    for (unsigned int ii = 0; ii < 1023; ii++){
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==15.0 && par1[ii] > 0.4 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+        double fit = 0.013531*exp(fg155d->Eval(par2[ii], par1[ii]));
+        //cout<<" 15 "<<j15<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fit <<" "<< cross_section[ii]<<" diff: " <<(fit - cross_section[ii])/fit<< endl;
+        g15->SetPoint(j15, par2[ii], par1[ii], 100*(fit - cross_section[ii])/fit); 
+        j15++;
+        }  
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==-15.0 && par1[ii] > 0.4 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+            double fit = 0.013531*exp(fgm155d->Eval(par2[ii], par1[ii]));
+          ///  cout<<" -15 " <<jm15<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fit <<" "<< cross_section[ii]<<" diff: " <<(fit - cross_section[ii])/fit<< endl;
+            gm15->SetPoint(jm15, par2[ii], par1[ii], 100*(fit - cross_section[ii])/fit); 
+            jm15++;
+        }          
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==10.0 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+            double fit = 0.013531*exp(fg105d->Eval(par2[ii], par1[ii]));//
+          //  cout<<" 10 " <<j10<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fit <<" "<< cross_section[ii]<<" diff: " <<(fit - cross_section[ii])/fit<< endl;
+            g10->SetPoint(j10, par2[ii], par1[ii], 100*(fit - cross_section[ii])/fit); 
+            j10++;
+        }  
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==-10.0 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+            double fit = 0.013531*exp(fgm105d->Eval(par2[ii], par1[ii]));
+           // cout<<" -10 " <<jm10<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fit <<" "<< cross_section[ii]<<" diff: " <<(fit - cross_section[ii])/fit<< endl;
+            gm10->SetPoint(jm10, par2[ii], par1[ii], 100*(fit - cross_section[ii])/fit); 
+            jm10++;
+        }  
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==12.5 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+            double fit = 0.013531*exp(fg1255d->Eval(par2[ii], par1[ii]));
+          //  cout<<" 12.5 " <<j125<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fit <<" "<< cross_section[ii]<<" diff: " <<(fit - cross_section[ii])/fit<< endl;
+            g125->SetPoint(j125, par2[ii], par1[ii], 100*(fit - cross_section[ii])/fit); 
+            j125++;
+        }  
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==-12.5 && par1[ii] > 0.4 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+            double fit = 0.013531*exp(fgm1255d->Eval(par2[ii], par1[ii]));
+           // cout<<" -12.5 " <<jm125<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fit <<" "<< cross_section[ii]<<" diff: " <<(fit - cross_section[ii])/fit<< endl;
+            gm125->SetPoint(jm125, par2[ii], par1[ii], 100*(fit - cross_section[ii])/fit); 
+            jm125++;
+        }  
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==7.5 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+            double fit = 0.013531*exp(fg755d->Eval(par2[ii], par1[ii]));
+            //cout<<" 7.5 " <<j75<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fit <<" "<< cross_section[ii]<<" diff: " <<(fit - cross_section[ii])/fit<< endl;
+            g75->SetPoint(j75, par2[ii], par1[ii], 100*(fit - cross_section[ii])/fit); 
+            j75++;
+        }  
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==-7.5 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+            double fit = 0.013531*exp(fgm755d->Eval(par2[ii], par1[ii]));
+          //  cout<<" -7.5 " <<jm75<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fit <<" "<< cross_section[ii]<<" diff: " <<(fit - cross_section[ii])/fit<< endl;
+            gm75->SetPoint(jm75, par2[ii], par1[ii], 100*(fit - cross_section[ii])/fit); 
+            jm75++;
+        } 
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==3.5 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+            double fit = 0.013531*exp(fg355d->Eval(par2[ii], par1[ii]));
+          //  cout<<" 3.5 " <<j35<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fit <<" "<< cross_section[ii]<<" diff: " <<(fit - cross_section[ii])/fit<< endl;
+            g35->SetPoint(j35, par2[ii], par1[ii], 100*(fit - cross_section[ii])/fit); 
+            j35++;
+        }  
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==-3.5 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+            double fitq = 0.013531*exp(fgm355d->Eval(par2[ii], par1[ii]));
+            cout<<" -3.5 " <<jm35<<" "<<ii<<" " << par0[ii]<<" "<< par1[ii]<<" " << par2[ii]<<" "<< par3[ii]<<" "<< par4[ii]<<" "<<fitq <<" "<< cross_section[ii]<<" diff: " <<(fitq - cross_section[ii])/fitq<< endl;
+            gm35->SetPoint(jm35, par2[ii], par1[ii], 100*(fitq - cross_section[ii])/fitq); 
+            jm35++;
+        } 
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==2.4 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+            double fit = 0.013531*exp(fg245d->Eval(par2[ii], par1[ii]));
+          //  cout<<" 2.4 " <<j24<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fit <<" "<< cross_section[ii]<<" diff: " <<(fit - cross_section[ii])/fit<< endl;
+            g24->SetPoint(j24, par2[ii], par1[ii], 100*(fit - cross_section[ii])/fit); 
+            j24++;
+        }  
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==-2.4 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+            double fit = 0.013531*exp(fgm245d->Eval(par2[ii], par1[ii]));
+          //  cout<<" -2.4 " <<jm24<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fit <<" "<< cross_section[ii]<<" diff: " <<(fit - cross_section[ii])/fit<< endl;
+            gm24->SetPoint(jm24, par2[ii], par1[ii], 100*(fit - cross_section[ii])/fit); 
+            jm24++;
+        } 
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==5 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+            double fit = 0.013531*exp(fg55d->Eval(par2[ii], par1[ii]));
+          //  cout<<" 5 " <<j5<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fit <<" "<< cross_section[ii]<<" diff: " <<(fit - cross_section[ii])/fit<< endl;
+            g5->SetPoint(j5, par2[ii], par1[ii], 100*(fit - cross_section[ii])/fit); 
+            j5++;
+        }  
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==-5 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+            double fit = 0.013531*exp(fgm55d->Eval(par2[ii], par1[ii]));
+          //  cout<<" -5 " <<jm5<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fit <<" "<< cross_section[ii]<<" diff: " <<(fit - cross_section[ii])/fit<< endl;
+            gm5->SetPoint(jm5, par2[ii], par1[ii], 100*(fit - cross_section[ii])/fit); 
+            jm5++;
+        } 
+        if( par3[ii] ==0 && par4[ii] ==0 && par0[ii]==1 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+            double fit = 0.013531*exp(fg15d->Eval(par2[ii], par1[ii]));
+         //   cout<<" 1 " <<j24<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fit <<" "<< cross_section[ii]<<" diff: " <<(fit - cross_section[ii])/fit<< endl;
+            g1->SetPoint(j1, par2[ii], par1[ii], 100*(fit - cross_section[ii])/fit); 
+            j1++;
+        } 
+    } // close loop in parameters 
+    /////////////////////////////////////////////
+    const int Number = 3;
+    Double_t Red[Number]    = { 1.00, 0.00, 0.00};
+    Double_t Green[Number]  = { 0.00, 1.00, 0.00};
+    Double_t Blue[Number]   = { 1.00, 0.00, 1.00};
+    Double_t Length[Number] = { 0.00, 0.50, 1.00 };
+    Int_t nb=30;
+    TColor::CreateGradientColorTable(Number,Length,Red,Green,Blue,nb);
+    //
+    TCanvas *c2 = new TCanvas("c2","Surfaces Drawing Options",2000,1500);
+    c2->Divide(4,4); 
+    c2->cd(1);
+    c2_1->SetRightMargin(0.2);
+    c2_1->SetTheta(90.0-0.001);
+    c2_1->SetPhi(0.0+0.001);
+    //g1->Draw("Pcolz");
+    cout<<"plot 1"<<endl;
+    c2->cd(2);
+    c2_2->SetRightMargin(0.2);
+    c2_2->SetTheta(90.0-0.001);
+    c2_2->SetPhi(0.0+0.001);
+    g24->Draw("Pcolz");
+    cout<<"plot 2.4"<<endl;
+    c2->cd(3);
+    c2_3->SetRightMargin(0.2);
+    c2_3->SetTheta(90.0-0.001);
+    c2_3->SetPhi(0.0+0.001);
+    g35->Draw("Pcolz");    
+    cout<<"plot 3.5"<<endl;
+    c2->cd(4);
+    c2_4->SetRightMargin(0.2);
+    c2_4->SetTheta(90.0-0.001);
+    c2_4->SetPhi(0.0+0.001);
+    g5->Draw("Pcolz");
+    cout<<"plot 5"<<endl;
+    c2->cd(5);
+    TLatex* text2 = new TLatex();
+    text2->SetTextSize(0.13);
+    text2->DrawLatex(0.4,0.4,"#frac{#sigma_{fit}- #sigma_{MC}}{#sigma_{fit}} (%)"); 
+    //
+    c2->cd(6);
+    c2_6->SetRightMargin(0.2);
+    c2_6->SetTheta(90.0-0.001);
+    c2_6->SetPhi(0.0+0.001);
+    gm24->Draw("Pcolz");
+    cout<<"plot -2.4"<<endl;
+    c2->cd(7);
+    c2_7->SetRightMargin(0.2);
+    c2_7->SetTheta(90.0-0.001);
+    c2_7->SetPhi(0.0+0.001);
+    gm35->Draw("Pcolz");
+    cout<<"plot -3.5"<<endl;
+    c2->cd(8);
+    c2_8->SetRightMargin(0.2);
+    c2_8->SetTheta(90.0-0.001);
+    c2_8->SetPhi(0.0+0.001);
+    gm5->Draw("Pcolz");
+    cout<<"plot -5"<<endl;
+    //
+    c2->cd(9);
+    c2_9->SetRightMargin(0.2);
+    c2_9->SetTheta(90.0-0.001);
+    c2_9->SetPhi(0.0+0.001);
+    g75->Draw("Pcolz");
+    cout<<"plot 7.5"<<endl;
+    c2->cd(10);
+    c2_10->SetRightMargin(0.2);
+    c2_10->SetTheta(90.0-0.001);
+    c2_10->SetPhi(0.0+0.001);
+    g10->Draw("Pcolz");
+    cout<<"plot 10"<<endl;
+    c2->cd(11);
+    c2_11->SetRightMargin(0.2);
+    c2_11->SetTheta(90.0-0.001);
+    c2_11->SetPhi(0.0+0.001);
+    g125->Draw("Pcolz");
+    cout<<"plot 12.5"<<endl;
+    c2->cd(12);
+    c2_12->SetRightMargin(0.2);
+    c2_12->SetTheta(90.0-0.001);
+    c2_12->SetPhi(0.0+0.001);
+    g15->Draw("Pcolz");
+    cout<<"plot 15"<<endl;
+    //
+    c2->cd(13);
+    c2_13->SetRightMargin(0.2);
+    c2_13->SetTheta(90.0-0.001);
+    c2_13->SetPhi(0.0+0.001);
+    gm75->Draw("Pcolz");
+    cout<<"plot -7.5"<<endl;
+    c2->cd(14);
+    c2_14->SetRightMargin(0.2);
+    c2_14->SetTheta(90.0-0.001);
+    c2_14->SetPhi(0.0+0.001);
+    gm10->Draw("Pcolz");
+    cout<<"plot -10"<<endl;
+    c2->cd(15);
+    c2_15->SetRightMargin(0.2);
+    c2_15->SetTheta(90.0-0.001);
+    c2_15->SetPhi(0.0+0.001);
+    gm125->Draw("Pcolz");
+    cout<<"plot -12.5"<<endl;
+    c2->cd(16);
+    c2_16->SetRightMargin(0.2);
+    c2_16->SetTheta(90.0-0.001);
+    c2_16->SetPhi(0.0+0.001);
+    gm15->Draw("Pcolz");
+    cout<<"plot -15"<<endl;
+        c2->SaveAs("Diff_c2_kt_ortogonal.pdf");
+    cout<<" 15 "<<j15<<" -15 "<<jm15<<" 10 "<<j10<<" -10 "<<jm10<<" 7.5 "<<j75<<" -7.5 "<<jm75<<" 3.5 "<<j35<<" -3.5 "<<jm35<<" 2.4 "<<j24<<" -2.4 "<<jm24<<" 12.5 "<<j125<<" -12.5 "<<jm125<<" 1 "<<j1<<" 5 "<<j5<<" -5 "<<jm5<<endl;
 }

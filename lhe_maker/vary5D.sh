@@ -4,7 +4,7 @@
 # turn off the automatic htmal open
 sed -i -e 's/# automatic_html_opening = True/automatic_html_opening = False/g' Cards/me5_configuration.txt
 #change the number of events to 3
-sed -i -e 's/.*[0-9]* = nevents.*/  1000 = nevents \! Number of unweighted events requested /g' Cards/run_card.dat
+sed -i -e 's/.*[0-9]* = nevents.*/  20000 = nevents \! Number of unweighted events requested /g' Cards/run_card.dat
 #change the minimum distance between jets
 #change the CM energy to 2Tev
 sed -i -E -e 's/[0-9]*.*=.*ebeam1/6500     = ebeam1/g' Cards/run_card.dat

@@ -46,6 +46,9 @@
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TIterator.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/Math/ParamFunctor.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TF2.h
+./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TF3.h
+./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TH3.h
+./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TAtt3D.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TH1D.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TProfile.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TStyle.h
@@ -85,8 +88,6 @@
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TStopwatch.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TH2D.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TH3D.h
-./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TH3.h
-./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TAtt3D.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TChain.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TTree.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TBranch.h
@@ -96,7 +97,6 @@
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/ThreadLocalStorage.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/RConfigure.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TVirtualTreePlayer.h
-./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TF3.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TKey.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TRandom.h
 ./FitXS_C.so: /Users/Xanda/Documents/programs/root/include/TRandom3.h
