@@ -1,0 +1,15 @@
+Martino Dall'Osso - Sept. 4th
+
+--- Macros to get variable distributions from cluster analysis ---
+
+prerequisite: CMSSW_7_4_4 environemnt (cmsenv CMSSW_7_4_4; cd CMSSW_7_4_4/src; scram b; cmsenv)
+
+Commands sequence:
+-
+-
+-
+-
+-
+-
+-
+
