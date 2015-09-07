@@ -8,10 +8,11 @@ Commands sequence:
 - copy ascii files folder into 'ascii_lhe'
 - create ascii file names list
 - create root file with variables distributions using 'makeDistros5D.C'
-- 
--
--
--
--
--
+- copy cluster results in 'results'
+- check name conversion map in 'utils'
+- run nameconversion.py to create cluster results file with sample names in.
+
+now you can create plots with distributions using: 
+- plot_unique5D.C --> one canvas per cluster per variable
+- ...
 

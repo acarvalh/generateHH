@@ -1,6 +1,7 @@
-// developed from Mia Tosi's macro
 // M.Dall'Osso
-// last change 16/04/15
+// To get distribution plots from clustering - 1 canvas per cluster.
+// .L plot_unique5D.C+
+// plot(13, 0, 4)
 //................................
 
 #include <TROOT.h>
@@ -24,19 +25,23 @@
 #include <string>
 #include <vector>
 
-// input files - parameters
+// input files - parameters - TO BE MODIFIED
 //******************************************
 
-// 13Tev - 5 parameters values - 1483 files
-string Totsamples = "1053";
+string Totsamples = "1053";  //number of lhe files //1053
 int CMenergy = 13;   //tev
 int pars = 5;        //space parameters dimension
 bool Privat = false; //true
-int Maxtotclu = 20;
-string Inputroot  = "Distros_5par_20000ev_13Tev_Xanda.root";
-string Inputfolder = "../Results/FCL_";
-TString Outfolder = "plots_5par_13Tev_2ndRound/"; //debug  _2var
-string testoption = "_Xanda"; //to add 'debug'  _2var
+int Maxtotclu = 20;  //max number of clusters
+string testoption = "_Xanda"; //debug
+
+string iNoption = "_13TeV_Xanda";       //see 'makeDistros5D.C'
+string Inputfolder = "results/";  //with cluster analysis results
+TString Outfolder = "../../plots_5par_13TeV_2ndRound/"; //to be created for final plots store - outside 'git' area
+
+//see 'makeDistros5D.C'
+string folder1_st = "0-416";
+string folder2_st = "417-1052";
 
 //******************************************
 
@@ -54,10 +59,13 @@ bool init(int totClu) {
   std::stringstream inputclusters;
   std::vector<string> samples;
 
-  filename = Inputroot;
+  //set Distros_.root filename
+  std::stringstream sstr;
+  sstr << "../../Distros_" << pars << "p_20000ev_"<< Totsamples << "sam" << iNoption << ".root";
+  filename = sstr.str();
 
   //read cluster result
-  inputclusters << Inputfolder << pars << "par_" << CMenergy << "Tev" << testoption << "_Nclu" << totClu << ".dat"; //<< testoption
+  inputclusters << Inputfolder << "res_" << pars << "p_" << CMenergy << "TeV" << testoption << "_NClu" << totClu << ".dat"; //<< testoption
   string infname = inputclusters.str();
   ifstream inresfile;
   inresfile.open(infname.c_str());
@@ -116,11 +124,11 @@ void draw_all(TPad* p, std::vector<TH1F*> h,
   if (logX) gPad->SetLogx();
   if (logY) gPad->SetLogy();
 
-//????
-gPad->SetFrameFillColor(0);
-gPad->SetFrameBorderMode(0);
-gPad->SetFrameFillColor(0);
-gPad->SetFrameBorderMode(0);
+  //needed????
+  gPad->SetFrameFillColor(0);
+  gPad->SetFrameBorderMode(0);
+  gPad->SetFrameFillColor(0);
+  gPad->SetFrameBorderMode(0);
 
   double legxmin = (legRIGHT ? 0.6 : 0.18);
   double legxmax = legxmin+0.20;
@@ -128,7 +136,7 @@ gPad->SetFrameBorderMode(0);
   double legymax = legymin+0.08;
   TLegend* leg = new TLegend(legxmin,legymin,legxmax,legymax);
   if (legHeader!="") leg->SetHeader(legHeader);
-  leg->SetTextSize(0.06); //was 0.05
+  leg->SetTextSize(0.06);
   leg->SetFillColor(0);
   leg->SetLineColor(0);
 
@@ -184,7 +192,7 @@ void draw_all_ratio(TPad* p, std::vector<TH1F*> h,
   double legymax = legymin+0.10;
   TLegend* leg = new TLegend(legxmin,legymin,legxmax,legymax);
   if (legHeader!="") leg->SetHeader(legHeader);
-  leg->SetTextSize(0.06); //was 0.05
+  leg->SetTextSize(0.06);
   leg->SetFillColor(0);
   leg->SetLineColor(0);
 
@@ -218,7 +226,6 @@ void draw_all_ratio(TPad* p, std::vector<TH1F*> h,
     ratio->Draw(options);
   }
   leg->Draw("same");
-  //p->Update();
 }
 
 void performancePlot1D(bool ratio, TPad* p, int nclust, TString hName,
@@ -254,10 +261,10 @@ void performancePlot1D(bool ratio, TPad* p, int nclust, TString hName,
     string sample = clu[nc][nsam];
     sample = sample + "_" + hName;
     TString fname = sample;
-//cout << sample.size() << endl;
-//  std::cout << " Getting " << fname << std::endl;
-    if(sample.find("g")<50) f->cd("0-416"); //debug
-    else f->cd("417-1052");
+    //cout << sample.size() << endl;
+    //std::cout << " Getting " << fname << std::endl;
+    if(sample.find("g")<50) f->cd(folder1_st.c_str()); //debug
+    else f->cd(folder2_st.c_str());
     histo = (TH1F*)gDirectory->Get(fname); 
     histo->SetMarkerSize(1.0);
     histo->SetMarkerStyle(20);
@@ -272,15 +279,15 @@ void performancePlot1D(bool ratio, TPad* p, int nclust, TString hName,
   string sample = clu[nc][0];
   sample = sample + "_" + hName;
   TString fname = sample;
-//  cout << sample.size() << endl;
-//  std::cout << " Getting the benchmark: " << fname << std::endl;
+  //  cout << sample.size() << endl;
+  //  std::cout << " Getting the benchmark: " << fname << std::endl;
   if(sample.find("g")<50) f->cd("0-416");
   else f->cd("417-1052");
   histo = (TH1F*)gDirectory->Get(fname); 
   histo->SetMarkerSize(1.0);
   histo->SetMarkerStyle(20);
   histo->SetLineColor(kRed);
-  histo->SetLineWidth(2); //2
+  histo->SetLineWidth(2);
   histo->GetXaxis()->SetTitle(xaxis);
   histo->GetYaxis()->SetTitle(yaxis);
   h.push_back(histo);
@@ -301,7 +308,7 @@ void performancePlot1D(bool ratio, TPad* p, int nclust, TString hName,
       else {
          if((unsigned int)(nc+1) != clu.size()){   //to skip ratio of benchmark comparison
            draw_all_ratio(p, h, xaxis,xmin,xmax,
-  	     clusterLabel,lgRIGHT,lgTOP, logX, stat,rebin,option); //,orbin         
+  	     clusterLabel,lgRIGHT,lgTOP, logX, stat,rebin,option);
         }
       }
   }  
@@ -488,41 +495,8 @@ void plot(int totclu = 20, bool r = false, int var = 0, int reb = 99, TString op
     }
     else if(var != 1 && var != 2 && var != 3) cout << "wrong var value (0-8)" << endl; //debug!!
    
-    clu.clear(); //needed!
+    clu.clear();
     if(!doall) return;
 
   }//end for  
 }
-
-//to get benchmarks in a fixed 
-void writeBCM(int totclu = 20) { 
-
-//      if(i==(h.size()-1)){
-//        nam = translate(clu[nclus][0].c_str());
-//        leg->AddEntry(h[i],nam.c_str(),"l"); //to print all for bench comp
-//      }
-
-}
-/*
-string translate(string samname) {
-  std::size_t pos0 = samname.find("L");
-  std::size_t pos1 = samname.find("y");
-  std::size_t pos2 = samname.find("c");
-
-  std::size_t len = pos1 - pos0 -1;
-  std::string kl = samname.substr(pos0+1,len); 
-  len = pos2 - pos1 -1;
-  std::string kt = samname.substr(pos1+1,len); 
-  std::string c2 = samname.substr(pos2+1); 
-
-  if((pos0=kl.find("m"))<6)   kl.replace(pos0,1,"-"); //debug!
-  if((pos0=kl.find("p"))<6)   kl.replace(pos0,1,"."); //debug!
-  if((pos0=kt.find("m"))<6)   kt.replace(pos0,1,"-"); //debug!
-  if((pos0=kt.find("p"))<6)   kt.replace(pos0,1,"."); //debug!
-  if((pos0=c2.find("m"))<6)   c2.replace(pos0,1,"-"); //debug!
-  if((pos0=c2.find("p"))<6)   c2.replace(pos0,1,"."); //debug!
-
-  std::stringstream name;
-  printf(name,"%s \t %s \t %s \n",kl.c_str(),kt.c_str(),c2.c_str());
-  return name.str();
-}*/

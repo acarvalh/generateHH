@@ -38,12 +38,12 @@ struct benchmark {
 // input files - parameters - TO BE CHANGED
 //******************************************
 int np = 5;	 //number of parameters
-int ns = 1054;   //number of samples 
-string option = "_13Tev"; //debug
+int ns = 1;   //number of samples //1053
+string option = "_13TeV"; //debug
 const int nev = 20000;	  //number of ev per sample
 
-string inputPath = "ascii_lhe/ascii_lhe5par_13Tev_2ndRound/";  //folder with ascii lhe files
-string fileslist_st = "ascii_lhe/list_ascii_13TeV_1053_draft.txt"; //ascii names list
+string inputPath = "../../ascii_lhe5par_13Tev/";  //folder with ascii lhe files (outside 'git' area)
+string fileslist_st = "utils/list_ascii_13TeV_1053_draft.txt"; //ascii names list
 
 //to be changed accordingly to lhe structure (3p, 5p,..)
 string folder1_st = "0-416";
@@ -53,14 +53,12 @@ TLorentzVector P1, P2, P12, P1boost, P2boost;
 bool update = false;
 		
 ///////////////////////////////////
-void makeDistros5D(nev) {
-
-  bool readfile = true;
+void makeDistros5D(){
 
   //out file
   TFile *out(0);
   std::stringstream sstr;
-  sstr << "Distros_" << np << "p_" << nev << "ev_"<< ns << "samples" << option;
+  sstr << "../../Distros_" << np << "p_" << nev << "ev_"<< ns << "sam" << option;
   string outfile = sstr.str() + ".root";
   if(!update)  { out = TFile::Open(outfile.c_str(), "RECREATE"); }  //RECREATE
   else           out = TFile::Open(outfile.c_str(), "UPDATE");   
