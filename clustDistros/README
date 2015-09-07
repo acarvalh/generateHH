@@ -5,8 +5,10 @@ Martino Dall'Osso - Sept. 4th
 prerequisite: CMSSW_7_4_4 environemnt (cmsenv CMSSW_7_4_4; cd CMSSW_7_4_4/src; scram b; cmsenv)
 
 Commands sequence:
--
--
+- copy ascii files folder into 'ascii_lhe'
+- create ascii file names list
+- create root file with variables distributions using 'makeDistros5D.C'
+- 
 -
 -
 -

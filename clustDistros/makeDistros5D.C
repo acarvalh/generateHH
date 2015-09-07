@@ -1,7 +1,7 @@
-//last changes 24/02/2015
-//to get kin distros
-
-//g++ -g `root-config --libs  --cflags` FCLdistro.cpp -o makedistro
+// M. Dall'Osso
+// To create root file with kin distros from ascii files.
+// .L makeDistros5D.C++
+// makeDistros5D()
 /////////////
 
 #include <iostream>
@@ -35,52 +35,39 @@ struct benchmark {
   int tracker;			//label of the benchmark 
 };
 
-// input files - parameters
+// input files - parameters - TO BE CHANGED
 //******************************************
+int np = 5;	 //number of parameters
+int ns = 1054;   //number of samples 
+string option = "_13Tev"; //debug
+const int nev = 20000;	  //number of ev per sample
 
-// 13Tev - 5 parameters values - 1483 files
-string inputPath = "../ascii_lhe5par_13Tev_2ndRound/";
-int np = 5;		//number of parameters
-int ns = 1054;    //number of samples 
-string option = "_13Tev_Xanda"; //debug
-const int nev = 20000;	//number of ev per sample //20000
+string inputPath = "ascii_lhe/ascii_lhe5par_13Tev_2ndRound/";  //folder with ascii lhe files
+string fileslist_st = "ascii_lhe/list_ascii_13TeV_1053_draft.txt"; //ascii names list
+
+//to be changed accordingly to lhe structure (3p, 5p,..)
+string folder1_st = "0-416";
+string folder2_st = "417-1052";
 
 TLorentzVector P1, P2, P12, P1boost, P2boost;
 bool update = false;
 		
 ///////////////////////////////////
-int main(int argc, char *argv[]) {
+void makeDistros5D(nev) {
 
   bool readfile = true;
-
-  // command line arguments
-  //-----------------------------
-  for (int i = 0; i < argc; i++){
-    if (!strcmp(argv[i],"-h")) {
-      cout << "List of arguments:" << endl;
-     // cout << "-nev number of events per sample" << endl;
-      cout << "-p   number of parameters" << endl;
-      cout << "-o   output name option" << endl;
-      cout << "-u   update existing root file" << endl;
-      return 0;
-    }
-   // else if (!strcmp(argv[i],"-nev")) {nev = atoi(argv[++i]);}
-    else if (!strcmp(argv[i],"-p"))   {np = atoi(argv[++i]);}
-    else if (!strcmp(argv[i],"-o"))   {option = argv[++i];}
-    else if (!strcmp(argv[i],"-u"))   {update = true;}
-  }  
 
   //out file
   TFile *out(0);
   std::stringstream sstr;
-  sstr << "Distros_" << np << "par_" << nev << "ev"<< option;
+  sstr << "Distros_" << np << "p_" << nev << "ev_"<< ns << "samples" << option;
   string outfile = sstr.str() + ".root";
   if(!update)  { out = TFile::Open(outfile.c_str(), "RECREATE"); }  //RECREATE
   else           out = TFile::Open(outfile.c_str(), "UPDATE");   
 
-  TDirectory *batch1 = out->mkdir("0-416");
-  TDirectory *batch2 = out->mkdir("417-1052");
-  
+  TDirectory *batch1 = out->mkdir(folder1_st.c_str());
+  TDirectory *batch2 = out->mkdir(folder2_st.c_str());
+
   typedef event bench[nev];
   bench *ev = new bench[ns]; 
 
@@ -88,7 +75,7 @@ int main(int argc, char *argv[]) {
 
   // Reading ASCII, one file a time
   // ------------------------------
-  ifstream filelist5("/lustre/cmswork/dallosso/hh2bbbb/non-resonant/clusterAnalysis/Results/maps/list_ascii_13TeV_1053_Xanda.txt"); ///lustre/cmswork/dorigo/hhbbbb/13TeV/
+  ifstream filelist5(fileslist_st);
   ifstream infile;
   int nf = 0;
   for(int f=0; f<ns; ++f) {
@@ -112,7 +99,6 @@ int main(int argc, char *argv[]) {
         infile >> ev[f][k].px1 >> ev[f][k].py1 >> ev[f][k].pz1 >> ev[f][k].E1 >> ev[f][k].m1;
         infile >> ev[f][k].px2 >> ev[f][k].py2 >> ev[f][k].pz2 >> ev[f][k].E2 >> ev[f][k].m2;
       }
-//      cout << f << " " << ev[nf][k].px2 << " " << ev[nf][k].py2 << " " << ev[nf][k].pz2 << " " << ev[nf][k].E2 << " " << ev[nf][k].m2;
       infile.close();    
 
       TH1D pt, pt2, pzl, pzh, mhh;
@@ -247,6 +233,5 @@ int main(int argc, char *argv[]) {
   out->Write();
   out->Close();
   delete out;
-
-  return 0;
 }
+
