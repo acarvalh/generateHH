@@ -5,14 +5,16 @@ Martino Dall'Osso - Sept. 4th
 prerequisite: CMSSW_7_4_4 environemnt (cmsenv CMSSW_7_4_4; cd CMSSW_7_4_4/src; scram b; cmsenv)
 
 Commands sequence:
-- copy ascii files folder into 'ascii_lhe'
-- create ascii file names list
+- create ascii file names list and put it in 'utils'
 - create root file with variables distributions using 'makeDistros5D.C'
+(check before hard coded input parameters)
 - copy cluster results in 'results'
 - check name conversion map in 'utils'
 - run nameconversion.py to create cluster results file with sample names in.
 
 now you can create plots with distributions using: 
-- plot_unique5D.C --> one canvas per cluster per variable
-- ...
+- plot_5D.C --> one canvas per cluster per variable.
+- plot_unique5D.C --> all clusters in one canvas. One canvas per Nclus.
+- plot_samstory5D.C --> plot the cluster with a selected sample for all the different Nclus.
+- plot_samstory5DforPaper.C --> .....
 

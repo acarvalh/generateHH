@@ -33,8 +33,8 @@ int CMenergy = 13;   //tev
 int pars = 5;        //space parameters dimension
 bool Privat = false; //true
 int Maxtotclu = 20;  //max number of clusters
-string testoption = "_Xanda"; //debug
 
+string testoption = "_Xanda"; //debug
 string iNoption = "_13TeV_Xanda";       //see 'makeDistros5D.C'
 string Inputfolder = "results/";  //with cluster analysis results
 TString Outfolder = "../../plots_5par_13TeV_2ndRound/"; //to be created for final plots store - outside 'git' area
@@ -281,8 +281,8 @@ void performancePlot1D(bool ratio, TPad* p, int nclust, TString hName,
   TString fname = sample;
   //  cout << sample.size() << endl;
   //  std::cout << " Getting the benchmark: " << fname << std::endl;
-  if(sample.find("g")<50) f->cd("0-416");
-  else f->cd("417-1052");
+  if(sample.find("g")<50) f->cd(folder1_st.c_str()); //debug
+  else f->cd(folder2_st.c_str());
   histo = (TH1F*)gDirectory->Get(fname); 
   histo->SetMarkerSize(1.0);
   histo->SetMarkerStyle(20);
