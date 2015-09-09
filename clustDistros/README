@@ -2,12 +2,16 @@ Martino Dall'Osso - Sept. 4th
 
 --- Macros to get variable distributions from cluster analysis ---
 
-prerequisite: CMSSW_7_4_4 environemnt (cmsenv CMSSW_7_4_4; cd CMSSW_7_4_4/src; scram b; cmsenv)
+prerequisite: 
+- CMSSW_7_4_4 environemnt (cmsenv CMSSW_7_4_4; cd CMSSW_7_4_4/src; scram b; cmsenv)
+- a folder with ascii files 
+(you can use /lustre/cmswork/dallosso/hh2bbbb/non-resonant/clusterAnalysis/ascii_lhe5par_13Tev)
+- a folder for future plots
+both folders in '../../' from the working area.
 
 Commands sequence:
 - create ascii file names list and put it in 'utils'
-- create root file with variables distributions using 'makeDistros5D.C'
-(check before hard coded input parameters)
+- create root file with variables distributions using 'makeDistros5D.C' (check hard coded input parameters)
 - copy cluster results in 'results'
 - check name conversion map in 'utils'
 - run nameconversion.py to create cluster results file with sample names in.
@@ -15,6 +19,4 @@ Commands sequence:
 now you can create plots with distributions using: 
 - plot_5D.C --> one canvas per cluster per variable.
 - plot_unique5D.C --> all clusters in one canvas. One canvas per Nclus.
-- plot_samstory5D.C --> plot the cluster with a selected sample for all the different Nclus.
-- plot_samstory5DforPaper.C --> .....
-
+- plot_samstory5D.C --> plot the cluster with a selected sample for all the different Nclus

@@ -1,5 +1,5 @@
 // M.Dall'Osso
-// to get plot the cluster with a selected sample for all the different Nclus.
+// to plot the cluster in which a selected sample is, for all the different Nclus.
 // .L plot_samstory5D.C+
 // plot(variable, samplenumber*, sample2number* ) *see map file
 //................................
@@ -292,8 +292,8 @@ bool performancePlot1D(string thesam, string thesam2, TPad* p, int nclust, TStri
         sample = sample + "_" + hName;
         TString fname = sample;
         //std::cout << " Getting " << fname << std::endl; //debug
-        if(sample.find("g")<50) f->cd("0-416");
-        else f->cd("417-1052");
+        if(sample.find("g")<50) f->cd(folder1_st.c_str()); //debug
+        else f->cd(folder2_st.c_str());
         histo = (TH1F*)gDirectory->Get(fname); 
         histo->SetMarkerSize(1.0);
         histo->SetMarkerStyle(20);

@@ -27,7 +27,6 @@
 
 // input files - parameters - TO BE MODIFIED
 //******************************************
-
 string Totsamples = "1053";  //number of lhe files //1053
 int CMenergy = 13;   //tev
 int pars = 5;        //space parameters dimension
