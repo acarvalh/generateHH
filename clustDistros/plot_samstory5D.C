@@ -1,7 +1,7 @@
 // M.Dall'Osso
 // to get plot the cluster with a selected sample for all the different Nclus.
 // .L plot_samstory5D.C+
-// plot(13, 0, 4)...
+// plot(variable, samplenumber*, sample2number* ) *see map file
 //................................
 
 #include <TROOT.h>
@@ -40,6 +40,7 @@ string testoption = "_Xanda"; //debug
 string iNoption = "_13TeV_Xanda";       //see 'makeDistros5D.C'
 string Inputfolder = "results/";  //with cluster analysis results
 TString Outfolder = "../../plots_5par_13TeV_2ndRound/"; //to be created for final plots store - outside 'git' area
+string mapFile = "utils/map_5par_13Tev_2ndRound.dat";  //map to read sample name
 
 //see 'makeDistros5D.C'
 string folder1_st = "0-416";
@@ -77,7 +78,7 @@ bool init() {
     printf( "ERROR: no input file %s \n", infname.c_str());
     return false;
   }
-  std::cout << "# Start reading sample names from file" << std::endl;
+  //std::cout << "# Start reading sample names from file" << std::endl;
   bool stop = false;
   int i = 1;
   do{
@@ -174,7 +175,7 @@ string translate(string samname) {
   std::stringstream name;
   name << std::setw(5); 
   name << "Kl=" << kl << ", Kt=" << kt << ", C2=" << c2 << ", Cg=" << cg << ", C2g=" << c2g;
-  cout << "BM in legend: " << name.str() << endl;
+  cout << "sample in legend: " << name.str() << endl;
   return name.str();
 }
 
@@ -256,7 +257,7 @@ bool performancePlot1D(string thesam, string thesam2, TPad* p, int nclust, TStri
   
   int nc = nclust; //ehi!
   int size = clu[nc].size();
-  std::cout << "# Start reading distros from file" << std::endl;
+  //std::cout << "# Start reading distros from file" << std::endl;
   bool match = false;
 
   //searching cluster
@@ -426,9 +427,32 @@ TPad* setcanvas(string thesam,  int v){
   return pad2;
 }
 
+std::string matchSamplename(int sam){
+
+  string thesam = "";  
+  ifstream infile;
+  infile.open(mapFile.c_str());
+  if(!infile)	{      //check if file exists
+    printf( "ERROR: no map file %s \n", mapFile.c_str());
+    return thesam;
+  }
+  int Nsam = 0;
+  while(!infile.eof()){
+    infile >> Nsam >> thesam;
+    if(Nsam == sam) break;
+  }
+  cout << "selected sample: " << thesam << endl;
+  return thesam;
+}
+
 //genaral function to plot all or single variable, single cluster.
-void plot(string thesample, string thesam2 = "", int var = 0, int reb = 99, TString opt="hist") { 
+void plot(int var, int sample1, int sample2 = 9999, int reb = 99, TString opt="hist") { 
 // allonly: to plot all in one canvas; var: 1-pt, 2-pzh, 3-pzl, 4-mhh ;  nclu = 0 to do all the clusters
+
+  std::string thesam2 = "", thesample = "";
+  thesample = matchSamplename(sample1);
+  if(thesample == "") return;
+  if(sample2 != 9999) thesam2 = matchSamplename(sample2);
 
   string app;
   std::stringstream outname;
