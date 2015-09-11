@@ -35,20 +35,22 @@ const int maxCol = 36;
 
 // input files - parameters
 //******************************************
-string Totsamples = "1053";  //number of lhe files //1053
+string Totsamples = "1488";  //number of lhe files //1053
 int CMenergy = 13;   //tev
 int pars = 5;        //space parameters dimension
 bool Privat = false; //true
 int Maxtotclu = 20;  //max number of clusters
 
-string testoption = "_Xanda"; //debug
-string iNoption = "_13TeV_Xanda";       //see 'makeDistros5D.C'
-string Inputfolder = "results/";
-TString Outfolder = "../../plots_5par_13TeV_2ndRound/"; //to be created for final plots store - outside 'git' area
+string testoption = ""; //debug
+string iNoption = "_13TeV";       //see 'makeDistros5D.C'
+string Inputfolder = "results/LogP/";
+TString Outfolder = "../../plots_5par_13TeV_1488/"; //to be created for final plots store - outside 'git' area
+string mapNamefile = "utils/list_ascii_13TeV_1488_translate.txt"; //debug
 
 //see 'makeDistros5D.C'
-string folder1_st = "0-416";
-string folder2_st = "417-1052";
+string folder1_st = "0-851";
+string folder2_st = "852-1488";
+int split = 851;
 
 //******************************************
 
@@ -73,8 +75,9 @@ bool init() {
   sstr << "../../Distros_" << pars << "p_20000ev_"<< Totsamples << "sam" << iNoption << ".root";
   filename = sstr.str();
 
-  //read cluster result
-  inputclusters << Inputfolder << "res_" << pars << "p_" << CMenergy << "TeV" << testoption << "_NClu" << totNclu << ".dat";
+  //read cluster result  
+  inputclusters << Inputfolder << "clustering_nev20k_Nclu" << totNclu << "_50_5.asc";
+//  inputclusters << Inputfolder << "res_" << pars << "p_" << CMenergy << "TeV" << testoption << "_NClu" << totNclu << ".dat"; //<< testoption
   string infname = inputclusters.str();
   ifstream inresfile;
   inresfile.open(infname.c_str());
@@ -95,11 +98,12 @@ bool init() {
     }
     istringstream istring(input);   
     cout << " Cluster #" << i << " -> ";
-    char in [50];
+    char in;
     int j = 0;
-    while (istring.getline (in,50,',')) { //debug - check 15
-     // cout << in << " "; //debug
-      samples.push_back(in);
+    //while (istring.getline (in,50,',')) { //debug - check 15
+    while (istring >> in) {
+      cout << in << " "; //debug
+      samples.push_back(std::to_string(in));
       j++;
     }
     cout << j << " sample" << endl;
@@ -123,7 +127,7 @@ bool init() {
   return true;
 }
 
-string translate(string samname) {
+/*string translate(string samname) {
 
   std::string kl, kt, c2, cg, c2g;
   //cout << samname.find(".") << endl;
@@ -180,6 +184,41 @@ string translate(string samname) {
   name << std::setw(5); 
   name << "Kl=" << kl << ", Kt=" << kt << ", C2=" << c2 << ", Cg=" << cg << ", C2g=" << c2g;
   cout << "BM in legend: " << name.str() << endl;
+  return name.str();
+}*/
+
+string translate(string samname) {
+
+  int i = stoi(samname); //debug
+  int kl =0, kt =0, c2 =0, cg =0, c2g =0;
+  std::stringstream name;
+  name << "";
+
+  ifstream inf;
+  inf.open(mapNamefile.c_str());
+  if(!inf)	{      //check if file exists
+    printf( "ERROR: no input file %s \n", mapNamefile.c_str());
+    return name.str();
+  }
+  int j = 0;
+  bool found = false;
+  while(!found || !inf.eof()){
+    string input;
+    std::getline(inf, input);
+    if(j == i){
+      istringstream istring(input);   
+      istring >> kl >> kt >> c2 >> cg >> c2g;
+      found = true;
+    }    
+    i++;
+  }
+
+  if(found){
+    name << std::setw(5); 
+    name << "Kl=" << kl << ", Kt=" << kt << ", C2=" << c2 << ", Cg=" << cg << ", C2g=" << c2g;
+    cout << "BM in legend: " << name.str() << endl;
+  }
+
   return name.str();
 }
 
@@ -391,11 +430,12 @@ void performancePlot1D(bool ratio, int nclust, TString hName,
 
     TH1F* histo = NULL;
     string sample = clu[nc][nsam];
+    int s = stoi(sample);
     sample = sample + "_" + hName;
     TString fname = sample;
   //cout << sample.size() << endl;
   //std::cout << " Getting " << fname << std::endl;
-    if(sample.find("g")<50) f->cd(folder1_st.c_str()); //debug
+    if(s < split) f->cd(folder1_st.c_str()); //debug
     else f->cd(folder2_st.c_str());
     histo = (TH1F*)gDirectory->Get(fname); 
     if(!histo) cout << "ERROR: no histo in the file" << endl;
@@ -415,11 +455,12 @@ void performancePlot1D(bool ratio, int nclust, TString hName,
   //to append benchmark as last histo. 
   TH1F* histo = NULL;
   string sample = clu[nc][0];
+  int s = stoi(sample);
   sample = sample + "_" + hName;
   TString fname = sample;
   //cout << sample.size() << endl;
   std::cout << " Getting the benchmark: " << fname << std::endl;
-  if(sample.find("g")<50) f->cd(folder1_st.c_str()); //debug
+  if(s < split) f->cd(folder1_st.c_str()); //debug
   else f->cd(folder2_st.c_str());
   histo = (TH1F*)gDirectory->Get(fname); 
   histo->SetMarkerSize(1.0);

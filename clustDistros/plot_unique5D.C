@@ -27,20 +27,21 @@
 
 // input files - parameters - TO BE MODIFIED
 //******************************************
-string Totsamples = "1053";  //number of lhe files //1053
+string Totsamples = "1488";  //number of lhe files //1053
 int CMenergy = 13;   //tev
 int pars = 5;        //space parameters dimension
 bool Privat = false; //true
 int Maxtotclu = 20;  //max number of clusters
 
-string testoption = "_Xanda"; //debug
-string iNoption = "_13TeV_Xanda";       //see 'makeDistros5D.C'
-string Inputfolder = "results/";  //with cluster analysis results
-TString Outfolder = "../../plots_5par_13TeV_2ndRound/"; //to be created for final plots store - outside 'git' area
+string testoption = ""; //debug
+string iNoption = "_13TeV";       //see 'makeDistros5D.C'
+string Inputfolder = "results/LogP/";  //read directly results with sample number
+TString Outfolder = "../../plots_5par_13TeV_1488/"; //to be created for final plots store - outside 'git' area
 
 //see 'makeDistros5D.C'
-string folder1_st = "0-416";
-string folder2_st = "417-1052";
+string folder1_st = "0-851";
+string folder2_st = "852-1488";
+int split = 851;
 
 //******************************************
 
@@ -64,7 +65,8 @@ bool init(int totClu) {
   filename = sstr.str();
 
   //read cluster result
-  inputclusters << Inputfolder << "res_" << pars << "p_" << CMenergy << "TeV" << testoption << "_NClu" << totClu << ".dat"; //<< testoption
+  inputclusters << Inputfolder << "clustering_nev20k_Nclu" << totClu << "_50_5.asc";
+//  inputclusters << Inputfolder << "res_" << pars << "p_" << CMenergy << "TeV" << testoption << "_NClu" << totClu << ".dat"; //<< testoption
   string infname = inputclusters.str();
   ifstream inresfile;
   inresfile.open(infname.c_str());
@@ -85,11 +87,12 @@ bool init(int totClu) {
     }
     istringstream istring(input);   
    //cout << " Cluster #" << i << " -> ";
-    char in [50];
+    int in;
     int j = 0;
-    while (istring.getline (in,50,',')) { //debug - check 15
-     // cout << in << " "; //debug
-      samples.push_back(in);
+    //while (istring.getline (in,50,',')) { //debug - check 15
+    while (istring >> in) {
+      cout << in << " "; //debug
+      samples.push_back(std::to_string(in));
       j++;
     }
    //cout << j << " sample" << endl;
@@ -178,7 +181,7 @@ void draw_all(TPad* p, std::vector<TH1F*> h,
   //p->Update();
 }
 
-void draw_all_ratio(TPad* p, std::vector<TH1F*> h,
+/*void draw_all_ratio(TPad* p, std::vector<TH1F*> h,
 	  TString xTitle, double xmin, double xmax, TString legHeader = "", 
           bool legRIGHT = true, bool legTOP = true, bool logX = false, bool stat = false, 
           int rebin = -1, TString option = "") { //int orbin = -1,
@@ -225,15 +228,15 @@ void draw_all_ratio(TPad* p, std::vector<TH1F*> h,
     ratio->Draw(options);
   }
   leg->Draw("same");
-}
+}*/
 
-void performancePlot1D(bool ratio, TPad* p, int nclust, TString hName,
+void performancePlot1D(TPad* p, int nclust, TString hName,
 		       double xmin, double xmax, double ymin, double ymax,
 		       TString xaxis, TString yaxis, bool logX = false, bool logY = false,
 		       bool stat = false, double scale = -9.,
 		       int rebin = -1, int orbin = -1,
 		       TString option = "")
-{   // double ymin_ratio, double ymax_ratio,
+{
 
   gROOT ->Reset();
   //=========  settings ====================
@@ -258,11 +261,12 @@ void performancePlot1D(bool ratio, TPad* p, int nclust, TString hName,
   for(int nsam=1; nsam<size; nsam++) { //on samples - skip benchmark.   
     TH1F* histo = NULL;
     string sample = clu[nc][nsam];
+    int s = stoi(sample);
     sample = sample + "_" + hName;
     TString fname = sample;
     //cout << sample.size() << endl;
-    //std::cout << " Getting " << fname << std::endl;
-    if(sample.find("g")<50) f->cd(folder1_st.c_str()); //debug
+    std::cout << " Getting the benchmark: " << fname << std::endl;
+    if(s < split) f->cd(folder1_st.c_str()); //debug
     else f->cd(folder2_st.c_str());
     histo = (TH1F*)gDirectory->Get(fname); 
     histo->SetMarkerSize(1.0);
@@ -276,11 +280,12 @@ void performancePlot1D(bool ratio, TPad* p, int nclust, TString hName,
   //to append benchmark as last histo. 
   TH1F* histo = NULL;
   string sample = clu[nc][0];
+  int s = stoi(sample);
   sample = sample + "_" + hName;
   TString fname = sample;
-  //  cout << sample.size() << endl;
-  //  std::cout << " Getting the benchmark: " << fname << std::endl;
-  if(sample.find("g")<50) f->cd(folder1_st.c_str()); //debug
+  //cout << sample.size() << endl;
+  std::cout << " Getting the benchmark: " << fname << std::endl;
+  if(s < split) f->cd(folder1_st.c_str()); //debug
   else f->cd(folder2_st.c_str());
   histo = (TH1F*)gDirectory->Get(fname); 
   histo->SetMarkerSize(1.0);
@@ -301,58 +306,50 @@ void performancePlot1D(bool ratio, TPad* p, int nclust, TString hName,
  else ymin = 0;
 
  if(h.size()>0){
-      if(!ratio){  draw_all(p, h, xaxis,xmin,xmax,ymin,ymax,
+         draw_all(p, h, xaxis,xmin,xmax,ymin,ymax,
   	   clusterLabel,lgRIGHT,lgTOP, logX, logY, stat, scale,rebin,orbin,option);
-      }
-      else {
-         if((unsigned int)(nc+1) != clu.size()){   //to skip ratio of benchmark comparison
-           draw_all_ratio(p, h, xaxis,xmin,xmax,
-  	     clusterLabel,lgRIGHT,lgTOP, logX, stat,rebin,option);
-        }
-      }
-  }  
-  else cout << "WARNING: empty cluster!" << endl;
+ }  
+ else cout << "WARNING: empty cluster!" << endl;
 
 }
  
 //plot call for different variables:
-void plot_pt(bool rat, TPad* p, int ncluster = 99, int rebin = 1, TString opt="") {
-  performancePlot1D(rat, p, ncluster-1,"pt",0.,450.,0.,800.,"pT^{h} [GeV]","", false, false, false,-9.,rebin,100,opt);
+void plot_pt( TPad* p, int ncluster = 99, int rebin = 1, TString opt="") {
+  performancePlot1D( p, ncluster-1,"pt",0.,450.,0.,800.,"pT^{h} [GeV]","", false, false, false,-9.,rebin,100,opt);
 }
 
-void plot_pzh(bool rat, TPad* p, int ncluster = 99, int rebin = 4, TString opt="") {
-  performancePlot1D(rat, p, ncluster-1,"pzh",0.,1000.,0.,800.,"max#cbar pz^{h}#cbar [GeV]","", false, false, false,-9.,rebin,500,opt);
+void plot_pzh( TPad* p, int ncluster = 99, int rebin = 4, TString opt="") {
+  performancePlot1D( p, ncluster-1,"pzh",0.,1000.,0.,800.,"max#cbar pz^{h}#cbar [GeV]","", false, false, false,-9.,rebin,500,opt);
 }
 
-void plot_pzl(bool rat, TPad* p, int ncluster = 99, int rebin = 4, TString opt="") {
-  performancePlot1D(rat, p, ncluster-1,"pzl",-300.,500.,0.,800.,"higgs p_{z lower} [GeV]","", false, false, false,-9.,rebin,500,opt);
+void plot_pzl( TPad* p, int ncluster = 99, int rebin = 4, TString opt="") {
+  performancePlot1D( p, ncluster-1,"pzl",-300.,500.,0.,800.,"higgs p_{z lower} [GeV]","", false, false, false,-9.,rebin,500,opt);
 }
 
-void plot_mhh(bool rat, TPad* p, int ncluster = 99, int rebin = 2, TString opt="") {
-  performancePlot1D(rat, p, ncluster-1,"mhh",240.,900.,0.,800.,"m_{hh} [GeV]","", false, false, false,-9.,rebin,200,opt);
+void plot_mhh( TPad* p, int ncluster = 99, int rebin = 2, TString opt="") {
+  performancePlot1D( p, ncluster-1,"mhh",240.,900.,0.,800.,"m_{hh} [GeV]","", false, false, false,-9.,rebin,200,opt);
 }
 
-void plot_hth(bool rat, TPad* p, int ncluster = 99, int rebin = 2, TString opt="") {
-  performancePlot1D(rat, p, ncluster-1,"hth",0.,3.2,0.,800.,"higgs #theta","", false, false, false,-9.,rebin,200,opt);
+void plot_hth( TPad* p, int ncluster = 99, int rebin = 2, TString opt="") {
+  performancePlot1D( p, ncluster-1,"hth",0.,3.2,0.,800.,"higgs #theta","", false, false, false,-9.,rebin,200,opt);
 }
 
-void plot_hcth(bool rat, TPad* p, int ncluster = 99, int rebin = 2, TString opt="") {
-  performancePlot1D(rat, p, ncluster-1,"hcth",-1.,1.,0.,800.,"higgs cos#theta","", false, false, false,-9.,rebin,200,opt);
+void plot_hcth( TPad* p, int ncluster = 99, int rebin = 2, TString opt="") {
+  performancePlot1D( p, ncluster-1,"hcth",-1.,1.,0.,800.,"higgs cos#theta","", false, false, false,-9.,rebin,200,opt);
 }
 
-void plot_hths(bool rat, TPad* p, int ncluster = 99, int rebin = 2, TString opt="") {
-  performancePlot1D(rat, p, ncluster-1,"hths",0.,3.2,0.,800.,"higgs #theta*","", false, false, false,-9.,rebin,200,opt);
+void plot_hths( TPad* p, int ncluster = 99, int rebin = 2, TString opt="") {
+  performancePlot1D( p, ncluster-1,"hths",0.,3.2,0.,800.,"higgs #theta*","", false, false, false,-9.,rebin,200,opt);
 }
 
-void plot_hcths(bool rat, TPad* p, int ncluster = 99, int rebin = 2, TString opt="") {
-  performancePlot1D(rat, p, ncluster-1,"hcths",0.,1.,0.,800.,"#cbar cos#theta*#cbar","", false, false, false,-9.,rebin,100,opt);
+void plot_hcths( TPad* p, int ncluster = 99, int rebin = 2, TString opt="") {
+  performancePlot1D( p, ncluster-1,"hcths",0.,1.,0.,800.,"#cbar cos#theta*#cbar","", false, false, false,-9.,rebin,100,opt);
 }
 
-TPad* setcanvas(bool rat, int N, string var){
+TPad* setcanvas( int N, string var){
 
   stringstream title;  
-  if(rat) title << N << "clus_" << var << "_ratio";
-  else    title << N << "clus_" << var;
+  title << N << "clus_" << var;
   TCanvas* can = new TCanvas((TString)title.str(),(TString)title.str(),1125,700); //debug!
   can->cd();
   TPad* pad1 = new TPad("pad1","title",0.,1.,1.,0.95);
@@ -427,41 +424,41 @@ void plot(int totclu = 20, bool r = false, int var = 0, int reb = 99, TString op
     } 
   
     if(var == 1 || var == 0) {
-      TPad* pad2 = (TPad*)setcanvas(r,totNclu,"pT^{h}");
+      TPad* pad2 = (TPad*)setcanvas(totNclu,"pT^{h}");
       pad2->Divide(cols,rows);
       for(int nc=1; nc<=(size); nc++) {
            TPad* pad= (TPad*)pad2->GetPad(nc);           
-           plot_pt(r, pad, nc, reb1, opt);
+           plot_pt( pad, nc, reb1, opt);
       }
       pad2->GetCanvas()->SaveAs(Outfolder+outname.str()+"_pt_"+app+".png");
       pad2->GetCanvas()->SaveAs(Outfolder+outname.str()+"_pt_"+app+".pdf");
     }
     if(var == 2 ) { //|| var == 0
-      TPad* pad2 = (TPad*)setcanvas(r,totNclu,"max#cbar pz^{h}#cbar");
+      TPad* pad2 = (TPad*)setcanvas(totNclu,"max#cbar pz^{h}#cbar");
       pad2->Divide(cols,rows);
       for(int nc=1; nc<=(size); nc++) {
            TPad* pad= (TPad*)pad2->GetPad(nc);           
-           plot_pzh(r, pad, nc, reb2, opt);
+           plot_pzh( pad, nc, reb2, opt);
       }
       pad2->GetCanvas()->SaveAs(Outfolder+outname.str()+"_pzh_"+app+".png");
       pad2->GetCanvas()->SaveAs(Outfolder+outname.str()+"_pzh_"+app+".pdf");
     }
     if(var == 3 ) { //|| var == 0
-      TPad* pad2 = (TPad*)setcanvas(r,totNclu,"higgs p_{z lower}");
+      TPad* pad2 = (TPad*)setcanvas(totNclu,"higgs p_{z lower}");
       pad2->Divide(cols,rows,10.,0);
       for(int nc=1; nc<=(size); nc++) {
            TPad* pad= (TPad*)pad2->GetPad(nc);           
-           plot_pzl(r, pad, nc, reb3, opt);
+           plot_pzl( pad, nc, reb3, opt);
       }
       pad2->GetCanvas()->SaveAs(Outfolder+outname.str()+"_pzl_"+app+".png");
       pad2->GetCanvas()->SaveAs(Outfolder+outname.str()+"_pzl_"+app+".pdf");
     }
     if(var == 4 || var == 0) {
-      TPad* pad2 = (TPad*)setcanvas(r,totNclu,"di-Higgs mass");
+      TPad* pad2 = (TPad*)setcanvas(totNclu,"di-Higgs mass");
       pad2->Divide(cols,rows);
       for(int nc=1; nc<=(size); nc++) {
            TPad* pad= (TPad*)pad2->GetPad(nc);           
-           plot_mhh(r, pad, nc, reb4, opt);
+           plot_mhh( pad, nc, reb4, opt);
       }
       pad2->GetCanvas()->SaveAs(Outfolder+outname.str()+"_mhh_"+app+".png");
       pad2->GetCanvas()->SaveAs(Outfolder+outname.str()+"_mhh_"+app+".pdf");
@@ -473,21 +470,21 @@ void plot(int totclu = 20, bool r = false, int var = 0, int reb = 99, TString op
 
     }
     else if(var == 7) {
-      TPad* pad2 = (TPad*)setcanvas(r,totNclu,"higgs #theta*");
+      TPad* pad2 = (TPad*)setcanvas(totNclu,"higgs #theta*");
       pad2->Divide(cols,rows);
       for(int nc=1; nc<=(size); nc++) {
            TPad* pad= (TPad*)pad2->GetPad(nc);           
-           plot_hths(r, pad, nc, reb7, opt);
+           plot_hths( pad, nc, reb7, opt);
       }
       pad2->GetCanvas()->SaveAs(Outfolder+outname.str()+"_hths_"+app+".png");
       pad2->GetCanvas()->SaveAs(Outfolder+outname.str()+"_hths_"+app+".pdf");
     }
     if(var == 8 || var == 0) {
-      TPad* pad2 = (TPad*)setcanvas(r,totNclu,"#cbar cos#theta*CS#cbar");
+      TPad* pad2 = (TPad*)setcanvas(totNclu,"#cbar cos#theta*CS#cbar");
       pad2->Divide(cols,rows);
       for(int nc=1; nc<=(size); nc++) {
            TPad* pad= (TPad*)pad2->GetPad(nc);           
-           plot_hcths(r, pad, nc, reb8, opt);
+           plot_hcths( pad, nc, reb8, opt);
       }
       pad2->GetCanvas()->SaveAs(Outfolder+outname.str()+"_hcths_"+app+".png");
       pad2->GetCanvas()->SaveAs(Outfolder+outname.str()+"_hcths_"+app+".pdf");

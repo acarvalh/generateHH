@@ -48,6 +48,7 @@ string fileslist_st = "utils/list_ascii_13TeV_1488.txt"; //ascii names list
 //to be changed accordingly to lhe structure (3p, 5p,..)
 string folder1_st = "0-851";
 string folder2_st = "852-1488";
+int split = 851;
 
 TLorentzVector P1, P2, P12, P1boost, P2boost;
 bool update = false;
@@ -90,9 +91,9 @@ void makeDistros5D(){
     else len = fname.length()-4 - fname.find("L");
     samplename = fname.substr(fname.find("L"), len);
     */
-    if(f==0 || f==851 || f==852){
-      cout << samplename << endl;
-    }
+    //if(f==0 || f==851 || f==852){
+    //  cout << samplename << endl;
+    //    }
 
     //fname = "ascii_" + samplename + ".txt";
     filename = inputPath+fname.c_str();
@@ -223,7 +224,7 @@ void makeDistros5D(){
 
 //        if(k==0) cout << samplename << "  " << P12.M() << "  " << ev[f][k].M <<endl; 	
       }
-      if(f<417) batch1->cd();
+      if(f<=split) batch1->cd();
       else batch2->cd();
       pt.Write();
       pt2.Write();

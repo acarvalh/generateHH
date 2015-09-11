@@ -28,7 +28,7 @@
 
 // input files - parameters
 //******************************************
-string Totsamples = "1053";  //number of lhe files //1053
+string Totsamples = "1488";  //number of lhe files //1053
 int CMenergy = 13;   //tev
 int pars = 5;        //space parameters dimension
 bool Privat = false; //true
@@ -36,15 +36,18 @@ int Maxtotclu = 20;  //max number of clusters
 
 int totClus [] = {20,18,16,15,14,13,12,11,10,8,6,4,3,2}; //Nclu values for which you want the plot
 
-string testoption = "_Xanda"; //debug
-string iNoption = "_13TeV_Xanda";       //see 'makeDistros5D.C'
-string Inputfolder = "results/";  //with cluster analysis results
-TString Outfolder = "../../plots_5par_13TeV_2ndRound/"; //to be created for final plots store - outside 'git' area
+string testoption = ""; //debug
+string iNoption = "_13TeV";       //see 'makeDistros5D.C'
+string Inputfolder = "results/LogP";  //with cluster analysis results
+TString Outfolder = "../../plots_5par_13TeV_1488/"; //to be created for final plots store - outside 'git' area
+string mapNamefile = "utils/list_ascii_13TeV_1488_translate.txt"; //debug
+
 string mapFile = "utils/map_5par_13Tev_2ndRound.dat";  //map to read sample name
 
 //see 'makeDistros5D.C'
-string folder1_st = "0-416";
-string folder2_st = "417-1052";
+string folder1_st = "0-851";
+string folder2_st = "852-1488";
+int split = 851;
 
 //******************************************
 
@@ -69,7 +72,8 @@ bool init() {
   filename = sstr.str();
 
   //read cluster result
-  inputclusters << Inputfolder << "res_" << pars << "p_" << CMenergy << "TeV" << testoption << "_NClu" << nTotClus << ".dat";
+  inputclusters << Inputfolder << "clustering_nev20k_Nclu" << nTotClus << "_50_5.asc";
+//  inputclusters << Inputfolder << "res_" << pars << "p_" << CMenergy << "TeV" << testoption << "_NClu" << totClu << ".dat"; //<< testoption
   string infname = inputclusters.str();
   //cout << infname << endl;
   ifstream inresfile;
@@ -91,11 +95,12 @@ bool init() {
     }
     istringstream istring(input);   
     //cout << " Cluster #" << i << " -> ";
-    char in [50];
+    int in;
     int j = 0;
-    while (istring.getline (in,50,',')) { //debug - check 15
-      //cout << in << " "; //debug
-      samples.push_back(in);
+    //while (istring.getline (in,50,',')) { //debug - check 15
+    while (istring >> in) {
+      cout << in << " "; //debug
+      samples.push_back(std::to_string(in));
       j++;
     }
     //cout << j << " sample" << endl;
@@ -119,7 +124,7 @@ bool init() {
   return true;
 }
 
-string translate(string samname) {
+/*string translate(string samname) {
 
   std::string kl, kt, c2, cg, c2g;
 
@@ -176,6 +181,40 @@ string translate(string samname) {
   name << std::setw(5); 
   name << "Kl=" << kl << ", Kt=" << kt << ", C2=" << c2 << ", Cg=" << cg << ", C2g=" << c2g;
   cout << "sample in legend: " << name.str() << endl;
+  return name.str();
+}*/
+
+string translate(string samname) {
+
+  int i = stoi(samname); //debug
+  int kl =0, kt =0, c2 =0, cg =0, c2g =0;
+  std::stringstream name;
+  name << "";
+
+  ifstream inf;
+  inf.open(mapNamefile.c_str());
+  if(!inf)	{      //check if file exists
+    printf( "ERROR: no input file %s \n", mapNamefile.c_str());
+    return name.str();
+  }
+  int j = 0;
+  bool found = false;
+  while(!found || !inf.eof()){
+    string input;
+    std::getline(inf, input);
+    if(j == i){
+      istringstream istring(input);   
+      istring >> kl >> kt >> c2 >> cg >> c2g;
+      found = true;
+    }    
+    i++;
+  }
+  if(found){
+    name << std::setw(5); 
+    name << "Kl=" << kl << ", Kt=" << kt << ", C2=" << c2 << ", Cg=" << cg << ", C2g=" << c2g;
+    cout << "BM in legend: " << name.str() << endl;
+  }
+
   return name.str();
 }
 
@@ -268,10 +307,12 @@ bool performancePlot1D(string thesam, string thesam2, TPad* p, int nclust, TStri
     if(clu[nc][ns] == thesam2){
         nsam2 = ns;
         string sample = clu[nc][ns];
+        int s = stoi(sample);
         sample = sample + "_" + hName;
         TString fname = sample;
-        //std::cout << " Getting " << fname << std::endl; //debug
-        if(sample.find("g")<50) f->cd(folder1_st.c_str()); //debug
+        //cout << sample.size() << endl;
+        std::cout << " Getting the benchmark: " << fname << std::endl;
+        if(s < split) f->cd(folder1_st.c_str()); //debug
         else f->cd(folder2_st.c_str());
         histo2 = (TH1F*)gDirectory->Get(fname); 
         histo2->SetMarkerSize(1.0);
@@ -289,10 +330,12 @@ bool performancePlot1D(string thesam, string thesam2, TPad* p, int nclust, TStri
       for(int nsam=1; nsam<size; nsam++) { //on samples - skip benchmark.   
         TH1F* histo = NULL;
         string sample = clu[nc][nsam];
+        int s = stoi(sample);
         sample = sample + "_" + hName;
         TString fname = sample;
-        //std::cout << " Getting " << fname << std::endl; //debug
-        if(sample.find("g")<50) f->cd(folder1_st.c_str()); //debug
+        //cout << sample.size() << endl;
+        std::cout << " Getting the benchmark: " << fname << std::endl;
+        if(s < split) f->cd(folder1_st.c_str()); //debug
         else f->cd(folder2_st.c_str());
         histo = (TH1F*)gDirectory->Get(fname); 
         histo->SetMarkerSize(1.0);
@@ -320,11 +363,13 @@ bool performancePlot1D(string thesam, string thesam2, TPad* p, int nclust, TStri
       //to append benchmark as last histo. 
       TH1F* histo = NULL;
       string sample = clu[nc][0];
+      int s = stoi(sample);
       sample = sample + "_" + hName;
       TString fname = sample;
+      //cout << sample.size() << endl;
       std::cout << " Getting the benchmark: " << fname << std::endl;
-      if(sample.find("g")<50) f->cd("0-416");
-      else f->cd("417-1052");
+      if(s < split) f->cd(folder1_st.c_str()); //debug
+      else f->cd(folder2_st.c_str());
       histo = (TH1F*)gDirectory->Get(fname); 
       histo->SetMarkerSize(1.0);
       histo->SetMarkerStyle(20);
@@ -427,7 +472,7 @@ TPad* setcanvas(string thesam,  int v){
   return pad2;
 }
 
-std::string matchSamplename(int sam){
+/*std::string matchSamplename(int sam){
 
   string thesam = "";  
   ifstream infile;
@@ -443,16 +488,23 @@ std::string matchSamplename(int sam){
   }
   cout << "selected sample: " << thesam << endl;
   return thesam;
-}
+}*/
 
 //genaral function to plot all or single variable, single cluster.
 void plot(int var, int sample1, int sample2 = 9999, int reb = 99, TString opt="hist") { 
 // allonly: to plot all in one canvas; var: 1-pt, 2-pzh, 3-pzl, 4-mhh ;  nclu = 0 to do all the clusters
 
+  //debug
   std::string thesam2 = "", thesample = "";
-  thesample = matchSamplename(sample1);
-  if(thesample == "") return;
-  if(sample2 != 9999) thesam2 = matchSamplename(sample2);
+  //thesample = matchSamplename(sample1);
+  //if(thesample == "") return;
+  //if(sample2 != 9999) thesam2 = matchSamplename(sample2);
+  if(sample1 > Totsamples || sample2 > Totsamples) {
+    cout << "sample out of range" << endl; 
+    return;
+  }
+  thesample = std::to_string(sample1);
+  thesam2 = std::to_string(sample2);
 
   string app;
   std::stringstream outname;
