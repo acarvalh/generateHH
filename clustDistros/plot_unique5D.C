@@ -1,7 +1,7 @@
 // M.Dall'Osso
 // To get distribution plots from clustering - 1 canvas per cluster.
 // .L plot_unique5D.C+
-// plot(13, 0, 4)
+// plot(13, 4)
 //................................
 
 #include <TROOT.h>
@@ -91,7 +91,7 @@ bool init(int totClu) {
     int j = 0;
     //while (istring.getline (in,50,',')) { //debug - check 15
     while (istring >> in) {
-      cout << in << " "; //debug
+      //cout << in << " "; //debug
       samples.push_back(std::to_string(in));
       j++;
     }
@@ -265,8 +265,8 @@ void performancePlot1D(TPad* p, int nclust, TString hName,
     sample = sample + "_" + hName;
     TString fname = sample;
     //cout << sample.size() << endl;
-    std::cout << " Getting the benchmark: " << fname << std::endl;
-    if(s < split) f->cd(folder1_st.c_str()); //debug
+    //std::cout << " Getting the sample: " << fname << std::endl;
+    if(s <= split) f->cd(folder1_st.c_str()); //debug
     else f->cd(folder2_st.c_str());
     histo = (TH1F*)gDirectory->Get(fname); 
     histo->SetMarkerSize(1.0);
@@ -285,7 +285,7 @@ void performancePlot1D(TPad* p, int nclust, TString hName,
   TString fname = sample;
   //cout << sample.size() << endl;
   std::cout << " Getting the benchmark: " << fname << std::endl;
-  if(s < split) f->cd(folder1_st.c_str()); //debug
+  if(s <= split) f->cd(folder1_st.c_str()); //debug
   else f->cd(folder2_st.c_str());
   histo = (TH1F*)gDirectory->Get(fname); 
   histo->SetMarkerSize(1.0);
@@ -369,7 +369,7 @@ TPad* setcanvas( int N, string var){
 }
 
 //genaral function to plot all or single variable, single cluster.
-void plot(int totclu = 20, bool r = false, int var = 0, int reb = 99, TString opt="hist") { 
+void plot(int totclu = 20, int var = 0, int reb = 99, TString opt="hist") { 
 // allonly: to plot all in one canvas; var: 1-pt, 2-pzh, 3-pzl, 4-mhh ;  nclu = 0 to do all the clusters
 
   bool doall = false;
@@ -400,28 +400,15 @@ void plot(int totclu = 20, bool r = false, int var = 0, int reb = 99, TString op
     cout << clu.size() << endl; //DEBUG
     int size = clu.size()-1;
     int cols, rows; //debug
-    if (!r){
-      app = "all";
-      if(size<3)      {cols = 2; rows = 1;}
-      else if(size<5) {cols = 2; rows = 2;}
-      else if(size<7) {cols = 3; rows = 2;}
-      else if(size<9) {cols = 4; rows = 2;}
-      else if(size<13){cols = 4; rows = 3;}
-      else if(size<17){cols = 5; rows = 3;}
-      else if(size<21){cols = 5; rows = 4;}
-      else return;
-    }
-    else {
-      app = "all_ratio";
-      if(size<3)      {cols = 1; rows = 2;}
-      else if(size<5) {cols = 2; rows = 2;}
-      else if(size<7) {cols = 3; rows = 2;}
-      else if(size<9) {cols = 4; rows = 2;}
-      else if(size<13){cols = 4; rows = 3;}
-      else if(size<17){cols = 4; rows = 4;}
-      else if(size<21){cols = 4; rows = 5;}
-      else return;
-    } 
+    app = "all";
+    if(size<3)      {cols = 2; rows = 1;}
+    else if(size<5) {cols = 2; rows = 2;}
+    else if(size<7) {cols = 3; rows = 2;}
+    else if(size<9) {cols = 4; rows = 2;}
+    else if(size<13){cols = 4; rows = 3;}
+    else if(size<17){cols = 5; rows = 3;}
+    else if(size<21){cols = 5; rows = 4;}
+    else return;
   
     if(var == 1 || var == 0) {
       TPad* pad2 = (TPad*)setcanvas(totNclu,"pT^{h}");

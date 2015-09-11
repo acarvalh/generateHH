@@ -2,6 +2,7 @@
 // to plot the cluster in which a selected sample is, for all the different Nclus.
 // .L plot_samstory5D.C+
 // plot(variable, samplenumber*, sample2number* ) *see map file
+// sample 1 and sample 2 must be always in the same cluster!!
 //................................
 
 #include <TROOT.h>
@@ -38,7 +39,7 @@ int totClus [] = {20,18,16,15,14,13,12,11,10,8,6,4,3,2}; //Nclu values for which
 
 string testoption = ""; //debug
 string iNoption = "_13TeV";       //see 'makeDistros5D.C'
-string Inputfolder = "results/LogP";  //with cluster analysis results
+string Inputfolder = "results/LogP/";  //with cluster analysis results
 TString Outfolder = "../../plots_5par_13TeV_1488/"; //to be created for final plots store - outside 'git' area
 string mapNamefile = "utils/list_ascii_13TeV_1488_translate.txt"; //debug
 
@@ -99,7 +100,7 @@ bool init() {
     int j = 0;
     //while (istring.getline (in,50,',')) { //debug - check 15
     while (istring >> in) {
-      cout << in << " "; //debug
+      //cout << in << " "; //debug
       samples.push_back(std::to_string(in));
       j++;
     }
@@ -187,7 +188,7 @@ bool init() {
 string translate(string samname) {
 
   int i = stoi(samname); //debug
-  int kl =0, kt =0, c2 =0, cg =0, c2g =0;
+  double kl =0, kt =0, c2 =0, cg =0, c2g =0;
   std::stringstream name;
   name << "";
 
@@ -199,15 +200,15 @@ string translate(string samname) {
   }
   int j = 0;
   bool found = false;
-  while(!found || !inf.eof()){
+  while(!inf.eof()){
+    if(j == i-1){
+      inf >> kl >> kt >> c2 >> cg >> c2g;
+      found = true;
+      break;
+    }    
     string input;
     std::getline(inf, input);
-    if(j == i){
-      istringstream istring(input);   
-      istring >> kl >> kt >> c2 >> cg >> c2g;
-      found = true;
-    }    
-    i++;
+    j++;
   }
   if(found){
     name << std::setw(5); 
@@ -238,7 +239,6 @@ void draw_all(TPad* p, std::vector<TH1F*> h,
   leg->SetLineColor(0);
 
   TString options = (option=="" ? "pe" : option);
-  
   //normalize and set y range
   ymax=0.;
   h[0]->Sumw2();  
@@ -311,8 +311,8 @@ bool performancePlot1D(string thesam, string thesam2, TPad* p, int nclust, TStri
         sample = sample + "_" + hName;
         TString fname = sample;
         //cout << sample.size() << endl;
-        std::cout << " Getting the benchmark: " << fname << std::endl;
-        if(s < split) f->cd(folder1_st.c_str()); //debug
+        //std::cout << " Getting the sample: " << fname << std::endl;
+        if(s <= split) f->cd(folder1_st.c_str()); //debug
         else f->cd(folder2_st.c_str());
         histo2 = (TH1F*)gDirectory->Get(fname); 
         histo2->SetMarkerSize(1.0);
@@ -334,8 +334,8 @@ bool performancePlot1D(string thesam, string thesam2, TPad* p, int nclust, TStri
         sample = sample + "_" + hName;
         TString fname = sample;
         //cout << sample.size() << endl;
-        std::cout << " Getting the benchmark: " << fname << std::endl;
-        if(s < split) f->cd(folder1_st.c_str()); //debug
+        //std::cout << " Getting the sample: " << fname << std::endl;
+        if(s <= split) f->cd(folder1_st.c_str()); //debug
         else f->cd(folder2_st.c_str());
         histo = (TH1F*)gDirectory->Get(fname); 
         histo->SetMarkerSize(1.0);
@@ -368,7 +368,7 @@ bool performancePlot1D(string thesam, string thesam2, TPad* p, int nclust, TStri
       TString fname = sample;
       //cout << sample.size() << endl;
       std::cout << " Getting the benchmark: " << fname << std::endl;
-      if(s < split) f->cd(folder1_st.c_str()); //debug
+      if(s <= split) f->cd(folder1_st.c_str()); //debug
       else f->cd(folder2_st.c_str());
       histo = (TH1F*)gDirectory->Get(fname); 
       histo->SetMarkerSize(1.0);
@@ -460,7 +460,7 @@ TPad* setcanvas(string thesam,  int v){
   pad1->Draw();
   TPad* pad2 = new TPad("pad2","histos",0.,1.,0.95,0.);
   pad2->Draw();
-
+  //cout << title.str() << endl;
   pad1->cd();  
   stringstream header;
   if(Privat) header << "Private simulation 2015, #sqrt{s}=" << CMenergy << " TeV, " << Totsamples << " samples, " << translate(thesam) << ", " << var;
@@ -499,13 +499,14 @@ void plot(int var, int sample1, int sample2 = 9999, int reb = 99, TString opt="h
   //thesample = matchSamplename(sample1);
   //if(thesample == "") return;
   //if(sample2 != 9999) thesam2 = matchSamplename(sample2);
-  if(sample1 > Totsamples || sample2 > Totsamples) {
+  if(sample1 > stoi(Totsamples)) {
     cout << "sample out of range" << endl; 
     return;
   }
   thesample = std::to_string(sample1);
-  thesam2 = std::to_string(sample2);
-
+  if(sample2 != 9999)  thesam2 = std::to_string(sample2);
+  cout << thesample << "  " << thesam2 << endl;
+ 
   string app;
   std::stringstream outname;
   outname << pars << "par_" << CMenergy << "Tev" << testoption;

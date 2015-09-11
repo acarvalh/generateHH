@@ -102,11 +102,11 @@ bool init() {
     int j = 0;
     //while (istring.getline (in,50,',')) { //debug - check 15
     while (istring >> in) {
-      cout << in << " "; //debug
+      //cout << in << " "; //debug
       samples.push_back(std::to_string(in));
       j++;
     }
-    cout << j << " sample" << endl;
+    cout << j << " samples" << endl;
     i++;
     if(!stop)clu.push_back(samples);    
     //cout << endl; //debug
@@ -202,7 +202,8 @@ string translate(string samname) {
   }
   int j = 0;
   bool found = false;
-  while(!found || !inf.eof()){
+  while(!inf.eof()){
+    if(found) break;
     string input;
     std::getline(inf, input);
     if(j == i){
@@ -210,7 +211,7 @@ string translate(string samname) {
       istring >> kl >> kt >> c2 >> cg >> c2g;
       found = true;
     }    
-    i++;
+    j++;
   }
 
   if(found){
@@ -349,7 +350,7 @@ void draw_ratio(std::vector<TH1F*> h,
 	  TString legHeader = "", bool legRIGHT = true, bool legTOP = true,
 	  bool logX = false, bool stat = false, int rebin = -1, int orbin = -1,
 	  TString option = "", int nclus = 99) {  //double ymin_ratio, double ymax_ratio,
-  TCanvas* can = new TCanvas(name+"_ratio",name+"_ratio",900,450);
+/*  TCanvas* can = new TCanvas(name+"_ratio",name+"_ratio",900,450);
   can->cd();
 
   double legxmin = (legRIGHT ? 0.30 : 0.18);
@@ -397,7 +398,7 @@ void draw_ratio(std::vector<TH1F*> h,
   leg->Draw("same");
   drawPrivate(0.04);
   can->Update();
-  can->SaveAs(Outfolder+name+"_ratio.png");
+  can->SaveAs(Outfolder+name+"_ratio.png");*/
 }
 
 void performancePlot1D(bool ratio, int nclust, TString hName,
@@ -425,7 +426,7 @@ void performancePlot1D(bool ratio, int nclust, TString hName,
  
   int nc = nclust; //ehi!
   int size = clu[nc].size();
-  std::cout << "# Start reading distros from file" << std::endl;
+  std::cout << "# Start reading distros from file" << filename << std::endl;
   for(int nsam=1; nsam<size; nsam++) { //on samples - skip benchmark.   
 
     TH1F* histo = NULL;
@@ -435,7 +436,7 @@ void performancePlot1D(bool ratio, int nclust, TString hName,
     TString fname = sample;
   //cout << sample.size() << endl;
   //std::cout << " Getting " << fname << std::endl;
-    if(s < split) f->cd(folder1_st.c_str()); //debug
+    if(s <= split) f->cd(folder1_st.c_str()); //debug
     else f->cd(folder2_st.c_str());
     histo = (TH1F*)gDirectory->Get(fname); 
     if(!histo) cout << "ERROR: no histo in the file" << endl;
@@ -460,7 +461,7 @@ void performancePlot1D(bool ratio, int nclust, TString hName,
   TString fname = sample;
   //cout << sample.size() << endl;
   std::cout << " Getting the benchmark: " << fname << std::endl;
-  if(s < split) f->cd(folder1_st.c_str()); //debug
+  if(s <= split) f->cd(folder1_st.c_str()); //debug
   else f->cd(folder2_st.c_str());
   histo = (TH1F*)gDirectory->Get(fname); 
   histo->SetMarkerSize(1.0);
@@ -571,10 +572,10 @@ void plot(int totclu = 20, int var = 0, int nclu = 0, bool r = false, int reb = 
     Outname = ss.str();
     
     //default rebin
-    int reb1 = (reb == 99) ? 1 : reb;
+    int reb1 = (reb == 99) ? 2 : reb;
     int reb2 = (reb == 99) ? 4 : reb;
     int reb3 = (reb == 99) ? 4 : reb;
-    int reb4 = (reb == 99) ? 2 : reb;
+    int reb4 = (reb == 99) ? 4 : reb;
     int reb5 = (reb == 99) ? 2 : reb;
     int reb6 = (reb == 99) ? 2 : reb;
     int reb7 = (reb == 99) ? 2 : reb;
