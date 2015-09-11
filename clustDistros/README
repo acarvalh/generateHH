@@ -4,17 +4,13 @@ Martino Dall'Osso - Sept. 4th
 
 prerequisite: 
 - CMSSW_7_4_4 environemnt (cmsenv CMSSW_7_4_4; cd CMSSW_7_4_4/src; scram b; cmsenv)
-- a folder with ascii files 
-(you can use /lustre/cmswork/dallosso/hh2bbbb/non-resonant/clusterAnalysis/ascii_lhe5par_13Tev)
-- a folder for future plots
-both folders in '../../' from the working area.
+- a folder with ascii files -> better to use original folder in Xanda area
+- a folder for future plots -> better to place it in '../../' from the working area.
 
 Commands sequence:
-- create ascii file names list and put it in 'utils'
-- create root file with variables distributions using 'makeDistros5D.C' (check hard coded input parameters)
-- copy cluster results in 'results'
-- check name conversion map in 'utils'
-- run nameconversion.py to create cluster results file with sample names in.
+- use list_ascii file in 'utils'
+- create root file with variables distributions using 'makeDistros5D.C' (needed only once!)
+- copy cluster results in 'results' 
 
 now you can create plots with distributions using: 
 - plot_5D.C --> one canvas per cluster per variable.
