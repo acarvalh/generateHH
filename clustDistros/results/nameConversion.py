@@ -5,13 +5,13 @@ diz = {}						#empty dictionary
 
 for x in range(2, 21):
 
-	for line in open("../utils/map_5par_13Tev_2ndRound.dat"): #to be fixed
+	for line in open("../utils/map_5par_13TeV_1488.dat"): #to be fixed
 		key = line.split("\t")[0]			#split the line, take first part as key
 		value = line.split("\t")[1]			#take first part as value
 		diz[key]=value					#add new entry to dictionary
 
-	fout = open("res_5p_13TeV_Xanda_NClu%d.dat" %(x), "w")	#open output file
-	for line in open("fromXanda_5par_13Tev_2ndRound/clustering_nev20k_Nclu%d_50_10.asc" %(x)):
+	fout = open("res_5p_13TeV_1488_NClu%d.dat" %(x), "w")	#open output file
+	for line in open("LogP/clustering_nev20k_Nclu%d_50_5.asc" %(x)):
 		outline = ""					#empty output line
 		for number in line.split():			#read every number in the line
 			name = diz.get(number)			#pick the corresponding dict. string

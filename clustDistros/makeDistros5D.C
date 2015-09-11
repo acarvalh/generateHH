@@ -38,16 +38,16 @@ struct benchmark {
 // input files - parameters - TO BE CHANGED
 //******************************************
 int np = 5;	 //number of parameters
-int ns = 1;   //number of samples //1053
+int ns = 1488;   //number of samples
 string option = "_13TeV"; //debug
 const int nev = 20000;	  //number of ev per sample
 
-string inputPath = "../../ascii_lhe5par_13Tev/";  //folder with ascii lhe files (outside 'git' area)
-string fileslist_st = "utils/list_ascii_13TeV_1053_draft.txt"; //ascii names list
+string inputPath = "";  //folder with ascii lhe files (outside 'git' area)
+string fileslist_st = "utils/list_ascii_13TeV_1488.txt"; //ascii names list
 
 //to be changed accordingly to lhe structure (3p, 5p,..)
-string folder1_st = "0-416";
-string folder2_st = "417-1052";
+string folder1_st = "0-851";
+string folder2_st = "852-1488";
 
 TLorentzVector P1, P2, P12, P1boost, P2boost;
 bool update = false;
@@ -81,9 +81,20 @@ void makeDistros5D(){
     ostringstream fnumber;
     string filename;
     string fname;
-    string samplename;
-    filelist5 >> samplename;
-    fname = "ascii_" + samplename + ".txt";
+    string samplename = std::to_string(f); // go with ordering only.
+    filelist5 >> fname;
+    //to extract samplename
+    /*//debug!!!!
+    int len = 0;
+    if(f<851) len = fname.length()-10 - fname.find("L");
+    else len = fname.length()-4 - fname.find("L");
+    samplename = fname.substr(fname.find("L"), len);
+    */
+    if(f==0 || f==851 || f==852){
+      cout << samplename << endl;
+    }
+
+    //fname = "ascii_" + samplename + ".txt";
     filename = inputPath+fname.c_str();
     //cout << filename << endl;
     infile.open(filename.c_str());
