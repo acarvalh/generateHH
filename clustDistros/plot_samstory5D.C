@@ -514,10 +514,10 @@ void plot(int var, int sample1, int sample2 = 9999, int reb = 99, TString opt="h
   int siz = sizeof(totClus)/4;
   if(siz<3)      {cols = 2; rows = 1;}
   else if(siz<5) {cols = 2; rows = 2;}
-  else if(siz<7) {cols = 2; rows = 3;}
-  else if(siz<9) {cols = 2; rows = 4;}
-  else if(siz<13){cols = 3; rows = 4;}
-  else if(siz<17){cols = 4; rows = 4;}
+  else if(siz<7) {cols = 3; rows = 2;}
+  else if(siz<9) {cols = 4; rows = 2;}
+  else if(siz<13){cols = 4; rows = 3;}
+  else if(siz<16){cols = 5; rows = 3;}
   else if(siz<21){cols = 5; rows = 4;}
   else { 
     cout << "ERROR: too many values for totClus" << endl;

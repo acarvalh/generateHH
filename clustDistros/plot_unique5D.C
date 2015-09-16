@@ -378,7 +378,7 @@ void plot(int totclu = 20, int var = 0, int reb = 99, TString opt="hist") {
   string app;
 
   for(int i=10; i<=Maxtotclu; i++) { //mintotclu .. continued!
-
+    if(i==16) continue; //issue with that file.. debug
     if(!doall) totNclu = totclu;
     else   totNclu = i;
 
@@ -406,7 +406,7 @@ void plot(int totclu = 20, int var = 0, int reb = 99, TString opt="hist") {
     else if(size<7) {cols = 3; rows = 2;}
     else if(size<9) {cols = 4; rows = 2;}
     else if(size<13){cols = 4; rows = 3;}
-    else if(size<17){cols = 5; rows = 3;}
+    else if(size<16){cols = 5; rows = 3;}
     else if(size<21){cols = 5; rows = 4;}
     else return;
   
