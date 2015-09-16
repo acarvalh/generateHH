@@ -284,8 +284,8 @@ void draw(std::vector<TH1F*> h,
   else { 
     legxmin = (legRIGHT ? 0.30 : 0.18);
     legxmax = legxmin+0.20;
-    legymin = (legTOP ? 0.82 : 0.15);
-    legymax = legymin+0.08;
+    legymin = (legTOP ? 0.82 : 0.50); //0.82
+    legymax = legymin+0.08; //+0.08
   }
   TLegend* leg = new TLegend(legxmin,legymin,legxmax,legymax);
   if (legHeader!="") leg->SetHeader(legHeader);
