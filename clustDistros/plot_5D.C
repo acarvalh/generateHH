@@ -64,7 +64,7 @@ int totNclu;
 string Outname;
 std::vector< std::vector<string> > clu;
 
-bool init() {
+bool init(int totClu) {
 
   //dafault file name format
   std::stringstream inputclusters;
@@ -76,7 +76,7 @@ bool init() {
   filename = sstr.str();
 
   //read cluster result  
-  inputclusters << Inputfolder << "clustering_nev20k_Nclu" << totNclu << "_50_5.asc";
+  inputclusters << Inputfolder << "clustering_nev20k_Nclu" << totClu << "_50_5.asc";
 //  inputclusters << Inputfolder << "res_" << pars << "p_" << CMenergy << "TeV" << testoption << "_NClu" << totNclu << ".dat"; //<< testoption
   string infname = inputclusters.str();
   ifstream inresfile;
@@ -97,8 +97,8 @@ bool init() {
 	break;
     }
     istringstream istring(input);   
-    cout << " Cluster #" << i << " -> ";
-    char in;
+   cout << " Cluster #" << i << " -> ";
+    int in;
     int j = 0;
     //while (istring.getline (in,50,',')) { //debug - check 15
     while (istring >> in) {
@@ -106,10 +106,9 @@ bool init() {
       samples.push_back(std::to_string(in));
       j++;
     }
-    cout << j << " samples" << endl;
+   cout << j << " samples" << endl;
     i++;
     if(!stop)clu.push_back(samples);    
-    //cout << endl; //debug
   }while(!stop);
 
   //build nodes comparison
@@ -189,8 +188,8 @@ bool init() {
 
 string translate(string samname) {
 
-  int i = stoi(samname); //debug
-  int kl =0, kt =0, c2 =0, cg =0, c2g =0;
+  int i = stoi(samname)+1; //debug
+  double kl =0, kt =0, c2 =0, cg =0, c2g =0;
   std::stringstream name;
   name << "";
 
@@ -203,17 +202,15 @@ string translate(string samname) {
   int j = 0;
   bool found = false;
   while(!inf.eof()){
-    if(found) break;
+    if(j == i-1){
+      inf >> kl >> kt >> c2 >> cg >> c2g;
+      found = true;
+      break;
+    }    
     string input;
     std::getline(inf, input);
-    if(j == i){
-      istringstream istring(input);   
-      istring >> kl >> kt >> c2 >> cg >> c2g;
-      found = true;
-    }    
     j++;
   }
-
   if(found){
     name << std::setw(5); 
     name << "Kl=" << kl << ", Kt=" << kt << ", C2=" << c2 << ", Cg=" << cg << ", C2g=" << c2g;
@@ -222,6 +219,7 @@ string translate(string samname) {
 
   return name.str();
 }
+
 
 void drawCMS() {
   TLatex* text=new TLatex(0.2, 0.95, "CMS Data, 2012, #sqrt{s}=8 TeV, Preliminary");
@@ -302,7 +300,9 @@ void draw(std::vector<TH1F*> h,
   ymax=0.;
   h[0]->Sumw2();  
   //double norm = 10000.;     //not normalized because same stats per each samples
+  //cout << h.size() << endl;
   for (size_t i=0; i<h.size(); i++) {  
+  //cout << i << endl;
     if(h[i]->GetNbinsX() != orbin) cout << "WARNING: orbin for " << h[i]->GetName() << " are " << h[i]->GetNbinsX() << endl; //debug - shift of h[][] wrt clu[][]
     if (rebin>0) h[i]->Rebin(rebin);
     //scale = norm/(h[i]->Integral());
@@ -426,6 +426,7 @@ void performancePlot1D(bool ratio, int nclust, TString hName,
  
   int nc = nclust; //ehi!
   int size = clu[nc].size();
+cout << size << endl; //debug
   std::cout << "# Start reading distros from file" << filename << std::endl;
   for(int nsam=1; nsam<size; nsam++) { //on samples - skip benchmark.   
 
@@ -443,8 +444,10 @@ void performancePlot1D(bool ratio, int nclust, TString hName,
     if(nsam<maxCol){ histo->SetLineColor(colors[nsam]);
                      histo->SetMarkerColor(colors[nsam]);
     }
-    else { histo->SetLineColor(kGray+1);
-           histo->SetMarkerColor(kGray+1);
+    else { 
+           histo->SetLineColorAlpha(kGray+1, 0.25); //to get transparency!
+	//   histo->SetLineColor(kGray+1);
+       //    histo->SetMarkerColor(kGray+1);
     }
     histo->SetMarkerSize(1.0);
     histo->SetMarkerStyle(20);
@@ -519,7 +522,7 @@ void performancePlot1D(bool ratio, int nclust, TString hName,
  
 //plot call for different variables:
 void plot_pt(bool rat, int ncluster = 99, int rebin = 1, TString opt="") {
-  performancePlot1D(rat,ncluster-1,"pt",0.,450.,0.,800.,"higgs p_{T} [GeV]","", false, false, false,-9.,rebin,100,opt);
+  performancePlot1D(rat,ncluster-1,"pt",0.,450.,0.,800.,"pT^{h} [GeV]","", false, false, false,-9.,rebin,100,opt);
 }
 
 void plot_pt2(bool rat, int ncluster = 99, int rebin = 1, TString opt="") {
@@ -527,7 +530,7 @@ void plot_pt2(bool rat, int ncluster = 99, int rebin = 1, TString opt="") {
 }
 
 void plot_pzh(bool rat, int ncluster = 99, int rebin = 4, TString opt="") {
-  performancePlot1D(rat,ncluster-1,"pzh",0.,1000.,0.,800.,"higgs p_{z higher} [GeV]","", false, false, false,-9.,rebin,500,opt);
+  performancePlot1D(rat,ncluster-1,"pzh",0.,1000.,0.,800.,"max#cbar pz^{h}#cbar [GeV]","", false, false, false,-9.,rebin,500,opt);
 }
 
 void plot_pzl(bool rat, int ncluster = 99, int rebin = 4, TString opt="") {
@@ -535,7 +538,7 @@ void plot_pzl(bool rat, int ncluster = 99, int rebin = 4, TString opt="") {
 }
 
 void plot_mhh(bool rat, int ncluster = 99, int rebin = 2, TString opt="") {
-  performancePlot1D(rat,ncluster-1,"mhh",240.,900.,0.,800.,"di-higgs mass [GeV]","", false, false, false,-9.,rebin,200,opt);
+  performancePlot1D(rat,ncluster-1,"mhh",240.,900.,0.,800.,"m_{hh} [GeV]","", false, false, false,-9.,rebin,200,opt);
 }
 
 void plot_hth(bool rat, int ncluster = 99, int rebin = 2, TString opt="") {
@@ -551,13 +554,14 @@ void plot_hths(bool rat, int ncluster = 99, int rebin = 2, TString opt="") {
 }
 
 void plot_hcths(bool rat, int ncluster = 99, int rebin = 2, TString opt="") {
-  performancePlot1D(rat,ncluster-1,"hcths",0.,1.,0.,800.,"higgs #cbar cos#theta*#cbar","", false, false, false,-9.,rebin,100,opt);
+  performancePlot1D(rat,ncluster-1,"hcths",0.,1.,0.,800.,"#cbar cos#theta*#cbar","", false, false, false,-9.,rebin,100,opt);
 }
 
 //genaral function to plot all or single variable, single cluster.
 void plot(int totclu = 20, int var = 0, int nclu = 0, bool r = false, int reb = 99, TString opt="hist") { 
 // r: 0-distros, 1-ratio ; var: 1-pt, 2-pzh, 3-pzl, 4-mhh ;  nclu = 0 to do all the clusters
 
+cout << "var" << var << endl;
   bool doall = false;
   if(totclu == 0) doall = true;
   string app;
@@ -582,7 +586,7 @@ void plot(int totclu = 20, int var = 0, int nclu = 0, bool r = false, int reb = 
     int reb8 = (reb == 99) ? 10 : reb;
     int reb9 = (reb == 99) ? 1 : reb;
      
-    if(!init()) return;
+    if(!init(totNclu)) return;
      
     cout << clu.size() << endl; //DEBUG
     if(nclu == 0){

@@ -86,7 +86,7 @@ bool init(int totClu) {
 	break;
     }
     istringstream istring(input);   
-   //cout << " Cluster #" << i << " -> ";
+   cout << " Cluster #" << i << " -> ";
     int in;
     int j = 0;
     //while (istring.getline (in,50,',')) { //debug - check 15
@@ -95,10 +95,9 @@ bool init(int totClu) {
       samples.push_back(std::to_string(in));
       j++;
     }
-   //cout << j << " sample" << endl;
+   cout << j << " samples" << endl;
     i++;
     if(!stop)clu.push_back(samples);    
-    //cout << endl; //debug
   }while(!stop);
 
   //build nodes comparison
@@ -150,6 +149,7 @@ void draw_all(TPad* p, std::vector<TH1F*> h,
   //double norm = 10000.;     
   for (size_t i=0; i<h.size(); i++) {  
     if(h[i]->GetNbinsX() != orbin) cout << "WARNING: orbin for " << h[i]->GetName() << " are " << h[i]->GetNbinsX() << endl;
+    //cout << "orbin for " << h[i]->GetName() << " are " << h[i]->GetNbinsX() << endl;
     if (rebin>0) h[i]->Rebin(rebin);
     //cout << h[i]->GetNbinsX() << endl; //debug
     //scale = norm/(h[i]->Integral());
@@ -272,7 +272,7 @@ void performancePlot1D(TPad* p, int nclust, TString hName,
     histo->SetMarkerSize(1.0);
     histo->SetMarkerStyle(20);
     histo->SetLineWidth(1); //2
-    histo->SetLineColorAlpha(kBlue, 0.25);
+    histo->SetLineColorAlpha(kBlue, 0.25); //to get transparency!
     histo->GetXaxis()->SetTitle(xaxis);
     histo->GetYaxis()->SetTitle(yaxis);
     h.push_back(histo);
