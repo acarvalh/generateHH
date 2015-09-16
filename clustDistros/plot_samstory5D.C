@@ -61,7 +61,7 @@ bool lgTOP = true; //false for pt, cos
 std::vector< std::vector<string> > clu;
 int nTotClus;
 
-bool init() {
+bool init(int totClu) {
 
   //dafault file name format
   std::stringstream inputclusters;
@@ -73,7 +73,7 @@ bool init() {
   filename = sstr.str();
 
   //read cluster result
-  inputclusters << Inputfolder << "clustering_nev20k_Nclu" << nTotClus << "_50_5.asc";
+  inputclusters << Inputfolder << "clustering_nev20k_Nclu" << totClu << "_50_5.asc";
 //  inputclusters << Inputfolder << "res_" << pars << "p_" << CMenergy << "TeV" << testoption << "_NClu" << totClu << ".dat"; //<< testoption
   string infname = inputclusters.str();
   //cout << infname << endl;
@@ -83,8 +83,8 @@ bool init() {
     printf( "ERROR: no input file %s \n", infname.c_str());
     return false;
   }
-  //std::cout << "# Start reading sample names from file" << std::endl;
-  bool stop = false;
+ //std::cout << "# Start reading sample names from file" << std::endl;
+ bool stop = false;
   int i = 1;
   do{
     samples.clear();
@@ -95,7 +95,7 @@ bool init() {
 	break;
     }
     istringstream istring(input);   
-    //cout << " Cluster #" << i << " -> ";
+   //cout << " Cluster #" << i << " -> ";
     int in;
     int j = 0;
     //while (istring.getline (in,50,',')) { //debug - check 15
@@ -104,10 +104,9 @@ bool init() {
       samples.push_back(std::to_string(in));
       j++;
     }
-    //cout << j << " sample" << endl;
+   //cout << j << " samples" << endl;
     i++;
     if(!stop)clu.push_back(samples);    
-    //cout << endl; //debug
   }while(!stop);
 
   //build nodes comparison
@@ -187,7 +186,7 @@ bool init() {
 
 string translate(string samname) {
 
-  int i = stoi(samname); //debug
+  int i = stoi(samname)+1; //debug
   double kl =0, kt =0, c2 =0, cg =0, c2g =0;
   std::stringstream name;
   name << "";
@@ -552,7 +551,7 @@ void plot(int var, int sample1, int sample2 = 9999, int reb = 99, TString opt="h
     for(int i=1; i<siz+1; i++) {
       nTotClus = totClus[i-1];
 cout << nTotClus << endl;
-      if(!init()) return;  //check
+      if(!init(nTotClus)) return;  //check
       int size = clu.size()-1;
 
       if(v == 1) {
