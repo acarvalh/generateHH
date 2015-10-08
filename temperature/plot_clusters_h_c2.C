@@ -27,7 +27,7 @@
 #include "Math/GoFTest.h"
 
 void plot_clusters_h_c2(int Nclu=13) {
-    const int Nfile =1512;//1052;
+    const int Nfile =1508;//1052;
     ////////////////////////////////////////////////////
     TStyle *defaultStyle = new TStyle("defaultStyle","Default Style");
     //gStyle->SetOptStat(0);
@@ -1455,7 +1455,7 @@ void plot_clusters_h_c2(int Nclu=13) {
     g5->SetMarkerSize(1.7);
     g5->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = 5}  ; c_{2} ; #kappa_{t} ");
     //
-    TGraph2D *gm5 = new TGraph2D(51);//(118);
+    TGraph2D *gm5 = new TGraph2D(50);//(118);
     gm5->SetMarkerStyle(20);
     gm5->SetMarkerSize(1.7);
     gm5->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = -5} ; c_{2} ; #kappa_{t} ");
@@ -1465,7 +1465,7 @@ void plot_clusters_h_c2(int Nclu=13) {
     g24->SetMarkerSize(1.7);
     g24->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = 2.4}  ; c_{2} ; #kappa_{t} ");
     //
-    TGraph2D *gm24 = new TGraph2D(51);//(118);
+    TGraph2D *gm24 = new TGraph2D(50);//(118);
     gm24->SetMarkerStyle(20);
     gm24->SetMarkerSize(1.7);
     gm24->SetTitle(" #scale[2.2]{                  #kappa_{#lambda} = -2.4} ; c_{2} ; #kappa_{t} ");

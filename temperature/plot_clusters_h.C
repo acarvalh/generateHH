@@ -406,7 +406,7 @@ void plot_clusters_h(int Nclu=13) {
     double cx[1683];
     double cxerr[1683];
     ifstream parpoints("/Users/Xanda/Documents/codes/git/generateHH/fit_minut_maker/list_all_translation.txt");///"LogP_1593_cT05/list_all_translation.txt");
-    for (int i=0; i<1512; i++) {// 1593
+    for (int i=0; i<1508; i++) {// 1593
         parpoints >> L[i] >> y[i] >> c2[i] >> cg[i] >> c2g[i] >> cx[i] >> cxerr[i];
         //cout << i<< " " << L[i] << " " << y[i] << " " << c2[i] << " " << cg[i] << " " << c2g[i] << endl;
     }
