@@ -96,7 +96,8 @@ void plot_clusters_h(int Nclu=13) {
     defaultStyle->cd();
     //////////////////////////////////////////////
     // as our fit
-    double a[15] = {2.19565, 10.4153, 0.303507, 0.120167, 1.46108, -8.8842, -1.46282, 2.9955, 3.31497, -3.34163, -0.721797, 1.98807, 0.352199, -0.89178, -0.592545};
+    double a[15] = {2.19668,10.5545,0.303974,0.120575,1.44119,-8.93185,-1.4652,3.02194,1.53896,-5.21019,-0.725321,1.98027,0.352949,-0.895157,-0.602566};//
+                //{2.19565, 10.4153, 0.303507, 0.120167, 1.46108, -8.8842, -1.46282, 2.9955, 3.31497, -3.34163, -0.721797, 1.98807, 0.352199, -0.89178, -0.592545};
     double norm =1.;
     ////////////////////////////////////////////////////
     double kt5d=1.0;
@@ -135,7 +136,7 @@ void plot_clusters_h(int Nclu=13) {
     cg5d=0;
     // cg ===> x ==> c2 ==> kl
     // c2g ===> y ==> kt
-    TF2 *fa15d = new TF2("fa15d","log(([0]*y**4 + [1]*[16]**2 + [2]*y**2*x**2 + [3]*[17]**2*x**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*x*y**2 + [7]*y*x*[16] + [8]*[17]*x*[16] + [9]*x*[15] + [10]*[17]*x*y**2 + [11]*[15]*y**2 + [12]*x*[17]*y*x + [13]*[15]*y*x + [14]*[17]*[15]*x)/[18])",-15.,15.,0.5,2.5);
+    TF2 *fa15d = new TF2("fa15d","log(([0]*y**4 + [1]*[17]**2 + [2]*y**2*x**2 + [3]*[15]**2*x**2 +  [4]*[15]**2 + [5]*[17]*y**2 + [6]*y*x*y**2 + [7]*[15]*x*[17] + [8]*[16]*x*[17] + [9]*[17]*y + [10]*[16]*x*[15]**2 + [11]*[16]*y**2 + [12]*x*[16]*[15]*x + [13]*[15]*[15]*x + [14]*[16]*[15])/[18])",-15.,15.,0.5,2.5);
     fa15d->SetParameter(0,a[0]);
     fa15d->SetParameter(1,a[1]);
     fa15d->SetParameter(2,a[2]);    
@@ -152,9 +153,9 @@ void plot_clusters_h(int Nclu=13) {
     fa15d->SetParameter(13,a[13]);
     fa15d->SetParameter(14,a[14]);
     fa15d->SetTitle("");
-    fa15d->SetParameter(15,c2g5d); 
+    fa15d->SetParameter(15,cg5d); 
     fa15d->SetParameter(16,c25d); // => c2
-    fa15d->SetParameter(17,cg5d);
+    fa15d->SetParameter(17,c2g5d);
     fa15d->SetParameter(18,norm);
     fa15d->SetMinimum(0);
     fa15d->SetLineColor(26); 
@@ -166,7 +167,7 @@ void plot_clusters_h(int Nclu=13) {
     cg5d=0;
     // cg ===> x ==> c2
     // c2g ===> y ==> kt ==> c2g
-    TF2 *fc15d = new TF2("fc15d","log(([0]*y**4 + [1]*[15]**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*x**2 + [5]*[15]*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*[15] + [8]*[17]*[16]*[15] + [9]*[15]*x + [10]*[17]*[16]*y**2 + [11]*x*y**2 + [12]*[16]*[17]*y*[16] + [13]*x*y*[16] + [14]*[17]*x*[16])/[18])",-3.,3.,-1,1);
+    TF2 *fc15d = new TF2("fc15d","log([0]*[15]**4 + [1]*x**2 + [2]*[15]**2*[16]**2 +  [4]*y**2 + [5]*x*[15]**2 + [6]*[15]*[16]*[15]**2 + [7]*[15]*[16]*x + [9]*x*y + [11]*y*[15]**2  + [13]*y*[15]*[16])/[17]",-3.,3.,-1,1);
     fc15d->SetParameter(0,a[0]);
     fc15d->SetParameter(1,a[1]);
     fc15d->SetParameter(2,a[2]);    
@@ -185,8 +186,8 @@ void plot_clusters_h(int Nclu=13) {
     fc15d->SetTitle("");
     fc15d->SetParameter(15,kt5d); //==> kt
     fc15d->SetParameter(16,kl5d);
-    fc15d->SetParameter(17,cg5d); 
-    fc15d->SetParameter(18,norm);
+    //fc15d->SetParameter(17,cg5d); 
+    fc15d->SetParameter(17,norm);
     fc15d->SetMinimum(0);
     fc15d->SetLineColor(26); 
     ////////////////////////////////////////////////////
@@ -196,7 +197,7 @@ void plot_clusters_h(int Nclu=13) {
     cg5d=0;
     // cg ===> x ==> c2 ==> kl
     // c2g ===> [17] ==> kt ==>cg
-    TF2 *fe15d = new TF2("fe15d","log(([0]*[17]**4 + [1]*[16]**2 + [2]*[17]**2*x**2 + [3]*y**2*x**2 +  [4]*(-y)**2 + [5]*x*[17]**2 + [6]*[17]*x*[17]**2 + [7]*[17]*x*[16] + [8]*y*x*[16] + [9]*x*(-y) + [10]*y*x*[17]**2 + [11]*(-y)*[17]**2 + [12]*x*y*[17]*x + [13]*(-y)*[17]*x + [14]*y*(-y)*x)/[18])",-15,15,-1,1);
+    TF2 *fe15d = new TF2("fe15d","log([0]*[15]**4 + [1]*[16]**2 + [2]*[15]**2*x**2 + [3]*y**2*x**2 +  [4]*y**2 + [5]*[16]*[15]**2 + [6]*[15]*x*[15]**2 + [7]*[15]*x*[16] + [8]*y*x*[16] - [9]*[16]*y + [10]*y*x*[15]**2 - [11]*y*[15]**2 + [12]*x*y*[15]*x - [13]*y*[15]*x - [14]*y*y*x)/[17]",-15,15,-1,1);
     fe15d->SetParameter(0,a[0]);
     fe15d->SetParameter(1,a[1]);
     fe15d->SetParameter(2,a[2]);    
@@ -213,10 +214,10 @@ void plot_clusters_h(int Nclu=13) {
     fe15d->SetParameter(13,a[13]);
     fe15d->SetParameter(14,a[14]);
     fe15d->SetTitle("");
-    fe15d->SetParameter(15,c2g5d); //obsolete 
+    fe15d->SetParameter(15,1.0); // kt  
     fe15d->SetParameter(16,c25d); 
-    fe15d->SetParameter(17,cg5d); // => kt
-    fe15d->SetParameter(18,norm);
+    //fe15d->SetParameter(17,cg5d); // => kt
+    fe15d->SetParameter(17,norm);
     fe15d->SetMinimum(0);
     fe15d->SetLineColor(26); 
     ////////////////////////////////////////////////////
@@ -227,7 +228,7 @@ void plot_clusters_h(int Nclu=13) {
     cg5d=0;
     // cg ===> x ==> c2
     // c2g ===> y ==> kt ==> c2g
-    TF2 *fd15d = new TF2("fd15d","log(([0]*y**4 + [1]*[15]**2 + [2]*y**2*[16]**2 + [3]*(-y)**2*[16]**2 +  [4]*x**2 + [5]*[15]*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*[15] + [8]*(-y)*[16]*[15] + [9]*[15]*x + [10]*(-y)*[16]*y**2 + [11]*x*y**2 + [12]*[16]*(-y)*y*[16] + [13]*x*y*[16] + [14]*(-y)*x*[16])/[18])",-3.,3.,-1.,1.);
+    TF2 *fd15d = new TF2("fd15d","log([0]*[15]**4 + [1]*x**2 + [2]*[15]**2*[16]**2 + [3]*y**2*[16]**2 +  [4]*y**2 + [5]*x*[15]**2 + [6]*[15]*[16]*[15]**2 + [7]*[15]*[16]*x + [8]*y*[16]*x - [9]*x*y + [10]*y*[16]*[15]**2 - [11]*y*[15]**2 + [12]*[16]*y*[15]*[16] - [13]*y*[15]*[16] - [14]*y*y*[16])/[17]",-3.,3.,-1.,1.);
     fd15d->SetParameter(0,a[0]);
     fd15d->SetParameter(1,a[1]);
     fd15d->SetParameter(2,a[2]);    
@@ -246,8 +247,8 @@ void plot_clusters_h(int Nclu=13) {
     fd15d->SetTitle("");
     fd15d->SetParameter(15,kt5d); //==> kt
     fd15d->SetParameter(16,kl5d);
-    fd15d->SetParameter(17,cg5d); // obsolete 
-    fd15d->SetParameter(18,norm);
+    //fd15d->SetParameter(17,cg5d); // obsolete 
+    fd15d->SetParameter(17,norm);
     fd15d->SetMinimum(0);
     fd15d->SetLineColor(26); 
     ////////////////////////////////////////////////////
@@ -258,7 +259,7 @@ void plot_clusters_h(int Nclu=13) {
     cg5d=0;
     // cg ===> [17] ==> c2 ==> cg
     // c2g ===> y ==> kt ==> c2g
-    TF2 *fb15d = new TF2("fb15d","log(([0]*y**4 + [1]*[15]**2 + [2]*y**2*[16]**2 + [3]*x**2*[16]**2 +  [4]*[17]**2 + [5]*[15]*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*[15] + [8]*x*[16]*[15] + [9]*[15]*[17] + [10]*x*[16]*y**2 + [11]*[17]*y**2 + [12]*[16]*x*y*[16] + [13]*[17]*y*[16] + [14]*x*[17]*[16])/[18])",-1.,1.,-1.,1.);
+    TF2 *fb15d = new TF2("fb15d","log(([0]*[15]**4 + [1]*[17]**2 + [2]*[15]**2*[16]**2 + [3]*x**2*[16]**2 +  [4]*y**2 + [5]*[17]*[15]**2 + [6]*[15]*[16]*[15]**2 + [7]*[15]*[16]*[17] + [8]*x*[16]*[17] + [9]*[17]*y + [10]*x*[16]*[15]**2 + [11]*y*[15]**2 + [12]*[16]*x*[15]*[16] + [13]*y*[15]*[16] + [14]*x*y*[16])/[18])",-1.,1.,-1.,1.);
     fb15d->SetParameter(0,a[0]);
     fb15d->SetParameter(1,a[1]);
     fb15d->SetParameter(2,a[2]);    
@@ -289,7 +290,7 @@ void plot_clusters_h(int Nclu=13) {
     cg5d=0;
     // cg ===> [17] ==> c2 ==> cg
     // c2g ===> y ==> kt ==> c2g
-    TF2 *fg15d = new TF2("fg15d","log(([0]*y**4 + [1]*[15]**2 + [2]*y**2*[16]**2 + [3]*x**2*[16]**2 +  [4]*[17]**2 + [5]*[15]*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*[15] + [8]*x*[16]*[15] + [9]*[15]*[17] + [10]*x*[16]*y**2 + [11]*[17]*y**2 + [12]*[16]*x*y*[16] + [13]*[17]*y*[16] + [14]*x*[17]*[16])/[18])",-1.,1.,-1.,1.);
+    TF2 *fg15d = new TF2("fg15d","log(([0]*[15]**4 + [1]*[17]**2 + [2]*[15]**2*[16]**2 + [3]*x**2*[16]**2 +  [4]*y**2 + [5]*[17]*[15]**2 + [6]*[15]*[16]*[15]**2 + [7]*[15]*[16]*[17] + [8]*x*[16]*[17] + [9]*[17]*y + [10]*x*[16]*[15]**2 + [11]*y*[15]**2 + [12]*[16]*x*[15]*[16] + [13]*y*[15]*[16] + [14]*x*y*[16])/[18])",-1.,1.,-1.,1.);
     fg15d->SetParameter(0,a[0]);
     fg15d->SetParameter(1,a[1]);
     fg15d->SetParameter(2,a[2]);    
@@ -402,10 +403,12 @@ void plot_clusters_h(int Nclu=13) {
     double c2[1683];
     double cg[1683];
     double c2g[1683];
-    ifstream parpoints("LogP_1593_cT05/list_all_translation.txt");
-    for (int i=0; i<1593; i++) {
-        parpoints >> L[i] >> y[i] >> c2[i] >> cg[i] >> c2g[i];
-        cout << i<< " " << L[i] << " " << y[i] << " " << c2[i] << " " << cg[i] << " " << c2g[i] << endl;
+    double cx[1683];
+    double cxerr[1683];
+    ifstream parpoints("/Users/Xanda/Documents/codes/git/generateHH/fit_minut_maker/list_all_translation.txt");///"LogP_1593_cT05/list_all_translation.txt");
+    for (int i=0; i<1512; i++) {// 1593
+        parpoints >> L[i] >> y[i] >> c2[i] >> cg[i] >> c2g[i] >> cx[i] >> cxerr[i];
+        //cout << i<< " " << L[i] << " " << y[i] << " " << c2[i] << " " << cg[i] << " " << c2g[i] << endl;
     }
     parpoints.close();
     //////////////////////////////
@@ -420,7 +423,7 @@ void plot_clusters_h(int Nclu=13) {
   //ifstream cluster_15("clustering_Nclu15_20_8_8.asc");
   //ifstream cluster_20("clustering_Nclu20_20_8_8.asc");
 
-  ifstream cluster_13("LogP_1593_cT05/clustering_nev20k_Nclu13_50_5.asc");      
+  ifstream cluster_13("LogP_1176/clustering_nev20k_Nclu13_50_5.asc");      
   ifstream cluster_20("LogP_1593_cT05/clustering_nev20k_Nclu20_50_5.asc");   
 
   TH2D * clua_0[20];
@@ -442,7 +445,7 @@ void plot_clusters_h(int Nclu=13) {
   char name[100];
   for (int i=0; i<20; i++) {
       sprintf (name, "clua_0%d", i);
-      clua_0[i] = new TH2D (name,"", 500, -17., 17., 500, 0., 3. );//c_{2} = 0
+      clua_0[i] = new TH2D (name,"", 500, -17., 17., 500, 0.3, 2.7 );//c_{2} = 0
       sprintf (name, "club_0%d", i);
       club_0[i] = new TH2D (name,"", 500, -1.2, 1.2, 500, -1.2, 1.2 );//c_{2} = 0
       sprintf (name, "cluc_0%d", i);
@@ -452,9 +455,9 @@ void plot_clusters_h(int Nclu=13) {
       sprintf (name, "clue_0%d", i);
       clue_0[i] = new TH2D (name,"", 500, -17., 17., 500, -1.2, 1.2 );//c_{2} = 0
       sprintf (name, "cluf_0%d", i);
-      cluf_0[i] = new TH2D (name,"", 500,  -3.5, 3.5, 500,  0., 3. );//c_{2} = 0
+      cluf_0[i] = new TH2D (name,"", 500,  -3.5, 3.5, 500,  0.3, 2.7 );//c_{2} = 0
       sprintf (name, "clug_0%d", i);
-      clug_0[i] = new TH2D (name,"", 500, -1.1, 1.1, 500,-1.2, 1.2 );//c_{2} = 0
+      clug_0[i] = new TH2D (name,"", 500, -1.1, 1.1, 500,-1.2, 1.2 );//c_{2} = 0 
       //
       sprintf (name, "hclua_0%d", i);
       hclua_0[i] = new TH2D (name,"", 500, -17., 17., 500, 0., 3. );//c_{2} = 0
@@ -473,7 +476,7 @@ void plot_clusters_h(int Nclu=13) {
   }
     int isamp;
     int head20[20]= {263,826,1073,235,339,307,1182,5,298,408,810,945,1209,677,98,1045,717,1221,983,175}; //fixtouse
-    int head13[20]= {21,45,883,874,467,743,983,1571,25,803,1269,1021,1226};   
+    int head13[20]= {225 ,741 ,496 ,207 ,223 ,482 ,577 ,1154 ,358 ,871 ,1068 ,622 ,73};   
     int head[20];
     for (int i=0; i<Nclu; i++) {
         if (Nclu==20) {
@@ -485,7 +488,7 @@ void plot_clusters_h(int Nclu=13) {
         }
     }// close do heads
   int iclu=-1;
-  for (int i=0; i<1593; i++) {
+  for (int i=0; i<1512; i++) { //1593
     if (Nclu==20) {
       cluster_20 >> isamp;
     } else if (Nclu==15) {
@@ -495,36 +498,38 @@ void plot_clusters_h(int Nclu=13) {
     } else if (Nclu==10) {
       cluster_10 >> isamp;
     }
-    for (int j=0; j<Nclu; j++) {if (isamp==head[j]) {	cout << "head = " << isamp << endl;	iclu++;}}
+    for (int j=0; j<Nclu; j++) {if (isamp==head[j]) { cout << "head = " << isamp << endl;		iclu++;}} //
     // new cluster
-      if (cg[isamp]==0 && c2g[isamp]==0 && c2[isamp]==0.0){
+      if (cg[isamp]==0 && c2g[isamp]==0 && c2[isamp]==0.0 ){
         clua_0[iclu]->Fill(L[isamp],y[isamp]);
         for (int j=0; j<Nclu; j++) { if (isamp==head[j]) hclua_0[iclu]->Fill(L[isamp],y[isamp]);};
-        //cout << isamp<< " " << L[isamp] << " " << y[isamp] << " " << c[isamp] << " " << cg[isamp] << " " << c2g[isamp] << endl;
+        //if (L[isamp]==-5) cout << isamp<< " " << L[isamp] << " " << y[isamp] << " " << c2[isamp] << " " << cg[isamp] << " " << c2g[isamp] << endl;
       } 
+      if (isamp==1023)  cout << isamp<< " " << L[isamp] << " " << y[isamp] << " " << c2[isamp] << " " << cg[isamp] << " " << c2g[isamp] << endl;
       if (L[isamp]==1 && c2[isamp]==0 && y[isamp]==1){
           club_0[iclu]->Fill(cg[isamp],c2g[isamp]);
           for (int j=0; j<Nclu; j++) { if (isamp==head[j]) hclub_0[iclu]->Fill(cg[isamp],c2g[isamp]);};
-          //cout << isamp<< " " << L[isamp] << " " << y[isamp] << " " << c[isamp] << " " << cg[isamp] << " " << c2g[isamp] << endl;
+          //if (c2g[isamp]==-0.8)  cout << isamp<< " " << L[isamp] << " " << y[isamp] << " " << c2[isamp] << " " << cg[isamp] << " " << c2g[isamp] << endl;
       } 
       if (L[isamp]==1 && cg[isamp]==0 && y[isamp]==1){
           cluc_0[iclu]->Fill(c2[isamp],c2g[isamp]);
           for (int j=0; j<Nclu; j++) { if (isamp==head[j]) hcluc_0[iclu]->Fill(c2[isamp],c2g[isamp]);};
-          //cout << isamp<< " " << L[isamp] << " " << y[isamp] << " " << c[isamp] << " " << cg[isamp] << " " << c2g[isamp] << endl;
+          //if(c2g[isamp] ==0.6 && c2[isamp]<-2) cout << isamp<< " " << L[isamp] << " " << y[isamp] << " " << c2[isamp] << " " << cg[isamp] << " " << c2g[isamp] << endl;
       } 
       if (L[isamp]==1 && y[isamp]==1 && cg[isamp]== -c2g[isamp]){
           clud_0[iclu]->Fill(c2[isamp],c2g[isamp]);
           for (int j=0; j<Nclu; j++) { if (isamp==head[j]) hclud_0[iclu]->Fill(c2[isamp],c2g[isamp]);};
+          //if(c2g[isamp] ==0 && c2[isamp]<2) cout << isamp<< " " << L[isamp] << " " << y[isamp] << " " << c2[isamp] << " " << cg[isamp] << " " << c2g[isamp] << endl;
       } 
       if (y[isamp]==1 && cg[isamp]== -c2g[isamp] && c2[isamp]==0){
           clue_0[iclu]->Fill(L[isamp],cg[isamp]);
           for (int j=0; j<Nclu; j++) { if (isamp==head[j]) hclue_0[iclu]->Fill(L[isamp],cg[isamp]);};
-          cout << isamp<< " " << L[isamp] << " " << y[isamp] << " " << c2[isamp] << " " << cg[isamp] << " " << c2g[isamp] << endl;
+          //if(c2g[isamp] ==0 && L[isamp] <0) cout << isamp<< " " << L[isamp] << " " << y[isamp] << " " << c2[isamp] << " " << cg[isamp] << " " << c2g[isamp] << endl;
       } 
-      if (L[isamp]==1 && cg[isamp]== -c2g[isamp] ){
+      if (L[isamp]==1 && cg[isamp]==0 && c2g[isamp] ==0 ){
           cluf_0[iclu]->Fill(c2[isamp],y[isamp]);
           for (int j=0; j<Nclu; j++) { if (isamp==head[j]) hclue_0[iclu]->Fill(c2[isamp],y[isamp]);};
-          //cout << isamp<< " " << L[isamp] << " " << y[isamp] << " " << c[isamp] << " " << cg[isamp] << " " << c2g[isamp] << endl;
+          if (y[isamp]<1 && c2[isamp]<0.5) cout << isamp<< " " << L[isamp] << " " << y[isamp] << " " << c2[isamp] << " " << cg[isamp] << " " << c2g[isamp] << endl;
       } 
       if (L[isamp]==1 && c2[isamp]==0.5 && y[isamp]==1){
         clug_0[iclu]->Fill(cg[isamp],c2g[isamp]);
@@ -558,12 +563,12 @@ void plot_clusters_h(int Nclu=13) {
         hclua_0[iclua]->SetMarkerColor(mc[iclua]);
         hclua_0[iclua]->SetMarkerStyle(mt[iclua]);
         hclua_0[iclua]->SetMarkerSize(3.0);
-        hclua_0[iclua]->Draw("PSAME");
+        //hclua_0[iclua]->Draw("PSAME");
         leg->Draw("same");
         TLatex* text = new TLatex();
-        text->SetTextSize(0.04);
+        text->SetTextSize(0.05);
         
-        text->DrawLatex(-17,2.8,"c_{2} = 0");
+        text->DrawLatex(-16,2.8,"c_{2} = c_{g} = c_{2g} = 0");
         text->Draw("same");
     }
     sprintf(nameplot,"cluasters_a_%d.png",Nclu);
@@ -575,8 +580,8 @@ void plot_clusters_h(int Nclu=13) {
     Db->cd();
     Db->SetLogz(0);
     for (int iclub=0; iclub<Nclu; iclub++) {
-        club_0[iclub]->GetYaxis()->SetTitle("#kappa_{t}");
-        club_0[iclub]->GetXaxis()->SetTitle("#kappa_{#lambDb}");
+        club_0[iclub]->GetYaxis()->SetTitle("c_{2g}");
+        club_0[iclub]->GetXaxis()->SetTitle("c_{g}");
         club_0[iclub]->SetLineColor(mc[iclub]);
         club_0[iclub]->SetMarkerColor(mc[iclub]);
         club_0[iclub]->SetMarkerStyle(mt[iclub]);
@@ -596,9 +601,9 @@ void plot_clusters_h(int Nclu=13) {
         hclub_0[iclub]->Draw("PSAME");
         leg->Draw("same");
         TLatex* text = new TLatex();
-        text->SetTextSize(0.04);
+        text->SetTextSize(0.05);
         
-        text->DrawLatex(-17,2.8,"c_{2} = 0");
+        text->DrawLatex(-1.15,1.3,"#kappa_{#lambda} = #kappa_{t} = 1 ; c_{2} = 0"); // L[isamp]==1 && c2[isamp]==0 && y[isamp]==1
         text->Draw("same");
     }
     sprintf(nameplot,"clubsters_b_%d.png",Nclu);
@@ -610,8 +615,8 @@ void plot_clusters_h(int Nclu=13) {
     Dc->cd();
     Dc->SetLogz(0);
     for (int icluc=0; icluc<Nclu; icluc++) {
-        cluc_0[icluc]->GetYaxis()->SetTitle("#kappa_{t}");
-        cluc_0[icluc]->GetXaxis()->SetTitle("#kappa_{#lambDc}");
+        cluc_0[icluc]->GetYaxis()->SetTitle("c_{2g}");
+        cluc_0[icluc]->GetXaxis()->SetTitle("c_{2}");
         cluc_0[icluc]->SetLineColor(mc[icluc]);
         cluc_0[icluc]->SetMarkerColor(mc[icluc]);
         cluc_0[icluc]->SetMarkerStyle(mt[icluc]);
@@ -631,9 +636,9 @@ void plot_clusters_h(int Nclu=13) {
         hcluc_0[icluc]->Draw("PSAME");
         leg->Draw("same");
         TLatex* text = new TLatex();
-        text->SetTextSize(0.04);
+        text->SetTextSize(0.05);
         
-        text->DrawLatex(-0.3,1.05,"#kappa_{t} = #kappa_{t} =1 ; c_{g} = -c_{2g}");
+        text->DrawLatex(-3.3,1.29,"#kappa_{t} = #kappa_{t} =1 ; c_{g} = 0"); //L[isamp]==1 && cg[isamp]==0 && y[isamp]==1
         text->Draw("same");
     }
     sprintf(nameplot,"clucsters_c_%d.png",Nclu);
@@ -666,9 +671,9 @@ void plot_clusters_h(int Nclu=13) {
         hclud_0[iclud]->Draw("PSAME");
         leg->Draw("same");
         TLatex* text = new TLatex();
-        text->SetTextSize(0.04);
+        text->SetTextSize(0.05);
         
-        text->DrawLatex(-0.3,1.05,"#kappa_{t} = #kappa_{t} =1 ; c_{g} = -c_{2g}");
+        text->DrawLatex(-3.3,1.29,"#kappa_{t} = #kappa_{t} =1 ; c_{g} = -c_{2g}"); //L[isamp]==1 && y[isamp]==1 && cg[isamp]== -c2g[isamp]
         text->Draw("same");
     }
     sprintf(nameplot,"cludsters_d_%d.png",Nclu);
@@ -680,8 +685,8 @@ void plot_clusters_h(int Nclu=13) {
     De->cd();
     De->SetLogz(0);
     for (int iclue=0; iclue<Nclu; iclue++) {
-        clue_0[iclue]->GetYaxis()->SetTitle("#kappa_{t}");
-        clue_0[iclue]->GetXaxis()->SetTitle("#kappa_{#lambDe}");
+        clue_0[iclue]->GetYaxis()->SetTitle("c_{g}");
+        clue_0[iclue]->GetXaxis()->SetTitle("#kappa_{#lambda}");
         clue_0[iclue]->SetLineColor(mc[iclue]);
         clue_0[iclue]->SetMarkerColor(mc[iclue]);
         clue_0[iclue]->SetMarkerStyle(mt[iclue]);
@@ -703,7 +708,7 @@ void plot_clusters_h(int Nclu=13) {
         TLatex* text = new TLatex();
         text->SetTextSize(0.04);
         
-        text->DrawLatex(-17,2.8,"c_{2} = 0");
+        text->DrawLatex(-16,1.28,"#kappa_{t} = 1 ; c_{g} = - c_{2g} ; c_{2} = 0"); //y[isamp]==1 && cg[isamp]== -c2g[isamp] && c2[isamp]==0
         text->Draw("same");
     }
     sprintf(nameplot,"cluesters_e_%d.png",Nclu);
@@ -716,7 +721,7 @@ void plot_clusters_h(int Nclu=13) {
     Df->SetLogz(0);
     for (int icluf=0; icluf<Nclu; icluf++) {
         cluf_0[icluf]->GetYaxis()->SetTitle("#kappa_{t}");
-        cluf_0[icluf]->GetXaxis()->SetTitle("#kappa_{#lambDe}");
+        cluf_0[icluf]->GetXaxis()->SetTitle("c_{2}");
         cluf_0[icluf]->SetLineColor(mc[icluf]);
         cluf_0[icluf]->SetMarkerColor(mc[icluf]);
         cluf_0[icluf]->SetMarkerStyle(mt[icluf]);
@@ -729,16 +734,16 @@ void plot_clusters_h(int Nclu=13) {
         } else {
             cluf_0[icluf]->Draw("PSAME");
         }
-        //leg->ADeEntry(cluf_0[icluf], lege20[icluf], "P");  
+        //leg->ADeEntry(cluf_0[icluf], lege20[icluf], "P");  c2[isamp],y[isamp]) 
         hcluf_0[icluf]->SetMarkerColor(mc[icluf]);
         hcluf_0[icluf]->SetMarkerStyle(mt[icluf]);
         hcluf_0[icluf]->SetMarkerSize(3.0);
         hcluf_0[icluf]->Draw("PSAME");
         leg->Draw("same");
         TLatex* text = new TLatex();
-        text->SetTextSize(0.04);
+        text->SetTextSize(0.05);
         
-        text->DrawLatex(-0.9,1.05,"#kappa_{t} = #kappa_{t} =1 ; c_{2} = 0.5");
+        text->DrawLatex(-3.3,2.8,"#kappa_{#lambda} = 1 ; c_{g} = c_{2g} = 0"); // L[isamp]==1 && cg[isamp]== -c2g[isamp]
         text->Draw("same");
     }
     sprintf(nameplot,"clufsters_f_%d.png",Nclu);
@@ -771,9 +776,9 @@ void plot_clusters_h(int Nclu=13) {
         hclug_0[iclug]->Draw("PSAME");
         leg->Draw("same");
         TLatex* text = new TLatex();
-        text->SetTextSize(0.04);
+        text->SetTextSize(0.05);
         
-        text->DrawLatex(-0.9,1.05,"#kappa_{t} = #kappa_{t} =1 ; c_{2} = 0.5");
+        text->DrawLatex(-1.1,1.3,"#kappa_{t} = #kappa_{t} =1 ; c_{2} = 0.5"); //L[isamp]==1 && c2[isamp]==0.5 && y[isamp]==1
         text->Draw("same");
     }
     sprintf(nameplot,"clugsters_g_%d.png",Nclu);
