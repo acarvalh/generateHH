@@ -1,0 +1,16 @@
+*.slo
+*.lo
+*.o
+*.obj
+*.d
+*.so
+*.pcm
+*.root
+*plots/
+*.asc
+*.backup
+*.png
+*.pdf
+*_hardM*
+*old/
+*.zip

@@ -35,7 +35,7 @@ const int maxCol = 36;
 
 // input files - parameters
 //******************************************
-string Totsamples = "1488";  //number of lhe files //1053
+string Totsamples = "1593";  //number of lhe files //1053
 int CMenergy = 13;   //tev
 int pars = 5;        //space parameters dimension
 bool Privat = false; //true
@@ -43,13 +43,13 @@ int Maxtotclu = 20;  //max number of clusters
 
 string testoption = ""; //debug
 string iNoption = "_13TeV";       //see 'makeDistros5D.C'
-string Inputfolder = "results/LogP/";
-TString Outfolder = "../../plots_5par_13TeV_1488/"; //to be created for final plots store - outside 'git' area
-string mapNamefile = "utils/list_ascii_13TeV_1488_translate.txt"; //debug
+string Inputfolder = "results/LogP_1593_cT05/";
+TString Outfolder = "../../plots_5par_13TeV_1593/"; //to be created for final plots store - outside 'git' area
+string mapNamefile = "utils/list_ascii_13TeV_1593_translate.txt"; //debug
 
 //see 'makeDistros5D.C'
 string folder1_st = "0-851";
-string folder2_st = "852-1488";
+string folder2_st = "852-1593";
 int split = 851;
 
 //******************************************

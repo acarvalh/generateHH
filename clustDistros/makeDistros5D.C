@@ -38,16 +38,16 @@ struct benchmark {
 // input files - parameters - TO BE CHANGED
 //******************************************
 int np = 5;	 //number of parameters
-int ns = 1488;   //number of samples
+int ns = 1593;   //number of samples
 string option = "_13TeV"; //debug
 const int nev = 20000;	  //number of ev per sample
 
 string inputPath = "";  //folder with ascii lhe files (outside 'git' area)
-string fileslist_st = "utils/list_ascii_13TeV_1488.txt"; //ascii names list
+string fileslist_st = "utils/list_ascii_13TeV_1593.txt"; //ascii names list !!!!!!!!!!!!!!!!
 
 //to be changed accordingly to lhe structure (3p, 5p,..)
 string folder1_st = "0-851";
-string folder2_st = "852-1488";
+string folder2_st = "852-1593";
 int split = 851;
 
 TLorentzVector P1, P2, P12, P1boost, P2boost;
