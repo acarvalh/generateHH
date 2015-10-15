@@ -35,17 +35,17 @@ int pars = 5;        //space parameters dimension
 bool Privat = false; //true
 int Maxtotclu = 20;  //max number of clusters
 
-int totClus [] = {20,18,16,15,14,13,12,11,10,8,6,4,3,2}; //Nclu values for which you want the plot
+int totClus [] = {20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2}; //Nclu values for which you want the plot
 
 string testoption = ""; //debug
 string iNoption = "_13TeV";       //see 'makeDistros5D.C'
 string Inputfolder = "results/LogP/";  //with cluster analysis results
 TString Outfolder = "../../plots_5par_13TeV_1488/"; //to be created for final plots store - outside 'git' area
-string mapNamefile = "utils/list_ascii_13TeV_1488_translate.txt"; //debug
+//string mapNamefile = "utils/list_ascii_13TeV_1488_translate.txt"; //debug
 
-string mapFile = "utils/map_5par_13Tev_2ndRound.dat";  //map to read sample name
+//string mapFile = "utils/map_5par_13Tev_2ndRound.dat";  //map to read sample name
 
-//see 'makeDistros5D.C'
+//equal to 'makeDistros5D.C' !!!!!!
 string folder1_st = "0-851";
 string folder2_st = "852-1488";
 int split = 851;
@@ -124,7 +124,8 @@ bool init(int totClu) {
   return true;
 }
 
-/*string translate(string samname) {
+/* old
+string translate(string samname) {
 
   std::string kl, kt, c2, cg, c2g;
 
@@ -184,6 +185,7 @@ bool init(int totClu) {
   return name.str();
 }*/
 
+/* debug
 string translate(string samname) {
 
   int i = stoi(samname)+1; //debug
@@ -217,6 +219,7 @@ string translate(string samname) {
 
   return name.str();
 }
+*/
 
 void draw_all(TPad* p, std::vector<TH1F*> h,
 	  TString xTitle, double xmin, double xmax, double ymin, double ymax,
@@ -462,8 +465,9 @@ TPad* setcanvas(string thesam,  int v){
   //cout << title.str() << endl;
   pad1->cd();  
   stringstream header;
-  if(Privat) header << "Private simulation 2015, #sqrt{s}=" << CMenergy << " TeV, " << Totsamples << " samples, " << translate(thesam) << ", " << var;
-  else     header << "Simulation 2015, #sqrt{s}=" << CMenergy << " TeV, " << Totsamples << " samples, " << translate(thesam) << ", " << var;
+//debug
+//  if(Privat) header << "Private simulation 2015, #sqrt{s}=" << CMenergy << " TeV, " << Totsamples << " samples, " << translate(thesam) << ", " << var;
+//  else     header << "Simulation 2015, #sqrt{s}=" << CMenergy << " TeV, " << Totsamples << " samples, " << translate(thesam) << ", " << var;
   TLatex* text=new TLatex(0.03, 0.1, header.str().c_str());
   text->SetTextSize(0.4);
   text->Draw(); 
