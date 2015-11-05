@@ -61,22 +61,23 @@
 
 using namespace std;
 
-static int Npoints=1431;
+static int Npoints=1508;
 static int nmin;
 static int nmax;
-static double cross_section[1800];
-static double par0[1800];
-static double par1[1800];
-static double par2[1800];
-static double par3[1800];
-static double par4[1800];
+static double cross_section[2800];
+static double cross_sectionerr[2800];
+static double par0[2800];
+static double par1[2800];
+static double par2[2800];
+static double par3[2800];
+static double par4[2800];
 
 extern "C" void Likelihood(int& npar, double* grad, double& fval, double* xval, int flag) {
   //  cout << "In likelihood" << endl;
   // xval[0:14] are the parameters
 
   double flike=0.;
-    double SMxs =  0.0041758;// 8tev 1 ; // 0.013531; //  in pb as MG model says 1; //
+    double SMxs =  0.013531; // 1 0.017278;// 14 0.0041758;// 8tev  ; //  in pb as MG model says 1; //
   double A1 = xval[0];
   double A2 = xval[1];
   double A3 = xval[2];
@@ -142,7 +143,7 @@ extern "C" void Likelihood(int& npar, double* grad, double& fval, double* xval, 
 }
 
 
-void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 1708) {
+void FitXS (int nminx = 0, int nmaxx = 1509, int nmintest = 0, int nmaxtest = 1509) {
     ////////////////////////////////////////////////////
     // ftp://root.cern.ch/root/doc/ROOTUsersGuideHTML/ch09s05.html
     TStyle *defaultStyle = new TStyle("defaultStyle","Default Style");
@@ -176,6 +177,7 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
     //defaultStyle->SetLabelFont(46,"XY");
     /////// title //////////
     //defaultStyle->SetTitleW(0.6);
+    defaultStyle->SetTitleSize(0.08, "XYZ");
     defaultStyle->SetTitleBorderSize(0);
     defaultStyle->SetTitleX(0.2);
     //  defaultStyle->SetTitleOffset(1.1,"X");
@@ -192,18 +194,18 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
     
     //    defaultStyle->SetTitleColor(1, "XYZ");
     //    defaultStyle->SetTitleFont(42, "XYZ");
-    defaultStyle->SetTitleSize(0.08, "XYZ");
+    
     
     // defaultStyle->SetTitleYSize(0.08);
     //defaultStyle->SetTitleXOffset(0.9);
     //defaultStyle->SetTitleYOffset(1.05);
     defaultStyle->SetTitleOffset(1.3, "Y"); // Another way to set the Offset
-    defaultStyle->SetTitleOffset(1.0, "X"); // Another way to set the Offset    
+    //defaultStyle->SetTitleOffset(1.0, "X"); // Another way to set the Offset    
     // For the axis labels:
     defaultStyle->SetLabelColor(1, "XYZ");
     //defaultStyle->SetLabelFont(46, "XYZ");
     defaultStyle->SetLabelOffset(0.03, "XYZ");
-    defaultStyle->SetLabelSize(0.06, "XYZ");
+    defaultStyle->SetLabelSize(0.07, "XYZ");
     //defaultStyle->SetLabelY(0.06);    
     // For the axis:
     //    defaultStyle->SetAxisColor(1, "XYZ");
@@ -222,11 +224,11 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
   if (nmax>Npoints) nmax=Npoints;
   // Read in the cross section values and the parameters space points
   ifstream XSvals;
-    XSvals.open("8TeV_CX_5k_opositecgw.ascii");//"all_CX_20k_opositecgw.ascii");// "8TeV_CX_5k_opositecgw.ascii");//
-  for (int i=nmin; i<nmax; i++) {
-    XSvals >> par0[i] >> par1[i] >> par2[i] >> par3[i] >> par4[i] >> cross_section[i];
-    //cout << "For point i = " << i << "pars are " << par0[i] << " " << par1[i] << " " << par2[i] 
-    //	 << " " << par3[i] << " " << par4[i] << " and xs is " << cross_section[i] << endl;
+    XSvals.open("list_all_translation_CX.txt");//"14TeV_CX_5k_opositecgw.ascii");// "8TeV_CX_5k_opositecgw.ascii");//
+  for (int i=nmin; i<nmax; i++)  {
+    XSvals >> par0[i] >> par1[i] >> par2[i] >> par3[i] >> par4[i] >> cross_section[i] >> cross_sectionerr[i];
+    cout << "For point i = " << i << "pars are " << par0[i] << " " << par1[i] << " " << par2[i] 
+    	 << " " << par3[i] << " " << par4[i] << " and xs is " << cross_section[i] << endl;
   }
   
   cout << "**********************************************" << endl;
@@ -248,9 +250,9 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
   rmin.mnexcm("SET STR", arglis, 1, iflag);
   // Set fit parameters
   
-    double Start[15];//  ={ 0.030642286182762914, 0.1502216514258229, 0.004287943879883482, 0.0016389029559123376, 0.01930407853512356, -0.12540818099961384, -0.02048425705808435,  0.04246248185144494, 0.02590360491719489,  -0.05255851386689693,  -0.010393610828707423,  0.02770339496466713,  0.005468667874225809,  -0.011297300064522649,  -0.02261561923548796}; // cx in pb
+  double Start[15];//  ={ 0.030642286182762914, 0.1502216514258229, 0.004287943879883482, 0.0016389029559123376, 0.01930407853512356, -0.12540818099961384, -0.02048425705808435,  0.04246248185144494, 0.02590360491719489,  -0.05255851386689693,  -0.010393610828707423,  0.02770339496466713,  0.005468667874225809,  -0.011297300064522649,  -0.02261561923548796}; // cx in pb
   //  double Start[15] = {2.2646, 1.102, 0.316898, 16, 192, -3, -1, 1, 7, 15, -8, -23, 4, 9, 200}; // normalized to SM
-    double Step[15];// ={ 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01 }; //={0.01};
+  double Step[15];// ={ 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01 }; //={0.01};
   double Min[15]; // ={-3.1415926};
   double Max[15]; // = {3.1415926}; 
   for (int i=0; i<15; i++) {
@@ -283,12 +285,14 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
     cout<<"$A_3$ = "<<a[2]<<" $\\pm$ "<<err[2]<<" & $A_6$ = "<<a[5]<<" $\\pm$ "<<err[5]<<" & $A_9$ = "<<a[8]<<" $\\pm$ "<<err[8]<<" & $A_{12}$ = "<<a[11]<<" $\\pm$ "<<err[11]<<" & $A_{15}$ = "<<a[14]<<" $\\pm$ "<<err[14]<< " \\\ "<<endl;
     cout<<endl<<" To mathematica: "<<endl;
     cout<<"{"<<a[0]<<","<<a[1]<<","<<a[2]<<","<<a[3]<<","<<a[4]<<","<<a[5]<<","<<a[6]<<","<<a[7]<<","<<a[8]<<","<<a[9]<<","<<a[10]<<","<<a[11]<<","<<a[12]<<","<<a[13]<<","<<a[14]<<"}"<<endl;
-
+    cout<<endl<<" To mathematica (errors): "<<endl;
+    cout<<"{"<<err[0]<<","<<err[1]<<","<<err[2]<<","<<err[3]<<","<<err[4]<<","<<err[5]<<","<<err[6]<<","<<err[7]<<","<<err[8]<<","<<err[9]<<","<<err[10]<<","<<err[11]<<","<<err[12]<<","<<err[13]<<","<<err[14]<<"}"<<endl;
+    
     /////////////////
     // plot the CX 
     ////////////////
     // plane b
-    double norm = 1;// 0.0041758;//1;//  8tev 0.013531;// 13 tev  1;// 
+    double norm =  1; //0.013531;// 0.0041758;//1;//  8tev 13 tev  1;// 
     double kt5d=1.0;
     double kl5d=1.0;
     double c25d=0.0;
@@ -595,7 +599,7 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
     c25d=0.0;
     // cg ===> x ==> c2
     // c2g ===> y ==> kt
-    TF2 *lm24 = new TF2("lm24","([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18]",-4,4,0.5,2.5);
+    TF2 *lm24 = new TF2("lm24","([0]*y**4 + [1]*x**2 + [2]*y**2*[16]**2 + [3]*[17]**2*[16]**2 +  [4]*[15]**2 + [5]*x*y**2 + [6]*y*[16]*y**2 + [7]*y*[16]*x + [8]*[17]*[16]*x + [9]*x*[15] + [10]*[17]*[16]*y**2 + [11]*[15]*y**2 + [12]*[16]*[17]*y*[16] + [13]*[15]*y*[16] + [14]*[17]*[15]*[16])/[18]",-17,17,0.5,2.5);
     lm24->SetParameter(0,a[0]);
     lm24->SetParameter(1,a[1]);
     lm24->SetParameter(2,a[2]);    
@@ -834,14 +838,14 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
     // need to be done by planes
     //c1->Clear();
     // a
-    double SMxs =  0.0041758;
+    double SMxs =  0.013531; // 1 0.017278;// 14 0.0041758;// 8tev 0.013531; // 13 tev 0.017278;// 0.0041758;
     TGraph2D *g2 = new TGraph2D(117);//(118);
     g2->SetMarkerStyle(20);
     g2->SetMarkerSize(2);
     g2->SetTitle("0");
-    g2->SetTitle("kt = #kappa_{#lambda} = 1 , c_{2} = 0 ; c_{g} ; c_{2g}");
+    g2->SetTitle("#kappa_{t} = #kappa_{#lambda} = 1 , c_{2} = 0 ; c_{g} ; c_{2g}");
     int j=0;
-    for (unsigned int ij = 0; ij < 1708; ij++) if( par1[ij] ==1 && par0[ij] ==1 && par2[ij]==0 && cross_section[ij] >0.0001) {
+    for (unsigned int ij = 0; ij < nmaxx ; ij++) if( par1[ij] ==1 && par0[ij] ==1 && par2[ij]==0 && cross_section[ij] >0.0001) if(ij!=301) {
         double fit = SMxs*(fg2->Eval(par3[ij], par4[ij]));
         cout<<j<<" "<< par3[ij]<<" "<< par4[ij]<<" "<<fit <<" "<< cross_section[ij]<<" diff: " <<(fit - cross_section[ij])/fit<< endl;
         g2->SetPoint(j, par3[ij], par4[ij], 100*(fit - cross_section[ij])/fit); 
@@ -854,7 +858,7 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
     int klb=1.0;
     // cg ===> x ==> c2
     // c2g ===> y ==> kt ==> cg = c2g
-    TF2 *pb = new TF2("pb","([0]*[15]**4 + [1]*x**2 + [2]*[15]**2*[16]**2 + [3]*y**2*[16]**2 +  [4]*y**2 + [5]*x*[15]**2 + [6]*[15]*[16]*[15]**2 + [7]*[15]*[16]*x + [8]*y*[16]*x - [9]*x*y + [10]*y*[16]*[15]**2 - [11]*y*[15]**2 + [12]*[16]*y*[15]*[16] - [13]*y*[15]*[16] - [14]*y*y*[16])/[17]",-4,4,-1,1);
+    TF2 *pb = new TF2("pb","([0]*[15]**4 + [1]*x**2 + [2]*[15]**2*[16]**2 + [3]*y**2*[16]**2 +  [4]*y**2 + [5]*x*[15]**2 + [6]*[15]*[16]*[15]**2 + [7]*[15]*[16]*x + [8]*y*[16]*x - [9]*x*y + [10]*y*[16]*[15]**2 - [11]*y*[15]**2 + [12]*[16]*y*[15]*[16] - [13]*y*[15]*[16] - [14]*y*y*[16])/[17]",-3,3,-1,1);
     pb->SetParameter(0,a[0]);
     pb->SetParameter(1,a[1]);
     pb->SetParameter(2,a[2]);    
@@ -883,7 +887,7 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
     //gb->SetTitle("0");
     gb->SetTitle("#kappa_{t} = #kappa_{#lambda} = 1 , c_{2g} = - c_{g} ; c_{2} ; c_{g}");
     int jb=0;
-    for (unsigned int ijb = 0; ijb < 408; ijb++) if( par1[ijb] ==1 && par0[ijb] ==1 && par3[ijb] == -par4[ijb] && cross_section[ijb] >0.0001) {
+    for (unsigned int ijb = 0; ijb < nmaxx ; ijb++) if( par1[ijb] ==1 && par0[ijb] ==1 && par3[ijb] == -par4[ijb] && cross_section[ijb] >0.0001) {
         double fitb = SMxs*(pb->Eval(par2[ijb], par3[ijb]));
         cout<<jb<<" "<<ijb<<" "<< par2[ijb]<<" "<< par4[ijb]<<" "<<fitb <<" "<< cross_section[ijb]<<" diff: " <<(fitb - cross_section[ijb])/fitb<< endl;
         if (abs((fitb - cross_section[ijb])/fitb) > 0.1) cout<<"here"<<endl;
@@ -898,7 +902,7 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
     int c2c=0.0;//==>c2
     // cg ===> x ==> c2 =//=>kl
     // c2g ===> y ==> kt ==> c2g = -cg 
-    TF2 *pc = new TF2("pb","([0]*[15]**4 + [1]*[16]**2 + [2]*[15]**2*x**2 + [3]*y**2*x**2 +  [4]*y**2 + [5]*[16]*[15]**2 + [6]*[15]*x*[15]**2 + [7]*[15]*x*[16] + [8]*y*x*[16] - [9]*[16]*y + [10]*y*x*[15]**2 - [11]*y*[15]**2 + [12]*x*y*[15]*x - [13]*y*[15]*x - [14]*y*y*x)/[17]",-5,5,-1,1);
+    TF2 *pc = new TF2("pb","([0]*[15]**4 + [1]*[16]**2 + [2]*[15]**2*x**2 + [3]*y**2*x**2 +  [4]*y**2 + [5]*[16]*[15]**2 + [6]*[15]*x*[15]**2 + [7]*[15]*x*[16] + [8]*y*x*[16] - [9]*[16]*y + [10]*y*x*[15]**2 - [11]*y*[15]**2 + [12]*x*y*[15]*x - [13]*y*[15]*x - [14]*y*y*x)/[17]",-17,17,-1,1);
     pc->SetParameter(0,a[0]);
     pc->SetParameter(1,a[1]);
     pc->SetParameter(2,a[2]);    
@@ -928,11 +932,11 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
   //  gc->GetYaxis()->SetTitle("c_{g}");
   //  gc->GetXaxis()->SetTitle("#kappa_{#lambda}");
     int jc=0;
-    for (unsigned int ijb = 0; ijb < 1708; ijb++) if( par1[ijb] ==1 && par2[ijb] ==0 && par3[ijb] == -par4[ijb] && abs(par0[ijb]) <6 && cross_section[ijb] >0.0001) {
+    for (unsigned int ijb = 0; ijb < nmaxx ; ijb++) if( par1[ijb] ==1 && par2[ijb] ==0 && par3[ijb] == -par4[ijb]  && cross_section[ijb] >0.0001 && par3[ijb] >-1.5) { //&& abs(par0[ijb]) <6
         double fitc = SMxs*(pc->Eval(par0[ijb], par3[ijb]));
         //cout<<jb<<" "<<ijb<<" "<< par0[ijb]<<" "<< par4[ijb]<<" "<<fitc <<" "<< cross_section[ijb]<<" diff: " <<(fitc - cross_section[ijb])/fitc<< endl;
         if (abs((fitc - cross_section[ijb])/fitc) > 0.1) cout<<"here"<<endl;
-        gc->SetPoint(jc, par0[ijb], par4[ijb], 100*((fitc - cross_section[ijb])/fitc)); 
+        gc->SetPoint(jc, par0[ijb], par3[ijb], 100*((fitc - cross_section[ijb])/fitc)); 
         jc++;
         //Differences2->Fill(par3[i], par4[i], (fit - cross_section[i])/fit); 
     }
@@ -947,10 +951,10 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
     gSM->SetTitle("0");
     gSM->SetTitle("c_{2} = c_{2g} = c_{g} = 0 ; #kappa_{#lambda} ; #kappa_{t}");
     int jSM=0;
-    for (unsigned int ii = 0; ii < 1708; ii++) if( par2[ii] ==0 && par3[ii] ==0 && par4[ii]==0 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+    for (unsigned int ii = 0; ii < nmaxx ; ii++) if( par2[ii] ==0 && par3[ii] ==0 && par4[ii]==0 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 && par1[ii] >0.3 && ii!=301) {
         double fitSM = SMxs*(SM0->Eval(par0[ii], par1[ii]));
         //{
-        //cout<<jSM<<" "<<ii<<" " << par0[ii]<<" "<< par1[ii]<<" "<<fitSM <<" "<< cross_section[ii]<<" diff: " <<(fitSM - cross_section[ii])/fitSM<< endl;
+        //cout<<" SM plane"<<jSM<<" "<<ii<<" " << par0[ii]<<" "<< par1[ii]<<" "<<fitSM <<" "<< cross_section[ii]<<" diff: " <<(fitSM - cross_section[ii])/fitSM<< endl;
         if (abs((fitSM - cross_section[ii])/fitSM) > 0.1) cout<<"here"<<endl;
         gSM->SetPoint(jSM, par0[ii], par1[ii], 100*(fitSM - cross_section[ii])/fitSM); 
         jSM++;
@@ -962,13 +966,13 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
     //SM0->Eval(1,1)
     // cg ===> x  ===> c2
     // c2g ===> y ===> kt
-    TGraph2D *gSMc2 = new TGraph2D(54);//(118);//57 13 tev
+    TGraph2D *gSMc2 = new TGraph2D(62);//(118);//57 13 tev
     gSMc2->SetMarkerStyle(20);
     gSMc2->SetMarkerSize(2);
     //gSMc2->SetTitle("0");
     gSMc2->SetTitle("#kappa_{#lambda} =1 , c_{2g} = c_{g} = 0 ; c_{2} ; #kappa_{t}");
     int jSMc2=0;
-    for (unsigned int ii = 0; ii < 421; ii++) if( par0[ii] ==1 && par3[ii] ==0 && par4[ii]==0 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 ) {
+    for (unsigned int ii = 0; ii < nmaxx ; ii++) if( par0[ii] ==1 && par3[ii] ==0 && par4[ii]==0 && cross_section[ii] >0.00001 &&  cross_section[ii] <10000 && par1[ii] >0.25 ) if(ii!=301){
         double fitSM = SMxs*(l1->Eval(par2[ii], par1[ii]));
         //{
         cout<<jSMc2<<" "<<ii<<" " << par2[ii]<<" "<< par1[ii]<<" "<<fitSM <<" "<< cross_section[ii]<<" diff: " <<(fitSM - cross_section[ii])/fitSM<< endl;
@@ -978,23 +982,68 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
         //}
         //Differences2->Fill(par3[i], par4[i], (fit - cross_section[i])/fit); 
     }   
+    ////////////////////////////////
+    // f = cg =0
+    int ktf=1.0;
+    int klf=1.0;
+    // cg ===> x ==> c2
+    // c2g ===> y ==> kt ==> cg = c2g
+    TF2 *pf = new TF2("pf","([0]*[15]**4 + [1]*x**2 + [2]*[15]**2*[16]**2 +  [4]*y**2 + [5]*x*[15]**2 + [6]*[15]*[16]*[15]**2 + [7]*[15]*[16]*x + [9]*x*y + [11]*y*[15]**2  + [13]*y*[15]*[16])/[17]",-3,3,-1,1);
+    pf->SetParameter(0,a[0]);
+    pf->SetParameter(1,a[1]);
+    pf->SetParameter(2,a[2]);    
+    pf->SetParameter(3,a[3]);
+    pf->SetParameter(4,a[4]);
+    pf->SetParameter(5,a[5]); 
+    pf->SetParameter(6,a[6]);
+    pf->SetParameter(7,a[7]);
+    pf->SetParameter(8,a[8]); 
+    pf->SetParameter(9,a[9]);
+    pf->SetParameter(10,a[10]);
+    pf->SetParameter(11,a[11]); 
+    pf->SetParameter(12,a[12]);    
+    pf->SetParameter(13,a[13]);
+    pf->SetParameter(14,a[14]);
+    pf->SetTitle("#kappa_{t} = #kappa_{#lambda} = 1 , c_{g} = 0 ; c_{2} ; c_{2g}");
+    //pf->SetTitleSize(0.3);
+    pf->SetParameter(15,ktf); //==> c2g ==>kt
+    pf->SetParameter(16,klf);
+    pf->SetContour(200);
+    //l5->SetParameter(17,cg); //==> cg
+    pf->SetParameter(17,norm);//0.013531
+    //pb->SetMinimum(0);
+    TGraph2D *gf = new TGraph2D(132);//(118);
+    gf->SetMarkerStyle(20);
+    gf->SetMarkerSize(2);
+    //gb->SetTitle("0");
+    gf->SetTitle("#kappa_{t} = #kappa_{#lambda} = 1 , c_{g} = 0 ; c_{2} ; c_{2g}");
+    int jf=0;
+    for (unsigned int ijb = 0; ijb < nmaxx ; ijb++) if( par1[ijb] ==1 && par0[ijb] ==1 && par3[ijb] == 0 && cross_section[ijb] >0.0001) {
+        double fitb = SMxs*(pf->Eval(par2[ijb], par4[ijb]));
+        cout<<jf<<" "<<ijb<<" "<< par2[ijb]<<" "<< par4[ijb]<<" "<<fitb <<" "<< cross_section[ijb]<<" diff: " <<(fitb - cross_section[ijb])/fitb<< endl;
+        if (abs((fitb - cross_section[ijb])/fitb) > 0.1) cout<<"here"<<endl;
+        gf->SetPoint(jf, par2[ijb], par4[ijb], 100*((fitb - cross_section[ijb])/fitb)); 
+        jf++;
+        //Differences2->Fill(par3[i], par4[i], (fit - cross_section[i])/fit); 
+    }
+    //////////////////////////////////////////////
     // rest square
-    TCanvas *c2 = new TCanvas("c2","Surfaces Drawing Options",2200,350);
-    c2->Divide(5,1);   
+    TCanvas *c2 = new TCanvas("c2","Surfaces Drawing Options",700,2200);
+    c2->Divide(2,3);   
     c2->cd(1);
     c2_1->SetRightMargin(0.17);
     c2_1->SetLeftMargin(0.21);
     //c2->cd();
     c2_1->SetTheta(90.0-0.001);
     c2_1->SetPhi(0.0+0.001);
-    g2->Draw("Pcolz");
+    gSM->Draw("Pcolz");
     //fg2->Draw("cont3SAME");
     c2->cd(2);
     c2_2->SetRightMargin(0.2);
     c2_2->SetLeftMargin(0.21);
     c2_2->SetTheta(90.0-0.001);
     c2_2->SetPhi(0.0+0.001);
-    gSM->Draw("Pcolz");
+    gSMc2->Draw("Pcolz");
     //SM0->Draw("cont3SAME");
     c2->cd(3);
     c2_3->SetRightMargin(0.2);
@@ -1015,46 +1064,68 @@ void FitXS (int nminx = 0, int nmaxx = 421, int nmintest = 0, int nmaxtest = 170
     c2_5->SetLeftMargin(0.21);
     c2_5->SetTheta(90.0-0.001);
     c2_5->SetPhi(0.0+0.001);
-    gSMc2->Draw("Pcolz");
-    c2->SaveAs("DiffSMplane_8tev.pdf");
+    
+    g2->Draw("Pcolz");
+    //
+    c2->cd(6);
+    c2_6->SetRightMargin(0.2);
+    c2_6->SetLeftMargin(0.21);
+    c2_6->SetTheta(90.0-0.001);
+    c2_6->SetPhi(0.0+0.001);
+    gf->Draw("Pcolz");
+    c2->SaveAs("DiffSMplane_all_orthogonal_13tev.pdf");
     //////////////////////////////////////////////
     // rest square
-    TCanvas *c3 = new TCanvas("c3","Surfaces Drawing Options",2200,350);
-    c3->Divide(5,1); 
+    TCanvas *c3 = new TCanvas("c3","Surfaces Drawing Options",2200,700);
+    c3->Divide(3,2); 
     c3->cd(1);
-    c3_1->SetLogz(0);
-
+    c3_1->SetLogz(1);
     c3_1->SetLeftMargin(0.19);
+    c3_1->SetBottomMargin(0.19);
     c3_1->SetRightMargin(0.2);
     //c2->cd();
     //g2->Draw("Pcolz");
-    fg2->Draw("colz");
+    SM0->Draw("colz");
+    
     c3->cd(2);
     c3_2->SetLogz(1);
     c3_2->SetRightMargin(0.19);
+    c3_2->SetBottomMargin(0.19);
     c3_2->SetLeftMargin(0.21);
     //gSM->Draw("Pcolz");
-    SM0->Draw("colz");
+    l1->Draw("colz");
     //c3_2->SetRightMargin(0.2);
     c3->cd(3);
     c3_3->SetLogz(1);
     c3_3->SetRightMargin(0.17);
+    c3_3->SetBottomMargin(0.19);
     c3_3->SetLeftMargin(0.21);
     //gb->Draw("Pcolz");
     pb->Draw("colz");
     c3->cd(4);
     c3_4->SetLogz(1);
     c3_4->SetRightMargin(0.16);
+    c3_4->SetBottomMargin(0.19);
     c3_4->SetLeftMargin(0.21);
     //gc->Draw("Pcolz");
     pc->Draw("colz");
     c3->cd(5);
     c3_5->SetLogz(1);
     c3_5->SetRightMargin(0.19);
+    c3_5->SetBottomMargin(0.19);
     c3_5->SetLeftMargin(0.21);
     //gSMc2->Draw("Pcolz");
-    l1->Draw("colz");
-    c3->SaveAs("CX_8tev.pdf");
+    
+    fg2->Draw("colz");
+    c3->cd(6);
+    c3_6->SetLogz(1);
+    c3_6->SetRightMargin(0.19);
+    c3_6->SetBottomMargin(0.19);
+    c3_6->SetLeftMargin(0.21);
+    //gSMc2->Draw("Pcolz");
+    pf->Draw("colz");
+    
+    c3->SaveAs("CX_all_orthogonal_13tev.pdf");
     //////////////////////////////////////////////
     
     /*  TGraph *gall = new TGraph(nmaxx - nminx);
