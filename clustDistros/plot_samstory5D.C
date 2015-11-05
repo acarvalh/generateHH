@@ -35,17 +35,17 @@ int pars = 5;        //space parameters dimension
 bool Privat = false; //true
 int Maxtotclu = 20;  //max number of clusters
 
-int totClus [] = {20,18,16,15,14,13,12,11,10,8,6,4,3,2}; //Nclu values for which you want the plot
+int totClus [] = {20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2}; //Nclu values for which you want the plot
 
 string testoption = ""; //debug
 string iNoption = "_13TeV";       //see 'makeDistros5D.C'
 string Inputfolder = "results/LogP/";  //with cluster analysis results
 TString Outfolder = "../../plots_5par_13TeV_1488/"; //to be created for final plots store - outside 'git' area
-string mapNamefile = "utils/list_ascii_13TeV_1488_translate.txt"; //debug
+//string mapNamefile = "utils/list_ascii_13TeV_1488_translate.txt"; //debug
 
-string mapFile = "utils/map_5par_13Tev_2ndRound.dat";  //map to read sample name
+//string mapFile = "utils/map_5par_13Tev_2ndRound.dat";  //map to read sample name
 
-//see 'makeDistros5D.C'
+//equal to 'makeDistros5D.C' !!!!!!
 string folder1_st = "0-851";
 string folder2_st = "852-1488";
 int split = 851;
@@ -61,7 +61,7 @@ bool lgTOP = true; //false for pt, cos
 std::vector< std::vector<string> > clu;
 int nTotClus;
 
-bool init() {
+bool init(int totClu) {
 
   //dafault file name format
   std::stringstream inputclusters;
@@ -73,7 +73,7 @@ bool init() {
   filename = sstr.str();
 
   //read cluster result
-  inputclusters << Inputfolder << "clustering_nev20k_Nclu" << nTotClus << "_50_5.asc";
+  inputclusters << Inputfolder << "clustering_nev20k_Nclu" << totClu << "_50_5.asc";
 //  inputclusters << Inputfolder << "res_" << pars << "p_" << CMenergy << "TeV" << testoption << "_NClu" << totClu << ".dat"; //<< testoption
   string infname = inputclusters.str();
   //cout << infname << endl;
@@ -83,8 +83,8 @@ bool init() {
     printf( "ERROR: no input file %s \n", infname.c_str());
     return false;
   }
-  //std::cout << "# Start reading sample names from file" << std::endl;
-  bool stop = false;
+ //std::cout << "# Start reading sample names from file" << std::endl;
+ bool stop = false;
   int i = 1;
   do{
     samples.clear();
@@ -95,7 +95,7 @@ bool init() {
 	break;
     }
     istringstream istring(input);   
-    //cout << " Cluster #" << i << " -> ";
+   //cout << " Cluster #" << i << " -> ";
     int in;
     int j = 0;
     //while (istring.getline (in,50,',')) { //debug - check 15
@@ -104,10 +104,9 @@ bool init() {
       samples.push_back(std::to_string(in));
       j++;
     }
-    //cout << j << " sample" << endl;
+   //cout << j << " samples" << endl;
     i++;
     if(!stop)clu.push_back(samples);    
-    //cout << endl; //debug
   }while(!stop);
 
   //build nodes comparison
@@ -125,7 +124,8 @@ bool init() {
   return true;
 }
 
-/*string translate(string samname) {
+/* old
+string translate(string samname) {
 
   std::string kl, kt, c2, cg, c2g;
 
@@ -185,9 +185,10 @@ bool init() {
   return name.str();
 }*/
 
+/* debug
 string translate(string samname) {
 
-  int i = stoi(samname); //debug
+  int i = stoi(samname)+1; //debug
   double kl =0, kt =0, c2 =0, cg =0, c2g =0;
   std::stringstream name;
   name << "";
@@ -218,6 +219,7 @@ string translate(string samname) {
 
   return name.str();
 }
+*/
 
 void draw_all(TPad* p, std::vector<TH1F*> h,
 	  TString xTitle, double xmin, double xmax, double ymin, double ymax,
@@ -463,8 +465,9 @@ TPad* setcanvas(string thesam,  int v){
   //cout << title.str() << endl;
   pad1->cd();  
   stringstream header;
-  if(Privat) header << "Private simulation 2015, #sqrt{s}=" << CMenergy << " TeV, " << Totsamples << " samples, " << translate(thesam) << ", " << var;
-  else     header << "Simulation 2015, #sqrt{s}=" << CMenergy << " TeV, " << Totsamples << " samples, " << translate(thesam) << ", " << var;
+//debug
+//  if(Privat) header << "Private simulation 2015, #sqrt{s}=" << CMenergy << " TeV, " << Totsamples << " samples, " << translate(thesam) << ", " << var;
+//  else     header << "Simulation 2015, #sqrt{s}=" << CMenergy << " TeV, " << Totsamples << " samples, " << translate(thesam) << ", " << var;
   TLatex* text=new TLatex(0.03, 0.1, header.str().c_str());
   text->SetTextSize(0.4);
   text->Draw(); 
@@ -514,10 +517,10 @@ void plot(int var, int sample1, int sample2 = 9999, int reb = 99, TString opt="h
   int siz = sizeof(totClus)/4;
   if(siz<3)      {cols = 2; rows = 1;}
   else if(siz<5) {cols = 2; rows = 2;}
-  else if(siz<7) {cols = 2; rows = 3;}
-  else if(siz<9) {cols = 2; rows = 4;}
-  else if(siz<13){cols = 3; rows = 4;}
-  else if(siz<17){cols = 4; rows = 4;}
+  else if(siz<7) {cols = 3; rows = 2;}
+  else if(siz<9) {cols = 4; rows = 2;}
+  else if(siz<13){cols = 4; rows = 3;}
+  else if(siz<16){cols = 5; rows = 3;}
   else if(siz<21){cols = 5; rows = 4;}
   else { 
     cout << "ERROR: too many values for totClus" << endl;
@@ -552,7 +555,7 @@ void plot(int var, int sample1, int sample2 = 9999, int reb = 99, TString opt="h
     for(int i=1; i<siz+1; i++) {
       nTotClus = totClus[i-1];
 cout << nTotClus << endl;
-      if(!init()) return;  //check
+      if(!init(nTotClus)) return;  //check
       int size = clu.size()-1;
 
       if(v == 1) {

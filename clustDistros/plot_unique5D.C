@@ -27,7 +27,7 @@
 
 // input files - parameters - TO BE MODIFIED
 //******************************************
-string Totsamples = "1488";  //number of lhe files //1053
+string Totsamples = "1593";  //number of lhe files //1053
 int CMenergy = 13;   //tev
 int pars = 5;        //space parameters dimension
 bool Privat = false; //true
@@ -35,12 +35,12 @@ int Maxtotclu = 20;  //max number of clusters
 
 string testoption = ""; //debug
 string iNoption = "_13TeV";       //see 'makeDistros5D.C'
-string Inputfolder = "results/LogP/";  //read directly results with sample number
-TString Outfolder = "../../plots_5par_13TeV_1488/"; //to be created for final plots store - outside 'git' area
+string Inputfolder = "results/LogP_1593_cT05/";  //read directly results with sample number
+TString Outfolder = "../../plots_5par_13TeV_1593/"; //to be created for final plots store - outside 'git' area
 
-//see 'makeDistros5D.C'
+//equal to 'makeDistros5D.C' -- to be modified!!
 string folder1_st = "0-851";
-string folder2_st = "852-1488";
+string folder2_st = "852-1593";
 int split = 851;
 
 //******************************************
@@ -49,7 +49,7 @@ TString filename;
 TString mainDIR;
 TString suffix;
 bool initialized = false;
-bool lgRIGHT = false;
+bool lgRIGHT = true;
 bool lgTOP = true;
 std::vector< std::vector<string> > clu;
 
@@ -86,7 +86,7 @@ bool init(int totClu) {
 	break;
     }
     istringstream istring(input);   
-   //cout << " Cluster #" << i << " -> ";
+   cout << " Cluster #" << i << " -> ";
     int in;
     int j = 0;
     //while (istring.getline (in,50,',')) { //debug - check 15
@@ -95,10 +95,9 @@ bool init(int totClu) {
       samples.push_back(std::to_string(in));
       j++;
     }
-   //cout << j << " sample" << endl;
+   cout << j << " samples" << endl;
     i++;
     if(!stop)clu.push_back(samples);    
-    //cout << endl; //debug
   }while(!stop);
 
   //build nodes comparison
@@ -118,7 +117,7 @@ bool init(int totClu) {
 
 void draw_all(TPad* p, std::vector<TH1F*> h,
 	  TString xTitle, double xmin, double xmax, double ymin, double ymax,
-	  TString legHeader = "", bool legRIGHT = true, bool legTOP = true,
+	  TString legHeader = "", int Nsamples = 0, bool legRIGHT = true, bool legTOP = true,
 	  bool logX = false, bool logY = false, bool stat = false,
 	  double scale = -9., int rebin = -1, int orbin = -1, TString option = "") {
 
@@ -132,13 +131,13 @@ void draw_all(TPad* p, std::vector<TH1F*> h,
   gPad->SetFrameFillColor(0);
   gPad->SetFrameBorderMode(0);
 
-  double legxmin = (legRIGHT ? 0.6 : 0.18);
+  double legxmin = (legRIGHT ? 0.52 : 0.50); //M pzh pt 0.52, costheta 0.2
   double legxmax = legxmin+0.20;
-  double legymin = (legTOP ? 0.92 : 0.15);
-  double legymax = legymin+0.08;
+  double legymin = (legTOP ? 0.92 : 0.82); //costheta 0.30  // 0.82
+  double legymax = legymin+0.05;
   TLegend* leg = new TLegend(legxmin,legymin,legxmax,legymax);
   if (legHeader!="") leg->SetHeader(legHeader);
-  leg->SetTextSize(0.06);
+  leg->SetTextSize(0.08);
   leg->SetFillColor(0);
   leg->SetLineColor(0);
 
@@ -146,39 +145,49 @@ void draw_all(TPad* p, std::vector<TH1F*> h,
   
   //normalize and set y range
   ymax=0.;
+  ymin = 10.; //debug - costheta
   h[0]->Sumw2();  
   //double norm = 10000.;     
   for (size_t i=0; i<h.size(); i++) {  
     if(h[i]->GetNbinsX() != orbin) cout << "WARNING: orbin for " << h[i]->GetName() << " are " << h[i]->GetNbinsX() << endl;
+    //cout << "orbin for " << h[i]->GetName() << " are " << h[i]->GetNbinsX() << endl;
     if (rebin>0) h[i]->Rebin(rebin);
     //cout << h[i]->GetNbinsX() << endl; //debug
     //scale = norm/(h[i]->Integral());
     //h[i]->Scale(scale);
     if (h[i]->GetMaximum() > ymax) ymax = h[i]->GetMaximum();
+    if (h[i]->GetMinimum() < ymin) ymin = h[i]->GetMinimum();//debug - costheta
   }
-  ymax = ymax*1.10;
+  //ymax = ymax*1.10;
 
-  for (size_t i=0; i<h.size(); i++) {
+   for (size_t i=0; i<h.size(); i++) {
     h[i]->GetXaxis()->SetRangeUser(xmin,xmax);
-    h[i]->SetMinimum(ymin);
-    h[i]->SetMaximum(ymax);
-    if (i==0  ){    //just for the first one && ( || i==6 || i ==11)
-       h[i]->GetYaxis()->SetTitleSize(0.06);
-       h[i]->GetYaxis()->SetTitleOffset(1);
-       h[i]->GetYaxis()->SetLabelSize(0.05);
-       h[i]->GetYaxis()->SetLabelOffset(0.8);
-    }
-    if (i==0){ //11 || i==12 || i==13
-       h[i]->GetXaxis()->SetTitleSize(0.06);
-       h[i]->GetXaxis()->SetTitleOffset(1);
-       h[i]->GetXaxis()->SetLabelSize(0.05);
-       h[i]->GetYaxis()->SetLabelOffset(0.8);
+//    h[i]->SetMinimum(ymin);
+//    h[i]->SetMaximum(ymax);
+    if (i==0){    //just for the first one
+     h[i]->GetXaxis()->SetLabelSize(0.07);
+     h[i]->GetXaxis()->SetTitle(xTitle);
+     h[i]->GetXaxis()->SetTitleOffset(0.9);
+     h[i]->GetXaxis()->SetTitleSize(0.07);
+     h[i]->GetXaxis()->SetNdivisions(606);
+     h[i]->GetYaxis()->SetTitle("");
+     h[i]->GetYaxis()->SetTitleSize(0.06);
+     h[i]->GetYaxis()->SetTitleOffset(3.);
+     h[i]->GetYaxis()->SetLabelSize(0.07);
+     h[i]->GetYaxis()->SetRangeUser(ymin-ymin*0.2,(ymax+ymax*0.1));  //ymin-ymin*0.2 //0.1
+     h[i]->GetYaxis()->SetNdivisions(505);
     }
     if (i==1) options = options + (stat ? "sames" : "same"); //once is enought
     h[i]->Draw(options);
   }  
   leg->Draw("same");  
-  //p->Update();
+  
+  TLatex l;
+  l.SetTextSize(0.075);
+  stringstream sss;
+  sss << "N_{samples} = " << Nsamples;
+  TString ns = sss.str();  
+  l.DrawLatexNDC(0.52, 0.77, ns); //M pzh pt 0.52,0.77 //costheta
 }
 
 /*void draw_all_ratio(TPad* p, std::vector<TH1F*> h,
@@ -272,7 +281,7 @@ void performancePlot1D(TPad* p, int nclust, TString hName,
     histo->SetMarkerSize(1.0);
     histo->SetMarkerStyle(20);
     histo->SetLineWidth(1); //2
-    histo->SetLineColorAlpha(kBlue, 0.25);
+    histo->SetLineColorAlpha(kBlue, 0.25); //to get transparency!
     histo->GetXaxis()->SetTitle(xaxis);
     histo->GetYaxis()->SetTitle(yaxis);
     h.push_back(histo);
@@ -297,17 +306,20 @@ void performancePlot1D(TPad* p, int nclust, TString hName,
   h.push_back(histo);
 
   cout << " Cluster size: " << size << " sample" << endl << endl;
-  stringstream sst, sc;
-  sc << "CLUSTER " << (nc+1) << " - " << "#samples: " << size;
+  stringstream sc;
+  sc << "Node " << (nc+1) ;
   TString clusterLabel = sc.str();
-  sst << nc+1;   
+  //stringstream sst, sc;
+  //sc << "CLUSTER " << (nc+1) << " - " << "#samples: " << size;
+  //TString clusterLabel = sc.str();
+  //sst << nc+1;   
   
- if(hName=="hcths")ymin = 1000; //debug
- else ymin = 0;
+// if(hName=="hcths")ymin = 1000; //debug
+// else ymin = 0;
 
  if(h.size()>0){
          draw_all(p, h, xaxis,xmin,xmax,ymin,ymax,
-  	   clusterLabel,lgRIGHT,lgTOP, logX, logY, stat, scale,rebin,orbin,option);
+  	   clusterLabel,size,lgRIGHT,lgTOP, logX, logY, stat, scale,rebin,orbin,option);
  }  
  else cout << "WARNING: empty cluster!" << endl;
 
@@ -315,11 +327,11 @@ void performancePlot1D(TPad* p, int nclust, TString hName,
  
 //plot call for different variables:
 void plot_pt( TPad* p, int ncluster = 99, int rebin = 1, TString opt="") {
-  performancePlot1D( p, ncluster-1,"pt",0.,450.,0.,800.,"pT^{h} [GeV]","", false, false, false,-9.,rebin,100,opt);
+  performancePlot1D( p, ncluster-1,"pt",0.,500.,0.,5000.,"pT [GeV/c]","", false, false, false,-9.,rebin,100,opt);
 }
 
 void plot_pzh( TPad* p, int ncluster = 99, int rebin = 4, TString opt="") {
-  performancePlot1D( p, ncluster-1,"pzh",0.,1000.,0.,800.,"max#cbar pz^{h}#cbar [GeV]","", false, false, false,-9.,rebin,500,opt);
+  performancePlot1D( p, ncluster-1,"pzh",0.,1000.,0.,800.,"max|pz | [GeV/c]","", false, false, false,-9.,rebin,500,opt);
 }
 
 void plot_pzl( TPad* p, int ncluster = 99, int rebin = 4, TString opt="") {
@@ -327,7 +339,7 @@ void plot_pzl( TPad* p, int ncluster = 99, int rebin = 4, TString opt="") {
 }
 
 void plot_mhh( TPad* p, int ncluster = 99, int rebin = 2, TString opt="") {
-  performancePlot1D( p, ncluster-1,"mhh",240.,900.,0.,800.,"m_{hh} [GeV]","", false, false, false,-9.,rebin,200,opt);
+  performancePlot1D( p, ncluster-1,"mhh",240.,900.,0.,800.,"mhh [GeV/c^{2}]","", false, false, false,-9.,rebin,200,opt);
 }
 
 void plot_hth( TPad* p, int ncluster = 99, int rebin = 2, TString opt="") {
@@ -343,7 +355,7 @@ void plot_hths( TPad* p, int ncluster = 99, int rebin = 2, TString opt="") {
 }
 
 void plot_hcths( TPad* p, int ncluster = 99, int rebin = 2, TString opt="") {
-  performancePlot1D( p, ncluster-1,"hcths",0.,1.,0.,800.,"#cbar cos#theta*#cbar","", false, false, false,-9.,rebin,100,opt);
+  performancePlot1D( p, ncluster-1,"hcths",0.,1.,1000.,3000.,"|cos#theta* |","", false, false, false,-9.,rebin,100,opt);
 }
 
 TPad* setcanvas( int N, string var){
@@ -378,7 +390,8 @@ void plot(int totclu = 20, int var = 0, int reb = 99, TString opt="hist") {
   string app;
 
   for(int i=10; i<=Maxtotclu; i++) { //mintotclu .. continued!
-
+    //if(i==4||i==6||i==7||i==9) continue;
+    //if(i==10) break;
     if(!doall) totNclu = totclu;
     else   totNclu = i;
 
@@ -406,12 +419,12 @@ void plot(int totclu = 20, int var = 0, int reb = 99, TString opt="hist") {
     else if(size<7) {cols = 3; rows = 2;}
     else if(size<9) {cols = 4; rows = 2;}
     else if(size<13){cols = 4; rows = 3;}
-    else if(size<17){cols = 5; rows = 3;}
+    else if(size<16){cols = 5; rows = 3;}
     else if(size<21){cols = 5; rows = 4;}
     else return;
   
     if(var == 1 || var == 0) {
-      TPad* pad2 = (TPad*)setcanvas(totNclu,"pT^{h}");
+      TPad* pad2 = (TPad*)setcanvas(totNclu,"Higgs pT");
       pad2->Divide(cols,rows);
       for(int nc=1; nc<=(size); nc++) {
            TPad* pad= (TPad*)pad2->GetPad(nc);           
@@ -421,7 +434,7 @@ void plot(int totclu = 20, int var = 0, int reb = 99, TString opt="hist") {
       pad2->GetCanvas()->SaveAs(Outfolder+outname.str()+"_pt_"+app+".pdf");
     }
     if(var == 2 ) { //|| var == 0
-      TPad* pad2 = (TPad*)setcanvas(totNclu,"max#cbar pz^{h}#cbar");
+      TPad* pad2 = (TPad*)setcanvas(totNclu,"max |pz|");
       pad2->Divide(cols,rows);
       for(int nc=1; nc<=(size); nc++) {
            TPad* pad= (TPad*)pad2->GetPad(nc);           
@@ -467,7 +480,7 @@ void plot(int totclu = 20, int var = 0, int reb = 99, TString opt="hist") {
       pad2->GetCanvas()->SaveAs(Outfolder+outname.str()+"_hths_"+app+".pdf");
     }
     if(var == 8 || var == 0) {
-      TPad* pad2 = (TPad*)setcanvas(totNclu,"#cbar cos#theta*CS#cbar");
+      TPad* pad2 = (TPad*)setcanvas(totNclu,"#cbar cos#theta*#cbar");
       pad2->Divide(cols,rows);
       for(int nc=1; nc<=(size); nc++) {
            TPad* pad= (TPad*)pad2->GetPad(nc);           
