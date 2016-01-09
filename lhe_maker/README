@@ -1,0 +1,7 @@
+Make V1 distos -- shower, not decaying the b: main13
+make JHEP distos -- only the ascii files: main12 + makedistos (saved on the hard drive)
+make the envelope distos -- only the ascii files: main12 + makedistos
+
+sum the V1 and do the 2D histo -- the analysis code 
+
+

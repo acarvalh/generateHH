@@ -2,13 +2,13 @@
 
 ###############################################
 # turn off the automatic htmal open
-sed -i -e 's/# automatic_html_opening = True/automatic_html_opening = False/g' Cards/me5_configuration.txt
+#sed -i -e 's/# automatic_html_opening = True/automatic_html_opening = False/g' Cards/me5_configuration.txt
 #change the number of events to 3
-sed -i -e 's/.*[0-9]* = nevents.*/  500000 = nevents \! Number of unweighted events requested /g' Cards/run_card.dat
+#sed -i -e 's/.*[0-9]* = nevents.*/  20000 = nevents \! Number of unweighted events requested /g' Cards/run_card.dat
 #change the minimum distance between jets
 #change the CM energy to 2Tev
-sed -i -E -e 's/[0-9]*.*=.*ebeam1/6500     = ebeam1/g' Cards/run_card.dat
-sed -i -E -e 's/[0-9]*.*=.*ebeam2/6500     = ebeam2/g' Cards/run_card.dat
+#sed -i -E -e 's/[0-9]*.*=.*ebeam1/6500     = ebeam1/g' Cards/run_card.dat
+#sed -i -E -e 's/[0-9]*.*=.*ebeam2/6500     = ebeam2/g' Cards/run_card.dat
 # change the Higgs mass to 125 Gev
 #sed -i -E -e 's/25 [0-9]+?\.?[0-9]+?.* .*MH/25 1.25000e+02 \# MH/g' Cards/param_card.dat
 
@@ -17,9 +17,10 @@ sed -i -E -e 's/[0-9]*.*=.*ebeam2/6500     = ebeam2/g' Cards/run_card.dat
 ################################################
 
 
-
+counterline=0
 # read the input file
 while read line; do 
+  let counterline=counterline+1
   # read a line and parse it
   #echo -e "$line\n"; 
   arr=$(echo $line | tr ";" "\n")  
@@ -40,26 +41,28 @@ while read line; do
     counter=$((counter+1))
   #i++
   done  
-  echo "$kl" " " "$kt" " " "$c2" " " "$cg" " " "$c2g"  
+  echo "$kl" " " "$kt" " " "$c2" " " "$cg" " " "$c2g" " " "$counterline" "4b_node_${counterline}_customizecards.dat"
   #change the parameters  
   #30 -1.000000e+00 # c2 
   #31 1.000000e+00 # a1 
   #32 1.000000e+00 # a2 
   #188 1.000000e+00 # ctr 
   #189 1.000000e+00 # cy 
-sed -i -E -e "s/30.*\# c2 /30 ${c2} \# c2 /g" Cards/param_card.dat
-sed -i -E -e "s/31.*\# a1 /31 $cg \# a1 /g" Cards/param_card.dat
-sed -i -E -e "s/32.* \# a2 /32 $c2g \# a2 /g" Cards/param_card.dat
-sed -i -E -e "s/188.* \# ctr /188 $kl \# ctr /g" Cards/param_card.dat
-sed -i -E -e "s/189.* \# cy /189 $kt \# cy /g" Cards/param_card.dat
+cp customize_example.dat customize_toCX/4b_node_${counterline}_customizecards.dat
+
+sed -i -E -e "s/set param_card bsm 30 .*/set param_card bsm 30 ${c2}/g" customize_toCX/4b_node_$line_customizecards.dat
+sed -i -E -e "s/set param_card bsm 31 .*/set param_card bsm 31 $cg/g" customize_toCX/4b_node_$line_customizecards.dat
+sed -i -E -e "s/set param_card bsm 32 */set param_card bsm 32 $c2g/g" customize_toCX/4b_node_$line_customizecards.dat
+sed -i -E -e "s/set param_card bsm 188 .*/set param_card bsm 188 $kl/g" customize_toCX/4b_node_$line_customizecards.dat
+sed -i -E -e "s/set param_card bsm 189 .*/set param_card bsm 189 $kt/g" customize_toCX/4b_node_$line_customizecards.dat
   # generate events 
-./bin/generate_events 0 L${kl}kt${kt}cT${c2}cg${cg}c2g${c2g} run1
-  gunzip Events/L${kl}kt${kt}cT${c2}cg${cg}c2g${c2g}/unweighted_events.lhe.gz 
+#./bin/generate_events 0 L${kl}kt${kt}cT${c2}cg${cg}c2g${c2g} run1
+# gunzip Events/L${kl}kt${kt}cT${c2}cg${cg}c2g${c2g}/unweighted_events.lhe.gz 
   #take the CX
-  echo "${kl}" "${kt}" "${c2}" "${cg}" "${c2g}" "$(grep -E '\#  Integrated weight \(pb\)  \:  ' Events/L${kl}kt${kt}cT${c2}cg${cg}c2g${c2g}/unweighted_events.lhe)" >> ../hh_lhe/CX_8TeV.txt
-  mv Events/L${kl}kt${kt}cT${c2}cg${cg}c2g${c2g}/unweighted_events.lhe ../hh_lhe/L${kl}kt${kt}cT${c2}cg${cg}c2g${c2g}.lhe
+#echo "${kl}" "${kt}" "${c2}" "${cg}" "${c2g}" "$(grep -E '\#  Integrated weight \(pb\)  \:  ' Events/L${kl}kt${kt}cT${c2}cg${cg}c2g${c2g}/unweighted_events.lhe)" >> ../hh_lhe/CX_8TeV.txt
+# mv Events/L${kl}kt${kt}cT${c2}cg${cg}c2g${c2g}/unweighted_events.lhe ../hh_lhe/L${kl}kt${kt}cT${c2}cg${cg}c2g${c2g}.lhe
 #rm -r Events/L${kl}kt${kt}cT${c2}cg${cg}c2g${c2g}
-done < mini_togenerate_ktXc2.dat
+done < AllpointstoCX.txt
 
 
 
