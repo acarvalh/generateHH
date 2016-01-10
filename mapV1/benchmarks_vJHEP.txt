@@ -1,0 +1,12 @@
+/Users/Xanda/Documents/programs/generateHH/hh_lhe_JHEP_500k/L7.5kt1.0cT-1.0cg0c2g0.lhe.decayed
+/Users/Xanda/Documents/programs/generateHH/hh_lhe_JHEP_500k/L1.0kt1.0cT0.5cg-0.8c2g0.6.lhe.decayed
+/Users/Xanda/Documents/programs/generateHH/hh_lhe_JHEP_500k/L1.0kt1.0cT-1.5cg0c2g-0.8.lhe.decayed
+/Users/Xanda/Documents/programs/generateHH/hh_lhe_JHEP_500k/L-3.5kt1.5cT-3.0cg0c2g0.lhe.decayed
+/Users/Xanda/Documents/programs/generateHH/hh_lhe_JHEP_500k/L1.0kt1.0cT0cg0.8c2g-1.lhe.decayed
+/Users/Xanda/Documents/programs/generateHH/hh_lhe_JHEP_500k/L2.4kt1.0cT0cg0.2c2g-0.2.lhe.decayed
+/Users/Xanda/Documents/programs/generateHH/hh_lhe_JHEP_500k/L5.0kt1.0cT0cg0.2c2g-0.2.lhe.decayed
+/Users/Xanda/Documents/programs/generateHH/hh_lhe_JHEP_500k/L15.0kt1.0cT0cg-1.0c2g1.0.lhe.decayed
+/Users/Xanda/Documents/programs/generateHH/hh_lhe_JHEP_500k/L1.0kt1.0cT1.0cg-0.6c2g0.6.lhe.decayed
+/Users/Xanda/Documents/programs/generateHH/hh_lhe_JHEP_500k/L10.0kt1.5cT-1.0cg0c2g0.lhe.decayed
+/Users/Xanda/Documents/programs/generateHH/hh_lhe_JHEP_500k/L2.4kt1.0cT0cg1.0c2g-1.0.lhe.decayed
+/Users/Xanda/Documents/programs/generateHH/hh_lhe_JHEP_500k/L15.0kt1.0cT1.0cg0c2g0.lhe.decayed
