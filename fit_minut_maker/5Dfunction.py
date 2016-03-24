@@ -80,4 +80,6 @@ else : print ("invalid LHC energy")
 
 #print(f(1,1,0,0,0)*xs)
 # by now we ignore errors in the RHH errors
-print "XS =  %f fb, scale (+ %f, %f), PDF +- %f, alphaS +- %f, RHH +- 0 " % (f(kl,kt,c2,cg,c2g)*xs, f(kl,kt,c2,cg,c2g)*scalep, f(kl,kt,c2,cg,c2g)*scalem, f(kl,kt,c2,cg,c2g)*PDF, f(kl,kt,c2,cg,c2g)*alphas )
+print "XS =  %f fb, scale (+ %f, %f) fb, PDF +- %f fb, alphaS +- %f fb, top mass +- %f fb, RHH +- 0 " % (f(kl,kt,c2,cg,c2g)*xs, f(kl,kt,c2,cg,c2g)*scalep, f(kl,kt,c2,cg,c2g)*scalem, f(kl,kt,c2,cg,c2g)*PDF, f(kl,kt,c2,cg,c2g)*alphas, f(kl,kt,c2,cg,c2g)*0.1 )
+
+
