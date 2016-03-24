@@ -1,0 +1,12 @@
+5.0 1.0 0 0.2 -0.2 #  Integrated weight (pb)  :  0.48899E+00
+7.5 1.0 -1.0 0 0 #  Integrated weight (pb)  :  0.74740E-01
+-3.5 1.5 -3.0 0 0 #  Integrated weight (pb)  :  0.33261E+01
+15.0 1.0 0 -1.0 1.0 #  Integrated weight (pb)  :  0.69155E-01
+1.0 1.0 0.5 -0.8 0.6 #  Integrated weight (pb)  :  0.50391E-02
+1.0 1.0 0 0.8 -1 #  Integrated weight (pb)  :  0.22141E-01
+1.0 1.0 1.0 -0.6 0.6 #  Integrated weight (pb)  :  0.45756E-01
+1.0 1.0 -1.5 0 -0.8 #  Integrated weight (pb)  :  0.38301E+00
+2.4 1.0 0 0.2 -0.2 #  Integrated weight (pb)  :  0.92501E-02
+15.0 1.0 1.0 0 0 #  Integrated weight (pb)  :  0.13221E+01
+10.0 1.5 -1.0 0 0 #  Integrated weight (pb)  :  0.22108E+00
+2.4 1.0 0 1.0 -1.0 #  Integrated weight (pb)  :  0.60189E-01

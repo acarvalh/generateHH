@@ -1,0 +1,6 @@
+/Users/Xanda/Documents/codes/git/generateHH/envelopeShapes/all_oct_15_ascii/L7.5kt1cT-1.0cg0c2g0.lhe.ascii
+/Users/Xanda/Documents/codes/git/generateHH/envelopeShapes/all_oct_15_ascii/L10.0kt1.5cT-2.0cg0c2g0.lhe.ascii
+/Users/Xanda/Documents/codes/git/generateHH/envelopeShapes/all_oct_15_ascii/L12.5kt1cT3.0cg0c2g0.lhe.ascii
+/Users/Xanda/Documents/codes/git/generateHH/envelopeShapes/all_oct_15_ascii/L1kt1cT0.5cg0.8c2g0.4.lhe.ascii
+/Users/Xanda/Documents/codes/git/generateHH/envelopeShapes/all_oct_15_ascii/L3.5kt2.5cT2.0cg0c2g0.lhe.ascii
+/Users/Xanda/Documents/codes/git/generateHH/envelopeShapes/all_oct_15_ascii/L-15.0kt1cT3.0cg0c2g0.lhe.ascii

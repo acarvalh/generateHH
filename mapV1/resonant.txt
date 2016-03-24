@@ -1,0 +1,8 @@
+/Users/Xanda/Documents/codes/toy_hh_4b_syst/resonant_ascii/radion/MGraviton_25.lhe.decayed
+/Users/Xanda/Documents/codes/toy_hh_4b_syst/resonant_ascii/RS1/MGraviton_25.lhe.decayed
+/Users/Xanda/Documents/codes/toy_hh_4b_syst/resonant_ascii/radion/MGraviton_50.lhe.decayed
+/Users/Xanda/Documents/codes/toy_hh_4b_syst/resonant_ascii/RS1/MGraviton_50.lhe.decayed
+/Users/Xanda/Documents/codes/toy_hh_4b_syst/resonant_ascii/radion/MGraviton_100.lhe.decayed
+/Users/Xanda/Documents/codes/toy_hh_4b_syst/resonant_ascii/RS1/MGraviton_100.lhe.decayed
+/Users/Xanda/Documents/codes/toy_hh_4b_syst/resonant_ascii/radion/MGraviton_150.lhe.decayed
+/Users/Xanda/Documents/codes/toy_hh_4b_syst/resonant_ascii/RS1/MGraviton_150.lhe.decayed
