@@ -1,7 +1,7 @@
 /*
  execute
- root > .L FitXS.C+
- root > FitXS()
+ root > .L FitBinc.C+
+ root > FitBinc()
  */
 #include "TH2.h"
 #include "TF1.h"
@@ -73,16 +73,20 @@ static double par2r[2800];
 static double par3r[2800];
 static double par4r[2800];
 
+double SMxs =  0.013531; 
 double errNBSM = 0.1;
 double errNSM = 0.2;
 double effSM;
+double effSum;
+double ratioeff;
 
+///*
 ////////////////////////////////////////////////////////////////////////////////////////////
 extern "C" void Likelihood(int& npar, double* grad, double& fval, double* xval, int flag) {
   //  cout << "In likelihood" << endl;
   // xval[0:14] are the parameters
   double flike=0.;
-  double SMxs =  0.013531; // 1 0.017278;// 14 0.0041758;// 8tev  ; //  in pb as MG model says 1; //
+ // 1 0.017278;// 14 0.0041758;// 8tev  ; //  in pb as MG model says 1; //
   double A1 = xval[0];
   double A2 = xval[1];
   double A3 = xval[2];
@@ -104,7 +108,7 @@ extern "C" void Likelihood(int& npar, double* grad, double& fval, double* xval, 
     double c2 = par2[i];
     double cg = par3[i]; 
     double c2g= par4[i];  
-    double xs = SMxs*(
+    double xs = (
        A1*pow(kt,4)+ 
        A2*pow(c2,2)+
        (A3*pow(kt,2)+A4*pow(cg,2))*pow(kl,2)+
@@ -114,11 +118,14 @@ extern "C" void Likelihood(int& npar, double* grad, double& fval, double* xval, 
        A10*c2*c2g+
        (A11*cg*kl+A12*c2g)*pow(kt,2)+
        (A13*kl*cg+A14*c2g)*kt*kl+A15*cg*c2g*kl);
-    double error = 0.1*cross_section[i]+errNBSM-errNSM; 
+    double error;
+    if (i==0) error =0.001*cross_section[i];
+    else error = 0.1*cross_section[i]+errNBSM-errNSM; 
     flike += -0.5*pow((xs-cross_section[i])/error,2);
   }
   fval = -flike;
 }
+//*/
 ////////////////////////////////////////////////////////////////////////////////////////////
 void FitBinc (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nmaxtest = 1507) { 
   nmin=nminx;
@@ -129,7 +136,7 @@ void FitBinc (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nmaxtest = 
   // Read in the cross section values and the parameters space points
   ifstream XSvals;
   XSvals.open("../fit_minut_maker/list_all_translation_CX.txt");//"14TeV_CX_5k_opositecgw.ascii");// "8TeV_CX_5k_opositecgw.ascii");//
-  for (int i=nmin; i<nmax; i++)  XSvals >> par0r[i] >> par1r[i] >> par2r[i] >> par3r[i] >> par4r[i] >> cross_sectiontotal[i] >> cross_sectionerr[i];
+  for (int i=0; i<1507; i++)  XSvals >> par0r[i] >> par1r[i] >> par2r[i] >> par3r[i] >> par4r[i] >> cross_sectiontotal[i] >> cross_sectionerr[i];
   cout << "**********************************************" << endl;
   ////////////////////////////////////////////////////////////////////////////////////
   // read SM to normalize
@@ -143,19 +150,33 @@ void FitBinc (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nmaxtest = 
   //myfile << counter << " "<< h1SM->GetXaxis()->FindBin(mhh)<<" "<< h1SM->GetYaxis()->FindBin(cost)  <<" "<<a[0]<<" "<<a[1]<<" "<<a[2]<<" "<<a[3]<<" "<<a[4]<<" "<<a[5]<<" "<<a[6]<<" "<<a[7]<<" "<<a[8]<<" "<<a[9]<<" "<<a[10]<<" "<<a[11]<<" "<<a[12]<<" "<<a[13]<<" "<<a[14]<<endl;
   myfile.open ("coefficientsByBin.txt");
   TFile *f = new TFile("../mapV1/Distros_all_5p_20000ev_1507sam_13TeV_JHEPv3.root");
-  TH1D * h1SM = (TH1D*) f->Get("695_bin1");
-  for(int mhh =0 ; mhh< 90; mhh++){ // 90
-    for(int cost =0 ; cost< 10; cost++){ // 10
-      int counter = 0;
-      effSM = (h1SM->GetBinContent(mhh,cost))/(h1SM->Integral());
+  TFile *fSM = new TFile("Distros_5p_SM600k_sumBenchJHEP_13TeV.root");
+  TH2D * h1SM = (TH2D*) fSM->Get("H0bin1");
+  //h1SM->Draw("colz");
+  //h1SM->Rebin2D(90,5);
+  TH2D * h1Sum = (TH2D*) fSM->Get("H1bin1");
+  //h1Sum->Rebin2D(90,5);
+
+  for(int mhh =17 ; mhh< 18; mhh++){ // 1-91
+    for(int cost =1 ; cost< 3; cost++){ // 0 -10
+      int counter = 1;
+      effSum = (h1Sum->GetBinContent(mhh,cost)); ///(h1Sum->Integral()      
+      effSM = (h1SM->GetBinContent(mhh,cost)); ///(h1SM->Integral())
       for(int i =0 ; i< 1507; i++){ // 1507
         const char * htitle = Form("%d_bin1",i);
-        TH1D * h1 = (TH1D*) f->Get(htitle);
-        double effBSM = (h1->GetBinContent(mhh,cost))/(h1->Integral());  
-        double cross =cross_sectiontotal[i]*effBSM/effSM;
-        errNBSM = (effBSM/effSM)*(sqrt(h1->GetBinContent(mhh,cost))/h1->GetBinContent(mhh,cost) );
-        errNBSM = (effBSM/effSM)*(sqrt(h1SM->GetBinContent(mhh,cost))/h1SM->GetBinContent(mhh,cost) );
-        if(effBSM > 0.001 && effSM > 0.001) { // ignore if zero , or too few
+        TH2D * h1 = (TH2D*) f->Get(htitle);
+        //h1->Rebin2D(90,5);
+        double effBSM = (h1->GetBinContent(mhh,cost));///(h1->Integral())  
+        double cross =cross_sectiontotal[i]*(effBSM*30/effSM)/SMxs;
+        errNBSM = (effBSM*30/effSM)*(sqrt(h1->GetBinContent(mhh,cost))/(h1->GetBinContent(mhh,cost)) )/(h1->GetBinContent(mhh,cost));
+        errNSM = (effBSM*30/effSM)*(sqrt(h1SM->GetBinContent(mhh,cost))/(h1SM->GetBinContent(mhh,cost)) )/(h1SM->GetBinContent(mhh,cost));
+        ratioeff=(effBSM*30/effSM);
+        if(abs(par0r[i]) <2 and par2r[i] ==0 and par3r[i] ==0 and par4r[i] ==0 ){
+           cout<<par0r[i]<<" "<<par1r[i]<<" "<<par2r[i]<<" "<<par3r[i]<<" "<<par4r[i]<<" "
+               <<h1->GetXaxis()->GetBinCenter(mhh)<<" "<<h1->GetYaxis()->GetBinCenter(cost)<<" "<<effBSM/20000<<" "<<effSM/600000<<" RHH = "<< cross_sectiontotal[i]*(effBSM*30/effSM)/SMxs
+               <<" Ratio = "<< cross_sectiontotal[i]*(effBSM*30/effSM)<<" numeric error = "<< errNBSM<<" " <<errNSM <<endl;
+        }
+        if(effBSM > 0 && effSM > 0) { // ignore if zero , or too few
            cross_section[counter] = cross;
            par0[counter]= par0r[i];
            par1[counter]= par1r[i];
@@ -164,13 +185,22 @@ void FitBinc (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nmaxtest = 
            par4[counter]= par4r[i];
            //cout<<cross_section[counter]<< " " <<cross<<" " 
            //    <<(h1SM->GetBinContent(mhh,cost)) 
-           //    << " " <<par0[counter]<<" "<< " " <<par1[counter]<<" "<< " " <<par2[counter]<<" "<< " " <<par3[counter]<<" "<< " " <<par4[counter]<<" "<<errNBSM<<" " <<errNSM <<endl;
+           //    << " " <<par0[counter]<<" "<< " " <<par1[counter]<<" "<< " " <<par2[counter]<<" "<< " " <<par3[counter]<<" "<< " " <<par4[counter]<<" "<<effBSM<<" " <<effSM <<" "<<errNBSM<<" " <<errNSM <<endl;
            counter++;
         } //else { cout<<i<<endl;} 
         //cout<<(h1->GetBinContent(mhh,cost))/h1->Integral() <<endl;
         //cout<<h1->GetBinContent(mhh,cost)<< " "<< h1->Integral()<< " "<< h1->GetEntries()<<endl;
       } // close to bin
+      // if not SM
+       cross_section[0] = 1.0;
+       par0[0]= 1.0;
+       par1[0]= 1.0;
+       par2[0]= 0.0;
+       par3[0]= 0.0;
+       par4[0]= 0.0;
+     
 
+///*
       if(counter > 100) {
         ///////////////////////////////////////////////////////////////////////////////////
         // Likelihood maximization
@@ -220,15 +250,15 @@ void FitBinc (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nmaxtest = 
              <<err[7]<<","<<err[8]<<","<<err[9]<<","<<err[10]<<","<<err[11]<<","<<err[12]<<","<<err[13]<<","<<err[14]<<"}"<<endl;
    
     cout<<"npoints "<<counter<<endl;
-    myfile << counter  <<" "<<effSM<<  " " << " "<< h1SM->GetXaxis()->GetBinCenter(mhh)<<" "<< h1SM->GetYaxis()->GetBinCenter(cost)  <<" "
+    myfile << counter  <<" "<<effSM/600000<<  " "<<effSum/(12*100000) << " "<< h1SM->GetXaxis()->GetBinCenter(mhh)<<" "<< h1SM->GetYaxis()->GetBinCenter(cost)  <<" "
            <<a[0]<<" "<<a[1]<<" "<<a[2]<<" "<<a[3]<<" "<<a[4]<<" "<<a[5]<<" "
            <<a[6]<<" "<<a[7]<<" "<<a[8]<<" "<<a[9]<<" "<<a[10]<<" "<<a[11]<<" "<<a[12]<<" "
            <<a[13]<<" "<<a[14]<<" " <<err[0]<<" "<<err[1]<<" "<<err[2]<<" "<<err[3]<<" "
            <<err[4]<<" "<<err[5]<<" "<<err[6]<<" "<<err[7]<<" "<<err[8]<<" "
            <<err[9]<<" "<<err[10]<<" "<<err[11]<<" "<<err[12]<<" "<<err[13]<<" "<<err[14]<<endl;
   } // close if counter
-  else     myfile << counter <<" "<<effSM<<  " "<< h1SM->GetXaxis()->GetBinCenter(mhh)<<" "<< h1SM->GetYaxis()->GetBinCenter(cost)  <<" 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 "<<endl;
-
+  else     myfile << counter <<" "<<effSM/600000<<  " "<< h1SM->GetXaxis()->GetBinCenter(mhh)<<" "<< h1SM->GetYaxis()->GetBinCenter(cost)  <<" 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 "<<endl;
+//*/
 
 
     } // close cost bin
