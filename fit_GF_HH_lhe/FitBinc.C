@@ -157,8 +157,8 @@ void FitBinc (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nmaxtest = 
   TH2D * h1Sum = (TH2D*) fSM->Get("H1bin1");
   //h1Sum->Rebin2D(90,5);
 
-  for(int mhh =17 ; mhh< 18; mhh++){ // 1-91
-    for(int cost =1 ; cost< 3; cost++){ // 0 -10
+  for(int mhh =0 ; mhh< 90; mhh++){ // 1-91
+    for(int cost =1 ; cost< 10; cost++){ // 0 -10
       int counter = 1;
       effSum = (h1Sum->GetBinContent(mhh,cost)); ///(h1Sum->Integral()      
       effSM = (h1SM->GetBinContent(mhh,cost)); ///(h1SM->Integral())
