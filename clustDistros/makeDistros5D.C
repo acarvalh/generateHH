@@ -38,62 +38,125 @@ struct benchmark {
 // input files - parameters - TO BE CHANGED
 //******************************************
 int np = 5;	 //number of parameters
-int ns = 1593;   //number of samples
+int ns = 13;   //number of samples
 string option = "_13TeV"; //debug
-const int nev = 20000;	  //number of ev per sample
+const int nevBench = 100000;	  //number of ev per sample
+const int nevSM = 600000;	  //number of ev per sample
 
 string inputPath = "";  //folder with ascii lhe files (outside 'git' area)
-string fileslist_st = "utils/list_ascii_13TeV_1593.txt"; //ascii names list !!!!!!!!!!!!!!!!
+//string fileslist_st = "utils/list_ascii_13TeV_1593.txt"; //ascii names list !!!!!!!!!!!!!!!!
+string fileslist_st = "samples_JHEP.txt"; //file 0 is a high stats SM; the others are the JHEP benchmaks
+
 
 //to be changed accordingly to lhe structure (3p, 5p,..)
-string folder1_st = "0-851";
-string folder2_st = "852-1593";
-int split = 851;
+//string folder1_st = "0-851";
+//string folder2_st = "852-1593";
+//int split = 851;
 
 TLorentzVector P1, P2, P12, P1boost, P2boost;
 bool update = false;
-		
+	
 ///////////////////////////////////
 void makeDistros5D(){
+  // we hill have only two sets of histograms
+  // 0 is a high stats SM; the other the sum of JHEP benchmaks
 
   //out file
   TFile *out(0);
   std::stringstream sstr;
-  sstr << "../../Distros_" << np << "p_" << nev << "ev_"<< ns << "sam" << option;
+  sstr << "Distros_" << np << "p_SM600k_sumBenchJHEP" << option;
   string outfile = sstr.str() + ".root";
   if(!update)  { out = TFile::Open(outfile.c_str(), "RECREATE"); }  //RECREATE
   else           out = TFile::Open(outfile.c_str(), "UPDATE");   
 
-  TDirectory *batch1 = out->mkdir(folder1_st.c_str());
-  TDirectory *batch2 = out->mkdir(folder2_st.c_str());
+  //TDirectory *batch1 = out->mkdir(folder1_st.c_str());
+  //TDirectory *batch2 = out->mkdir(folder2_st.c_str());
 
-  typedef event bench[nev];
+  typedef event bench[nevSM];
   bench *ev = new bench[ns]; 
 
   char htitle2[20];
+
+      //string samplename = std::to_string(nhist); // go with ordering only.
+      TH1D pt[2], pt2[2], pzl[2], pzh[2], mhh[2];
+      TH1D hth[2], hcth[2], hths[2], hcths[2];
+      vector<TH2D *>  bin1;
+   
+
+      for(int f=0; f<2; ++f)  { 
+      string samplename = to_string(f); // go with ordering only.
+      sprintf (htitle2,"%s_pt",samplename.c_str()); //debug
+      pt[f].SetName(htitle2);
+      pt[f].SetTitle(htitle2);
+      pt[f].SetBins(100,0.,600.);
+
+      sprintf (htitle2,"%s_pt2",samplename.c_str()); //debug
+      pt2[f].SetName(htitle2);
+      pt2[f].SetTitle(htitle2);
+      pt2[f].SetBins(100,0.,600.);
+
+      sprintf (htitle2,"%s_pzl",samplename.c_str());
+      pzl[f].SetName(htitle2);
+      pzl[f].SetTitle(htitle2);
+      pzl[f].SetBins(500,-1000.,1000.); //400
+
+      sprintf (htitle2,"%s_pzh",samplename.c_str());
+      pzh[f].SetName(htitle2);
+      pzh[f].SetTitle(htitle2);
+      pzh[f].SetBins(500,0.,2500.);
+
+      sprintf (htitle2,"%s_mhh",samplename.c_str());
+      mhh[f].SetName(htitle2);
+      mhh[f].SetTitle(htitle2);
+      mhh[f].SetBins(200,0.,1000.);
+
+      sprintf (htitle2,"%s_hth",samplename.c_str());
+      hth[f].SetName(htitle2);
+      hth[f].SetTitle(htitle2);
+      hth[f].SetBins(200,0.,3.2); //debug
+
+      sprintf (htitle2,"%s_hcth",samplename.c_str()); //debug
+      hcth[f].SetName(htitle2);
+      hcth[f].SetTitle(htitle2);
+      hcth[f].SetBins(200,-1.,1.); //debug
+ 
+      sprintf (htitle2,"%s_hths",samplename.c_str());
+      hths[f].SetName(htitle2);
+      hths[f].SetTitle(htitle2);
+      hths[f].SetBins(200,0.,3.2); //debug
+
+      sprintf (htitle2,"%s_hcths",samplename.c_str()); //debug
+      hcths[f].SetName(htitle2);
+      hcths[f].SetTitle(htitle2);
+      hcths[f].SetBins(100,0.,1.); //debug
+
+      sprintf (htitle2,"H%sbin1",samplename.c_str()); //debug
+      TH2D *hdumb = new TH2D(htitle2, htitle2, 90,0.,1800.,10,-1,1.);
+      bin1.push_back(hdumb);
+      //bin1[f].SetName(htitle2);
+      //bin1[f].SetTitle(htitle2);
+      //bin1[f].SetBins(90,0.,1800.,10,-1,1.); //debug
+      //bin1[f].GetXaxis()->SetRange(0.,1800.);
+      //bin1[f].GetYaxis()->SetRange(-1,1.);
+      //bin1[f].Rebin2D(90,10,htitle2);
+
+      //sprintf (htitle2,"%s_bin2",samplename.c_str()); //debug
+      //bin2[f].SetName(htitle2);
+      //bin2[f].SetTitle(htitle2);
+      //bin2[f].SetBins(50,0.,1300.,5,0.,1.); //debug
+      }// close declare histos
 
   // Reading ASCII, one file a time
   // ------------------------------
   ifstream filelist5(fileslist_st);
   ifstream infile;
   int nf = 0;
-  for(int f=0; f<ns; ++f) {
-    //cout << "Reading file # " << f << endl;
+  for(int f=0; f<13; ++f) { // ns
+    cout << "Reading file # " << f << endl;
     ostringstream fnumber;
     string filename;
     string fname;
-    string samplename = std::to_string(f); // go with ordering only.
     filelist5 >> fname;
-    //to extract samplename
-    /*//debug!!!!
-    int len = 0;
-    if(f<851) len = fname.length()-10 - fname.find("L");
-    else len = fname.length()-4 - fname.find("L");
-    samplename = fname.substr(fname.find("L"), len);
-    */
-    //if(f==0 || f==851 || f==852){
-    //  cout << samplename << endl;
-    //    }
 
     //fname = "ascii_" + samplename + ".txt";
     filename = inputPath+fname.c_str();
@@ -105,60 +168,19 @@ void makeDistros5D(){
     else nf++;
      
    // 1 = higgs1; 2 = higgs2;
+    int pID;
+    int nev=0;
+    if(f==0) nev = nevSM; else nev = nevBench;
     for (int k=0; k<nev; ++k) {  // loop on number of events
-        infile >> ev[f][k].px1 >> ev[f][k].py1 >> ev[f][k].pz1 >> ev[f][k].E1 >> ev[f][k].m1;
-        infile >> ev[f][k].px2 >> ev[f][k].py2 >> ev[f][k].pz2 >> ev[f][k].E2 >> ev[f][k].m2;
+//        infile >> pID >> ev[f][k].px1 >> ev[f][k].py1 >> ev[f][k].pz1 >> ev[f][k].E1 >> ev[f][k].m1;
+//        infile >> pID >> ev[f][k].px2 >> ev[f][k].py2 >> ev[f][k].pz2 >> ev[f][k].E2 >> ev[f][k].m2;
+        infile >> pID >> ev[f][k].px1 >> ev[f][k].py1 >> ev[f][k].pz1 >> ev[f][k].E1 ;
+        infile >> pID >> ev[f][k].px2 >> ev[f][k].py2 >> ev[f][k].pz2 >> ev[f][k].E2 ;
       }
       infile.close();    
-
-      TH1D pt, pt2, pzl, pzh, mhh;
-      TH1D hth, hcth, hths, hcths;
-
-      sprintf (htitle2,"%s_pt",samplename.c_str()); //debug
-      pt.SetName(htitle2);
-      pt.SetTitle(htitle2);
-      pt.SetBins(100,0.,600.);
-
-      sprintf (htitle2,"%s_pt2",samplename.c_str()); //debug
-      pt2.SetName(htitle2);
-      pt2.SetTitle(htitle2);
-      pt2.SetBins(100,0.,600.);
-
-      sprintf (htitle2,"%s_pzl",samplename.c_str());
-      pzl.SetName(htitle2);
-      pzl.SetTitle(htitle2);
-      pzl.SetBins(500,-1000.,1000.); //400
-
-      sprintf (htitle2,"%s_pzh",samplename.c_str());
-      pzh.SetName(htitle2);
-      pzh.SetTitle(htitle2);
-      pzh.SetBins(500,0.,2500.);
-
-      sprintf (htitle2,"%s_mhh",samplename.c_str());
-      mhh.SetName(htitle2);
-      mhh.SetTitle(htitle2);
-      mhh.SetBins(200,0.,1000.);
-
-      sprintf (htitle2,"%s_hth",samplename.c_str());
-      hth.SetName(htitle2);
-      hth.SetTitle(htitle2);
-      hth.SetBins(200,0.,3.2); //debug
-
-      sprintf (htitle2,"%s_hcth",samplename.c_str()); //debug
-      hcth.SetName(htitle2);
-      hcth.SetTitle(htitle2);
-      hcth.SetBins(200,-1.,1.); //debug
- 
-      sprintf (htitle2,"%s_hths",samplename.c_str());
-      hths.SetName(htitle2);
-      hths.SetTitle(htitle2);
-      hths.SetBins(200,0.,3.2); //debug
-
-      sprintf (htitle2,"%s_hcths",samplename.c_str()); //debug
-      hcths.SetName(htitle2);
-      hcths.SetTitle(htitle2);
-      hcths.SetBins(100,0.,1.); //debug
-
+      // in which histogram to save
+      int nhist=0;
+      if(f==0) nhist = 0; else nhist = 1;
       // Some preprocessing:
       // 1 - order by pt -> pthi, ptlo
       // 2 - compute dphi
@@ -186,56 +208,47 @@ void makeDistros5D(){
   	  ev[f][k].pzl=-ev[f][k].pzl;
         }
        //Fill histos
-        pt.Fill(ev[f][k].pt);
-        pt2.Fill(ev[f][k].pt2);
-        pzl.Fill(ev[f][k].pzl);
-        pzh.Fill(ev[f][k].pzh);
-        mhh.Fill(P12.M());
+        pt[nhist].Fill(ev[f][k].pt);
+        pt2[nhist].Fill(ev[f][k].pt2);
+        pzl[nhist].Fill(ev[f][k].pzl);
+        pzh[nhist].Fill(ev[f][k].pzh);
+        mhh[nhist].Fill(P12.M());
 
        //angle computation   
         theta = P1.Theta();  //TMath::ACos(P1.Pz()/P1.P());
         costheta = P1.CosTheta();
-        hth.Fill(theta); //debug
-        hcth.Fill(costheta); //debug
-
-        //theta = P2.Theta();  //TMath::ACos(P1.Pz()/P1.P());
-        // costheta = P2.CosTheta();
-        // hth.Fill(theta); //debug
-        // hcth.Fill(costheta); //debug
+        hth[nhist].Fill(theta); //debug
+        hcth[nhist].Fill(costheta); //debug
 
        //star angle computation           
         P1boost = P1;
-        //P2boost = P2;
-        //minus needed? ...
-        P1boost.Boost(-P12.BoostVector()); //equal to (-P1.px()/P1.e(),-P1.py()/P1.e(),-P1.pz()/P1.e())
-        //P2boost.Boost(-P12.BoostVector()); //equal to (-P2.px()/P2.e(),-P2.py()/P2.e(),-P2.pz()/P2.e())
-
-        thetast = P1boost.Theta();  //equal to TMath::ACos(P1.Pz()/P1.P());
+        P12 = P1 + P2; // this is the total vectorial momenta of the system
+        P1boost.Boost(-P12.BoostVector()); 
+        thetast = P1boost.Theta();  
         costhetast = P1boost.CosTheta();
-//        if (costhetast< 0) costhetast *= -1; //to get abs
-        hths.Fill(thetast); 		//debug
-        hcths.Fill(abs(costhetast)); //debug
+        hths[nhist].Fill(thetast); 		
+        hcths[nhist].Fill(abs(costhetast)); 
 
-//        thetast = P2boost.Theta();
-//        costhetast = P2boost.CosTheta();
-//        if (P12.pz()< 0) costhetast *= -1; //to get abs
-//        hths.Fill(thetast); 		//debug
-//        hcths.Fill(abs(costhetast)); //debug
-
-//        if(k==0) cout << samplename << "  " << P12.M() << "  " << ev[f][k].M <<endl; 	
+        costhetast = P1boost.CosTheta(); // this is the costTheta
+        bin1[nhist]->Fill(P12.M(),costhetast); 
+        //bin2[nhist].Fill(P12.M(),costhetast); 
       }
-      if(f<=split) batch1->cd();
-      else batch2->cd();
-      pt.Write();
-      pt2.Write();
-      pzl.Write();
-      pzh.Write();
-      mhh.Write();
-      hth.Write();
-      hcth.Write();
-      hths.Write();
-      hcths.Write();    
-      
+      //if(f<=split) batch1->cd();
+      //else batch2->cd();
+     if(f ==0 || f ==12) { 
+      pt[nhist].Write();
+      pt2[nhist].Write();
+      pzl[nhist].Write();
+      pzh[nhist].Write();
+      mhh[nhist].Write();
+      hth[nhist].Write();
+      hcth[nhist].Write();
+      hths[nhist].Write();
+      hcths[nhist].Write(); 
+      bin1[nhist]->Write();
+      //bin2[nhist].Write();    
+      }// write only after SM and last file
+
     }
   cout << " " << nf << " files read" << endl;
 

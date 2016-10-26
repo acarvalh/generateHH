@@ -119,8 +119,8 @@ extern "C" void Likelihood(int& npar, double* grad, double& fval, double* xval, 
        (A11*cg*kl+A12*c2g)*pow(kt,2)+
        (A13*kl*cg+A14*c2g)*kt*kl+A15*cg*c2g*kl);
     double error;
-    if (i==0) error =0.001*cross_section[i];
-    else error = 0.1*cross_section[i]+errNBSM-errNSM; 
+    if (i==0) error =0.0001*cross_section[i];
+    else error = 0.001*cross_section[i]+0.001*errNBSM-0.001*errNSM; 
     flike += -0.5*pow((xs-cross_section[i])/error,2);
   }
   fval = -flike;
