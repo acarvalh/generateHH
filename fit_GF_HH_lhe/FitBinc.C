@@ -120,7 +120,7 @@ extern "C" void Likelihood(int& npar, double* grad, double& fval, double* xval, 
        (A13*kl*cg+A14*c2g)*kt*kl+A15*cg*c2g*kl);
     double error;
     if (i==0) error =0.0001*cross_section[i];
-    else error = 0.001*cross_section[i]+0.001*errNBSM-0.001*errNSM; 
+    else error = 0.01*cross_section[i]+errNBSM-errNSM; 
     flike += -0.5*pow((xs-cross_section[i])/error,2);
   }
   fval = -flike;
@@ -151,32 +151,63 @@ void FitBinc (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nmaxtest = 
   myfile.open ("coefficientsByBin.txt");
   TFile *f = new TFile("../mapV1/Distros_all_5p_20000ev_1507sam_13TeV_JHEPv3.root");
   TFile *fSM = new TFile("Distros_5p_SM600k_sumBenchJHEP_13TeV.root");
+  Float_t binsx[12]  = {250.,300.,350., 400.,450.,500.,550.,600.,700.,800.,900,1000.}; 
+  Float_t binsy[4]  = { -1., -0.6,0.6,1. };
   TH2D * h1SM = (TH2D*) fSM->Get("H0bin1");
-  //h1SM->Draw("colz");
-  //h1SM->Rebin2D(90,5);
   TH2D * h1Sum = (TH2D*) fSM->Get("H1bin1");
+   //create a new TH2 with your bin arrays spec
+   TH2F *hSMrebin = new TH2F("SMrebin","",11,binsx,3,binsy);
+   TH2F *hSumrebin = new TH2F("Sumrebin","",11,binsx,3,binsy);
+   TAxis *xaxis = h1SM->GetXaxis();
+   TAxis *yaxis = h1SM->GetYaxis();
+   for (int j=1; j<=yaxis->GetNbins();j++) {
+      for (int i=1; i<=xaxis->GetNbins();i++) {
+         double bmhh= xaxis->GetBinCenter(i);
+         double bcost=yaxis->GetBinCenter(j);
+         if (bmhh>259 and bmhh<1001){
+         hSMrebin->Fill(xaxis->GetBinCenter(i),yaxis->GetBinCenter(j),h1SM->GetBinContent(i,j));
+         hSumrebin->Fill(xaxis->GetBinCenter(i),yaxis->GetBinCenter(j),h1Sum->GetBinContent(i,j));
+         }
+      }
+   }
+
+  hSMrebin->Draw("colz");
+  //h1SM->Rebin2D(90,5);
   //h1Sum->Rebin2D(90,5);
 
-  for(int mhh =0 ; mhh< 90; mhh++){ // 1-91
-    for(int cost =1 ; cost< 10; cost++){ // 0 -10
+  for(int mhh =0 ; mhh< 11; mhh++){ // 1-91
+    for(int cost =0 ; cost< 3; cost++){ // 0 -10
       int counter = 1;
-      effSum = (h1Sum->GetBinContent(mhh,cost)); ///(h1Sum->Integral()      
-      effSM = (h1SM->GetBinContent(mhh,cost)); ///(h1SM->Integral())
+      effSum = (hSumrebin->GetBinContent(mhh+1,cost+1)); ///(h1Sum->Integral()      
+      effSM = (hSMrebin->GetBinContent(mhh+1,cost+1)); ///(h1SM->Integral())
       for(int i =0 ; i< 1507; i++){ // 1507
         const char * htitle = Form("%d_bin1",i);
         TH2D * h1 = (TH2D*) f->Get(htitle);
+   const char * htitlerebin = Form("%dbin1Rebin%di%d",i,mhh,cost);
+   TH2F *h1rebin = new TH2F(htitlerebin,"",11,binsx,3,binsy);
+   for (int j=1; j<=yaxis->GetNbins();j++) {
+      for (int i=1; i<=xaxis->GetNbins();i++) {
+         double bmhh= xaxis->GetBinCenter(i);
+         double bcost=yaxis->GetBinCenter(j);
+         if (bmhh>259 and bmhh<1001){
+         h1rebin->Fill(xaxis->GetBinCenter(i),yaxis->GetBinCenter(j),h1->GetBinContent(i,j));
+         }
+      }
+   }
+   if(mhh==0 && cost==0 && i==0) h1rebin->Draw("colz");
         //h1->Rebin2D(90,5);
-        double effBSM = (h1->GetBinContent(mhh,cost));///(h1->Integral())  
+        double effBSM = (h1rebin->GetBinContent(mhh+1,cost+1));///(h1->Integral())  
         double cross =cross_sectiontotal[i]*(effBSM*30/effSM)/SMxs;
-        errNBSM = (effBSM*30/effSM)*(sqrt(h1->GetBinContent(mhh,cost))/(h1->GetBinContent(mhh,cost)) )/(h1->GetBinContent(mhh,cost));
-        errNSM = (effBSM*30/effSM)*(sqrt(h1SM->GetBinContent(mhh,cost))/(h1SM->GetBinContent(mhh,cost)) )/(h1SM->GetBinContent(mhh,cost));
+        errNBSM = (effBSM*30/effSM)*(sqrt(h1rebin->GetBinContent(mhh+1,cost+1))/(h1rebin->GetBinContent(mhh+1,cost+1)) );
+        errNSM = (effBSM*30/effSM)*(sqrt(hSMrebin->GetBinContent(mhh+1,cost+1))/(hSMrebin->GetBinContent(mhh+1,cost+1)) );
         ratioeff=(effBSM*30/effSM);
         if(abs(par0r[i]) <2 and par2r[i] ==0 and par3r[i] ==0 and par4r[i] ==0 ){
            cout<<par0r[i]<<" "<<par1r[i]<<" "<<par2r[i]<<" "<<par3r[i]<<" "<<par4r[i]<<" "
-               <<h1->GetXaxis()->GetBinCenter(mhh)<<" "<<h1->GetYaxis()->GetBinCenter(cost)<<" "<<effBSM/20000<<" "<<effSM/600000<<" RHH = "<< cross_sectiontotal[i]*(effBSM*30/effSM)/SMxs
+               <<h1rebin->GetXaxis()->GetBinCenter(mhh+1)<<" "<<h1rebin->GetYaxis()->GetBinCenter(cost+1)<<" "<<effBSM/20000<<" "<<effSM/600000<<" RHH = "<< cross_sectiontotal[i]*(effBSM*30/effSM)/SMxs
                <<" Ratio = "<< cross_sectiontotal[i]*(effBSM*30/effSM)<<" numeric error = "<< errNBSM<<" " <<errNSM <<endl;
         }
         if(effBSM > 0 && effSM > 0) { // ignore if zero , or too few
+        //if(1 > 0) {
            cross_section[counter] = cross;
            par0[counter]= par0r[i];
            par1[counter]= par1r[i];
@@ -250,14 +281,14 @@ void FitBinc (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nmaxtest = 
              <<err[7]<<","<<err[8]<<","<<err[9]<<","<<err[10]<<","<<err[11]<<","<<err[12]<<","<<err[13]<<","<<err[14]<<"}"<<endl;
    
     cout<<"npoints "<<counter<<endl;
-    myfile << counter  <<" "<<effSM/600000<<  " "<<effSum/(12*100000) << " "<< h1SM->GetXaxis()->GetBinCenter(mhh)<<" "<< h1SM->GetYaxis()->GetBinCenter(cost)  <<" "
+    myfile << counter  <<" "<<effSM/600000<<  " "<<effSum/(12*100000) << " "<< hSMrebin->GetXaxis()->GetBinCenter(mhh+1)<<" "<< hSMrebin->GetYaxis()->GetBinCenter(cost+1)  <<" "
            <<a[0]<<" "<<a[1]<<" "<<a[2]<<" "<<a[3]<<" "<<a[4]<<" "<<a[5]<<" "
            <<a[6]<<" "<<a[7]<<" "<<a[8]<<" "<<a[9]<<" "<<a[10]<<" "<<a[11]<<" "<<a[12]<<" "
            <<a[13]<<" "<<a[14]<<" " <<err[0]<<" "<<err[1]<<" "<<err[2]<<" "<<err[3]<<" "
            <<err[4]<<" "<<err[5]<<" "<<err[6]<<" "<<err[7]<<" "<<err[8]<<" "
            <<err[9]<<" "<<err[10]<<" "<<err[11]<<" "<<err[12]<<" "<<err[13]<<" "<<err[14]<<endl;
   } // close if counter
-  else     myfile << counter <<" "<<effSM/600000<<  " "<< h1SM->GetXaxis()->GetBinCenter(mhh)<<" "<< h1SM->GetYaxis()->GetBinCenter(cost)  <<" 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 "<<endl;
+  else     myfile << counter <<" "<<effSM/600000<<  " "<< hSMrebin->GetXaxis()->GetBinCenter(mhh)<<" "<< hSMrebin->GetYaxis()->GetBinCenter(cost)  <<" 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 "<<endl;
 //*/
 
 
