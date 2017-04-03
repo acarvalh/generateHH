@@ -38,13 +38,14 @@ struct benchmark {
 // input files - parameters - TO BE CHANGED
 //******************************************
 int np = 5;	 //number of parameters
-const int ns = 105;   //number of samples
+const int ns = 297;   //number of samples
 string option = "_13TeV"; //debug
 const int nev = 50000;	  //number of ev per sample
 
-string inputPath = "GluonF_HH_toRecursive_lhe/GF_HH_";  //folder with ascii lhe files (outside 'git' area)
-//string inputPath = "/lustre/cmswork/carvalho/CMSSW_8_0_18/src/genproductions/bin/MadGraph5_aMCatNLO/GluonF_HH_toRecursive_lhe/GF_HH_";  //folder with ascii lhe files (outside 'git' area)
-string fileslist_st = "utils/list_toRecursive.txt"; //ascii names list !!!!!!!!!!!!!!!!
+string inputPath = "/afs/cern.ch/work/a/acarvalh/public/toAnamika/GF_HH_toRecursive/GF_HH_";  //folder with ascii lhe files (outside 'git' area)
+//string inputPath = "GluonF_HH_toRecursive_lhe/GF_HH_";  //folder with ascii lhe files (outside 'git' area)
+//string inputPath = "/lustre/cmswork/carvalho/CMSSW_8_0_18/src/genproductions/bin/MadGraph5_aMCatNLO/GluonF_HH_toRecursive_lhe/GF_HH_";  //folder with ascii lhe files (outside 'git' area) 
+//string fileslist_st = "utils/list_toRecursive.txt"; //ascii names list !!!!!!!!!!!!!!!!
 
 //to be changed accordingly to lhe structure (3p, 5p,..)
 //string folder1_st = "0-851";
@@ -62,7 +63,7 @@ void makeDistros5D_toRecursive(){
   //out file
   TFile *out(0);
   std::stringstream sstr;
-  sstr << "Distros_" << np << "p_SM100k_toRecursive" << option;
+  sstr << "Distros_" << np << "p_SM3M_toRecursive_5D_" << option;
   string outfile = sstr.str() + ".root";
   if(!update)  { out = TFile::Open(outfile.c_str(), "RECREATE"); }  //RECREATE
   else           out = TFile::Open(outfile.c_str(), "UPDATE");   
@@ -72,7 +73,7 @@ void makeDistros5D_toRecursive(){
 
   typedef event bench[nev];
   bench *ev = new bench[ns]; 
-      char htitle2[104];
+      char htitle2[296];
   for(int f=0; f<ns; ++f)  { 
 
 
@@ -142,8 +143,14 @@ void makeDistros5D_toRecursive(){
       bin1.SetTitle(htitle2);
       bin1.SetBins(90,0.,1800.,10,-1,1.); //debug
 
-      Float_t binsx[14]  = { 250.,270.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000. }; 
+      //Float_t binsx[14]  = { 250.,270.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000.}; 
+      Float_t binsxM[17]  = { 250.,260.,270.,290.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000.,1500 }; 
       Float_t binsy[4]  = { -1., -0.55,0.55,1. };
+      sprintf (htitle2,"H%sbin3",samplename.c_str()); //debug
+      TH2D *bin3 = new TH2D(htitle2, htitle2,16,binsxM,3,binsy);
+
+      Float_t binsx[14]  = { 250.,270.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000.}; 
+      //Float_t binsx[17]  = { 250.,260.,270.,290.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000.,1500 }; 
       sprintf (htitle2,"H%sbin2",samplename.c_str()); //debug
       TH2D *bin2 = new TH2D(htitle2, htitle2,13,binsx,3,binsy);
       //bin2.SetName(htitle2);
@@ -155,7 +162,7 @@ void makeDistros5D_toRecursive(){
   cout<<"histos declared"<<endl;
   // Reading ASCII, one file a time
   // ------------------------------
-  ifstream filelist5(fileslist_st);
+  //ifstream filelist5(fileslist_st);
   ifstream infile;
   int nf = 0;
   //for(int f=0; f<ns; ++f) { // ns
@@ -173,9 +180,13 @@ void makeDistros5D_toRecursive(){
     /////////////////////////////////
     // to construct the filename
     ////////////////////////////////
+    string filename;
+    if(f==0) {filename = "/afs/cern.ch/work/a/acarvalh/eoserase/GF_3M.decayed"; }
+    else {
     std::stringstream sstr1;
     sstr1 << f;
-    string filename = inputPath+sstr1.str() +".lhe.decayed";
+    filename = inputPath+sstr1.str() +".lhe.decayed";
+    }
     cout << filename << endl;
     infile.open(filename.c_str());
     if(!infile)	{      //check if file exists
@@ -185,7 +196,7 @@ void makeDistros5D_toRecursive(){
    // 1 = higgs1; 2 = higgs2;
     int pID;
     int Nev = 0;
-    if(f==0) Nev = 600000; else Nev = nev; 
+    if(f==0) Nev = 3000000; else Nev = nev; 
     for (int k=0; k<Nev; ++k) {  // loop on number of events
         infile >> pID >> ev[f][k].px1 >> ev[f][k].py1 >> ev[f][k].pz1 >> ev[f][k].E1 ;
         infile >> pID >> ev[f][k].px2 >> ev[f][k].py2 >> ev[f][k].pz2 >> ev[f][k].E2 ;
@@ -245,6 +256,7 @@ void makeDistros5D_toRecursive(){
         costhetast = P1boost.CosTheta(); // this is the costTheta
         bin1.Fill(P12.M(),costhetast); 
         bin2->Fill(P12.M(),costhetast); 
+        bin3->Fill(P12.M(),costhetast); 
         //bin2[nhist].Fill(P12.M(),costhetast); 
       }
       //if(f<=split) batch1->cd();
@@ -261,6 +273,7 @@ void makeDistros5D_toRecursive(){
       hcths.Write(); 
       bin1.Write();
       bin2->Write();
+      bin3->Write();
       //bin2[nhist].Write();    
       }// write only after SM and last file
 
