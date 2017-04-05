@@ -63,7 +63,7 @@ void makeDistros5D_toRecursive(){
   //out file
   TFile *out(0);
   std::stringstream sstr;
-  sstr << "Distros_" << np << "p_SM3M_toRecursive_5D_" << option;
+  sstr << "Distros_" << np << "p_SM3M_toRecursive_5D" << option;
   string outfile = sstr.str() + ".root";
   if(!update)  { out = TFile::Open(outfile.c_str(), "RECREATE"); }  //RECREATE
   else           out = TFile::Open(outfile.c_str(), "UPDATE");   
@@ -144,10 +144,10 @@ void makeDistros5D_toRecursive(){
       bin1.SetBins(90,0.,1800.,10,-1,1.); //debug
 
       //Float_t binsx[14]  = { 250.,270.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000.}; 
-      Float_t binsxM[17]  = { 250.,260.,270.,290.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000.,1500 }; 
+      Float_t binsxM[16]  = { 247.,270.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000.,1500.,50000 }; 
       Float_t binsy[4]  = { -1., -0.55,0.55,1. };
       sprintf (htitle2,"H%sbin3",samplename.c_str()); //debug
-      TH2D *bin3 = new TH2D(htitle2, htitle2,16,binsxM,3,binsy);
+      TH2D *bin3 = new TH2D(htitle2, htitle2,15,binsxM,3,binsy);
 
       Float_t binsx[14]  = { 250.,270.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000.}; 
       //Float_t binsx[17]  = { 250.,260.,270.,290.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000.,1500 }; 

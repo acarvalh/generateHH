@@ -41,7 +41,7 @@ int np = 5;	 //number of parameters
 int ns = 13;   //number of samples
 string option = "_13TeV"; //debug
 const int nevBench = 100000;	  //number of ev per sample
-const int nevSM = 100000;	  //number of ev per sample
+const int nevSM = 3000000;	  //number of ev per sample
 
 string inputPath = "";  //folder with ascii lhe files (outside 'git' area)
 //string fileslist_st = "utils/list_ascii_13TeV_1593.txt"; //ascii names list !!!!!!!!!!!!!!!!
@@ -64,7 +64,8 @@ void makeDistros5D(){
   //out file
   TFile *out(0);
   std::stringstream sstr;
-  sstr << "Distros_" << np << "p_SM600k_sumBenchJHEP" << option;
+  //sstr << "Distros_" << np << "p_SM600k_sumBenchJHEP" << option;
+  sstr << "Distros_" << np << "p_SM3M_sumBenchJHEP" << option;
   string outfile = sstr.str() + ".root";
   if(!update)  { out = TFile::Open(outfile.c_str(), "RECREATE"); }  //RECREATE
   else           out = TFile::Open(outfile.c_str(), "UPDATE");   
@@ -80,7 +81,7 @@ void makeDistros5D(){
       //string samplename = std::to_string(nhist); // go with ordering only.
       TH1D pt[2], pt2[2], pzl[2], pzh[2], mhh[2];
       TH1D hth[2], hcth[2], hths[2], hcths[2];
-      vector<TH2D *>  bin1 , bin2;
+      vector<TH2D *>  bin1 , bin2, bin3;
    
 
       for(int f=0; f<2; ++f)  { 
@@ -134,11 +135,19 @@ void makeDistros5D(){
       TH2D *hdumb = new TH2D(htitle2, htitle2, 90,0.,1800.,10,-1,1.);
       bin1.push_back(hdumb);
 
-      Float_t binsx[14]  = { 250.,270.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000. }; 
+      //Float_t binsx[14]  = { 250.,270.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000.}; 
+      Float_t binsxM[16]  = { 247.,270.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000.,1500.,50000 }; 
       Float_t binsy[4]  = { -1., -0.55,0.55,1. };
+      sprintf (htitle2,"H%sbin3",samplename.c_str()); //debug
+      TH2D *bin3dumb = new TH2D(htitle2, htitle2,15,binsxM,3,binsy);
+      bin3.push_back(bin3dumb);
+
+      Float_t binsx[14]  = { 250.,270.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000. }; 
+      //Float_t binsy[4]  = { -1., -0.55,0.55,1. };
       sprintf (htitle2,"H%sbin2",samplename.c_str()); //debug
       TH2D *bin2dumb = new TH2D(htitle2, htitle2,13,binsx,3,binsy);
       bin2.push_back(bin2dumb);
+
 
       //bin1[f].SetName(htitle2);
       //bin1[f].SetTitle(htitle2);
@@ -239,6 +248,7 @@ void makeDistros5D(){
         costhetast = P1boost.CosTheta(); // this is the costTheta
         bin1[nhist]->Fill(P12.M(),costhetast); 
         bin2[nhist]->Fill(P12.M(),costhetast); 
+        bin3[nhist]->Fill(P12.M(),costhetast); 
       }
       //if(f<=split) batch1->cd();
       //else batch2->cd();
@@ -254,6 +264,7 @@ void makeDistros5D(){
       hcths[nhist].Write(); 
       bin1[nhist]->Write();
       bin2[nhist]->Write();    
+      bin3[nhist]->Write();    
       }// write only after SM and last file
 
     }

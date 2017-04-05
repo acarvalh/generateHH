@@ -55,7 +55,7 @@
 
 using namespace std;
 
-static int Npoints=1507;
+static int Npoints=296;
 static int nmin;
 static int nmax;
 static double cross_sectiontotal[2800];
@@ -135,8 +135,8 @@ void FitBinc (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nmaxtest = 
   ////////////////////////////////////////////////////////////////////////////////////
   // Read in the cross section values and the parameters space points
   ifstream XSvals;
-  XSvals.open("../fit_minut_maker/list_all_translation_CX.txt");//"14TeV_CX_5k_opositecgw.ascii");// "8TeV_CX_5k_opositecgw.ascii");//
-  for (int i=0; i<1507; i++)  XSvals >> par0r[i] >> par1r[i] >> par2r[i] >> par3r[i] >> par4r[i] >> cross_sectiontotal[i] >> cross_sectionerr[i];
+  XSvals.open("tableToFitA3andA7.txt");//"14TeV_CX_5k_opositecgw.ascii");// "8TeV_CX_5k_opositecgw.ascii");//
+  for (int i=0; i<296; i++)  XSvals >> par0r[i] >> par1r[i] >> par2r[i] >> par3r[i] >> par4r[i] >> cross_sectiontotal[i] >> cross_sectionerr[i];
   cout << "**********************************************" << endl;
   ////////////////////////////////////////////////////////////////////////////////////
   // read SM to normalize
@@ -149,7 +149,7 @@ void FitBinc (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nmaxtest = 
   myfile << " npoints  mhh cost EffSM a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14 a15 Erra1 Erra2 Erra3 Erra4 Erra5 Erra6 Erra7 Erra8 Erra9 Erra10 Erra11 Erra12 Erra13 Erra14 Erra15" <<endl;
   //myfile << counter << " "<< h1SM->GetXaxis()->FindBin(mhh)<<" "<< h1SM->GetYaxis()->FindBin(cost)  <<" "<<a[0]<<" "<<a[1]<<" "<<a[2]<<" "<<a[3]<<" "<<a[4]<<" "<<a[5]<<" "<<a[6]<<" "<<a[7]<<" "<<a[8]<<" "<<a[9]<<" "<<a[10]<<" "<<a[11]<<" "<<a[12]<<" "<<a[13]<<" "<<a[14]<<endl;
   myfile.open ("coefficientsByBin.txt");
-  TFile *f = new TFile("../mapV1/Distros_all_5p_20000ev_1507sam_13TeV_JHEPv3.root");
+  TFile *f = new TFile("Distros_5p_SM3M_toRecursive_5D_13TeV.root");
   TFile *fSM = new TFile("Distros_5p_SM600k_sumBenchJHEP_13TeV.root");
   Float_t binsx[12]  = {250.,300.,350., 400.,450.,500.,550.,600.,700.,800.,900,1000.}; 
   Float_t binsy[4]  = { -1., -0.6,0.6,1. };
@@ -180,7 +180,7 @@ void FitBinc (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nmaxtest = 
       int counter = 1;
       effSum = (hSumrebin->GetBinContent(mhh+1,cost+1)); ///(h1Sum->Integral()      
       effSM = (hSMrebin->GetBinContent(mhh+1,cost+1)); ///(h1SM->Integral())
-      for(int i =0 ; i< 1507; i++){ // 1507
+      for(int i =0 ; i< 296; i++){ // 1507
         const char * htitle = Form("%d_bin1",i);
         TH2D * h1 = (TH2D*) f->Get(htitle);
    const char * htitlerebin = Form("%dbin1Rebin%di%d",i,mhh,cost);

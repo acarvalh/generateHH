@@ -1,4 +1,4 @@
-/afs/cern.ch/work/a/acarvalh/public/toAnamika/GF_HH_BSM/GF_HH_0_600k.lhe.decayed
+/afs/cern.ch/work/a/acarvalh/public/toAnamika/GF_HH_benchmarks/GF_3M.decayed
 /afs/cern.ch/work/a/acarvalh/public/toAnamika/GF_HH_BSM/GF_HH_1.lhe.decayed
 /afs/cern.ch/work/a/acarvalh/public/toAnamika/GF_HH_BSM/GF_HH_2.lhe.decayed
 /afs/cern.ch/work/a/acarvalh/public/toAnamika/GF_HH_BSM/GF_HH_3.lhe.decayed
