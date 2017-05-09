@@ -42,7 +42,7 @@ const int ns = 297;   //number of samples
 string option = "_13TeV"; //debug
 const int nev = 50000;	  //number of ev per sample
 
-string inputPath = "/afs/cern.ch/work/a/acarvalh/public/toAnamika/GF_HH_toRecursive/GF_HH_";  //folder with ascii lhe files (outside 'git' area)
+string inputPath = "/afs/cern.ch/work/a/acarvalh/generateHH/asciiHH_tofit/GF_HH_toRecursive/GF_HH_";  //folder with ascii lhe files (outside 'git' area)
 //string inputPath = "GluonF_HH_toRecursive_lhe/GF_HH_";  //folder with ascii lhe files (outside 'git' area)
 //string inputPath = "/lustre/cmswork/carvalho/CMSSW_8_0_18/src/genproductions/bin/MadGraph5_aMCatNLO/GluonF_HH_toRecursive_lhe/GF_HH_";  //folder with ascii lhe files (outside 'git' area) 
 //string fileslist_st = "utils/list_toRecursive.txt"; //ascii names list !!!!!!!!!!!!!!!!
@@ -153,10 +153,10 @@ void makeDistros5D_toRecursive(){
       //Float_t binsx[17]  = { 250.,260.,270.,290.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000.,1500 }; 
       sprintf (htitle2,"H%sbin2",samplename.c_str()); //debug
       TH2D *bin2 = new TH2D(htitle2, htitle2,13,binsx,3,binsy);
-      //bin2.SetName(htitle2);
-      //bin2.SetTitle(htitle2);
-      //bin2.SetBins(binsx,binsy); //debug
-      //bin2.SetBins(20,225.,1225.,5,-1,1.); //debug
+
+      Float_t binsySim[6]  = {  0.0,0.4,0.6,0.8, 0.9,1.0 };
+      sprintf (htitle2,"H%sbin4",samplename.c_str()); //debug
+      TH2D *bin4 = new TH2D(htitle2, htitle2,15,binsxM,5,binsySim);
 
       //}// close declare histos
   cout<<"histos declared"<<endl;
@@ -257,6 +257,7 @@ void makeDistros5D_toRecursive(){
         bin1.Fill(P12.M(),costhetast); 
         bin2->Fill(P12.M(),costhetast); 
         bin3->Fill(P12.M(),costhetast); 
+        bin4->Fill(P12.M(),abs(costhetast)); 
         //bin2[nhist].Fill(P12.M(),costhetast); 
       }
       //if(f<=split) batch1->cd();
@@ -274,6 +275,7 @@ void makeDistros5D_toRecursive(){
       bin1.Write();
       bin2->Write();
       bin3->Write();
+      bin4->Write();
       //bin2[nhist].Write();    
       }// write only after SM and last file
 

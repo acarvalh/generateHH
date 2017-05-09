@@ -81,7 +81,7 @@ void makeDistros5D(){
       //string samplename = std::to_string(nhist); // go with ordering only.
       TH1D pt[2], pt2[2], pzl[2], pzh[2], mhh[2];
       TH1D hth[2], hcth[2], hths[2], hcths[2];
-      vector<TH2D *>  bin1 , bin2, bin3;
+      vector<TH2D *>  bin1 , bin2, bin3, bin4;
    
 
       for(int f=0; f<2; ++f)  { 
@@ -148,6 +148,10 @@ void makeDistros5D(){
       TH2D *bin2dumb = new TH2D(htitle2, htitle2,13,binsx,3,binsy);
       bin2.push_back(bin2dumb);
 
+      Float_t binsySim[6]  = { 0.0,0.4,0.6,0.8, 0.9,1.0 };
+      sprintf (htitle2,"H%sbin4",samplename.c_str()); //debug
+      TH2D *bin4dumb = new TH2D(htitle2, htitle2,15,binsxM,5,binsySim);
+      bin4.push_back(bin4dumb);
 
       //bin1[f].SetName(htitle2);
       //bin1[f].SetTitle(htitle2);
@@ -249,6 +253,7 @@ void makeDistros5D(){
         bin1[nhist]->Fill(P12.M(),costhetast); 
         bin2[nhist]->Fill(P12.M(),costhetast); 
         bin3[nhist]->Fill(P12.M(),costhetast); 
+        bin4[nhist]->Fill(P12.M(),abs(costhetast)); 
       }
       //if(f<=split) batch1->cd();
       //else batch2->cd();
@@ -265,6 +270,7 @@ void makeDistros5D(){
       bin1[nhist]->Write();
       bin2[nhist]->Write();    
       bin3[nhist]->Write();    
+      bin4[nhist]->Write();    
       }// write only after SM and last file
 
     }

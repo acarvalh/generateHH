@@ -167,13 +167,16 @@ void FitBinc_SMplane (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nma
   myfile << " npoints  mhh cost EffSM a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14 a15 Erra1 Erra2 Erra3 Erra4 Erra5 Erra6 Erra7 Erra8 Erra9 Erra10 Erra11 Erra12 Erra13 Erra14 Erra15" <<endl;
   //myfile << counter << " "<< h1SM->GetXaxis()->FindBin(mhh)<<" "<< h1SM->GetYaxis()->FindBin(cost)  <<" "<<a[0]<<" "<<a[1]<<" "<<a[2]<<" "<<a[3]<<" "<<a[4]<<" "<<a[5]<<" "<<a[6]<<" "<<a[7]<<" "<<a[8]<<" "<<a[9]<<" "<<a[10]<<" "<<a[11]<<" "<<a[12]<<" "<<a[13]<<" "<<a[14]<<endl;
   //myfile.open ("coefficientsByBin_A1A3A7.txt");
-  myfile.open ("coefficientsByBin_extended_3M.txt");
+  myfile.open ("coefficientsByBin_extended_3M_costHHSim.txt");
   TFile *f = new TFile("../clustDistros/Distros_5p_SM3M_toRecursive_5D_13TeV.root"); // ("Distros_5p_SM100k_toRecursive_13TeV.root");
   TFile *fSM = new TFile("../clustDistros/Distros_5p_SM3M_sumBenchJHEP_13TeV.root");
   //TH1D * h1SM = (TH1D*) fSM->Get("H0bin2");
   //TH1D * h1Sum = (TH1D*) fSM->Get("H1bin2");
-  TH1D * h1SM = (TH1D*) fSM->Get("H0bin3"); // extended bins
-  TH1D * h1Sum = (TH1D*) fSM->Get("H1bin3");
+  //TH1D * h1SM = (TH1D*) fSM->Get("H0bin3"); // extended bins
+  //TH1D * h1Sum = (TH1D*) fSM->Get("H1bin3");
+  TH1D * h1SM = (TH1D*) fSM->Get("H0bin4"); // simmetric cost*HH
+  TH1D * h1Sum = (TH1D*) fSM->Get("H1bin4");
+
   /*
   Float_t binsx[14]  = {250.,270.,300.,330.,360.,390., 420.,450.,500.,550.,600.,700.,800.,1000.}; 
   Float_t binsy[4]  = {-1, -0.55,0.55,1};
@@ -202,7 +205,7 @@ void FitBinc_SMplane (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nma
   //for(int mhh =1 ; mhh< 13+1; mhh++){ // 1-91
   //  for(int cost =1 ; cost< 3+1; cost++){ // 0 -10
   for(int mhh =1 ; mhh< 15+1; mhh++){ // 1-91
-    for(int cost =1 ; cost< 3+1; cost++){ // 0 -10
+    for(int cost =1 ; cost< 5+1; cost++){ // 0 -10
       int counter = 1; // the 0 will be SM
       effSum = (h1Sum->GetBinContent(mhh,cost))/120.0; ///(h1Sum->Integral()      
       effSM = ((h1SM->GetBinContent(mhh,cost))/10.0)/30; ///(h1SM->Integral())
@@ -211,7 +214,7 @@ void FitBinc_SMplane (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nma
         
         if( i<105  and par0r[i] !=0 and (par2r[i] ==0 and par3r[i] ==0 and par4r[i] ==0 and i!=32)  ) {// i<104 and (par2r[i] ==0 and par3r[i] ==0 and par4r[i] ==0 and i!=32) ){ // 1507 //
         //const char * htitle = Form("H%dbin2",i+1); // skip the 0
-        const char * htitle = Form("H%dbin3",i+1); // skip the 0
+        const char * htitle = Form("H%dbin4",i+1); // skip the 0
         TH1D * h1 = (TH1D*) f->Get(htitle);
         //cout<< h1->GetXaxis()->GetNbins()<<endl;
         if(mhh==1 && cost==1 && i==1) {neventsBSM=h1->Integral(); }// h1->Draw("colz"); 
@@ -234,7 +237,7 @@ void FitBinc_SMplane (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nma
       
       //////////////////////////////////////////////////////////////////////
         if( i>104   ) {//  (par2r[i] ==0 and par3r[i] ==0 and par4r[i] ==0 and i!=32) ){ // 1507 //
-        const char * htitle = Form("H%dbin2",i+1); // skip the 0
+        const char * htitle = Form("H%dbin4",i+1); // skip the 0
         TH1D * h1 = (TH1D*) f->Get(htitle);
         //cout<< h1->GetXaxis()->GetNbins()<<endl;
         if(mhh==1 && cost==1 && i==1) {neventsBSM=h1->Integral(); }// h1->Draw("colz"); 
@@ -259,6 +262,9 @@ void FitBinc_SMplane (int nminx = 0, int nmaxx = 1507, int nmintest = 0, int nma
        cross_section[0] = 1.0;
        par0[0]= 1.0;
        par1[0]= 1.0;
+       par2[0]= 0.0;
+       par3[0]= 0.0;
+       par4[0]= 0.0;
 
       if(counter>0) {
         ///////////////////////////////////////////////////////////////////////////////////
