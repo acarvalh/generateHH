@@ -42,7 +42,7 @@ const int ns = 297;   //number of samples
 string option = "_13TeV"; //debug
 const int nev = 50000;	  //number of ev per sample
 
-string inputPath = "/afs/cern.ch/work/a/acarvalh/generateHH/asciiHH_tofit/GF_HH_toRecursive/GF_HH_";  //folder with ascii lhe files (outside 'git' area)
+string inputPath = "/eos/user/a/acarvalh/asciiHH_tofit/GF_HH_toRecursive/GF_HH_";  //folder with ascii lhe files (outside 'git' area)
 //string inputPath = "GluonF_HH_toRecursive_lhe/GF_HH_";  //folder with ascii lhe files (outside 'git' area)
 //string inputPath = "/lustre/cmswork/carvalho/CMSSW_8_0_18/src/genproductions/bin/MadGraph5_aMCatNLO/GluonF_HH_toRecursive_lhe/GF_HH_";  //folder with ascii lhe files (outside 'git' area) 
 //string fileslist_st = "utils/list_toRecursive.txt"; //ascii names list !!!!!!!!!!!!!!!!
@@ -74,6 +74,7 @@ void makeDistros5D_toRecursive(){
   typedef event bench[nev];
   bench *ev = new bench[ns]; 
       char htitle2[296];
+  char htitle3[296];
   for(int f=0; f<ns; ++f)  { 
 
 
@@ -154,9 +155,30 @@ void makeDistros5D_toRecursive(){
       sprintf (htitle2,"H%sbin2",samplename.c_str()); //debug
       TH2D *bin2 = new TH2D(htitle2, htitle2,13,binsx,3,binsy);
 
-      Float_t binsySim[6]  = {  0.0,0.4,0.6,0.8, 0.9,1.0 };
-      sprintf (htitle2,"H%sbin4",samplename.c_str()); //debug
-      TH2D *bin4 = new TH2D(htitle2, htitle2,15,binsxM,5,binsySim);
+      /*
+      Float_t binsxM2[85]  = { 250,255,260,265,270,275,280,285,290,295,
+                               300,305,310,315,320,325,330,335,340,345,
+                               350,355,360,365,370,375,380,385,390,395,
+                               400,405,410,415,420,425,430,435,440,445, 
+                               450,455,460,465,470,475,480,485,490,495,
+                               500,510,520,530,540,550,560,570,580,590,
+                               600,610,620,630,640,650,660,670,680,690,
+                               700,750,800,850,900,950,1000,1100,1200,1300,
+                               1400,1500,1750,2000,50000}; 
+      Float_t binsySim[4]  = { 0.0,0.4,0.6, 1.0 };
+      sprintf (htitle3,"H%sbin4",samplename.c_str()); //debug
+      TH2D *bin4 = new TH2D(htitle3, htitle3,84,binsxM2,3,binsySim);
+      */
+      Float_t binsxM2[60]  = { 250,260,270,280,290,300,310,320,330,340,
+                               350,360,370,380,390,400,410,420,430,440, 
+                               450,460,470,480,490,500,510,520,530,540,
+                               550,560,570,580,590,600,610,620,630,640,
+                               650,660,670,680,690,700,750,800,850,900,
+                               950,1000,1100,1200,1300,1400,1500.,1750,2000,50000}; 
+      Float_t binsySim[5]  = {  0.0,0.4,0.6,0.8, 1.0};
+      sprintf (htitle3,"H%sbin4",samplename.c_str()); //debug
+      TH2D *bin4 = new TH2D(htitle3, htitle3,59,binsxM2,4,binsySim);
+
 
       //}// close declare histos
   cout<<"histos declared"<<endl;
@@ -251,7 +273,7 @@ void makeDistros5D_toRecursive(){
         thetast = P1boost.Theta();  
         costhetast = P1boost.CosTheta();
         hths.Fill(thetast); 		
-        hcths.Fill(abs(costhetast)); 
+        hcths.Fill(costhetast); 
 
         costhetast = P1boost.CosTheta(); // this is the costTheta
         bin1.Fill(P12.M(),costhetast); 
@@ -282,7 +304,7 @@ void makeDistros5D_toRecursive(){
     //}
   cout << " " << ns << " files read" << endl;
 
-//  cout << outfile << " wrote."<< endl;
+  cout << outfile << " wrote."<< endl;
   out->Write();
   out->Close();
   delete out;

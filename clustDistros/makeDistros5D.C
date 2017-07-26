@@ -39,6 +39,7 @@ struct benchmark {
 //******************************************
 int np = 5;	 //number of parameters
 int ns = 13;   //number of samples
+//int ns = 5;   //number of samples
 string option = "_13TeV"; //debug
 const int nevBench = 100000;	  //number of ev per sample
 const int nevSM = 3000000;	  //number of ev per sample
@@ -46,7 +47,7 @@ const int nevSM = 3000000;	  //number of ev per sample
 string inputPath = "";  //folder with ascii lhe files (outside 'git' area)
 //string fileslist_st = "utils/list_ascii_13TeV_1593.txt"; //ascii names list !!!!!!!!!!!!!!!!
 string fileslist_st = "samples_JHEP.txt"; //file 0 is a high stats SM; the others are the JHEP benchmaks
-
+//string fileslist_st = "samples_JHEP_2_3_5_9.txt"; //file 0 is a high stats SM; the others are the JHEP benchmaks
 
 //to be changed accordingly to lhe structure (3p, 5p,..)
 //string folder1_st = "0-851";
@@ -66,6 +67,7 @@ void makeDistros5D(){
   std::stringstream sstr;
   //sstr << "Distros_" << np << "p_SM600k_sumBenchJHEP" << option;
   sstr << "Distros_" << np << "p_SM3M_sumBenchJHEP" << option;
+  //sstr << "Distros_" << np << "p_SM3M_sumBenchJHEP_2_3_5_9" << option;
   string outfile = sstr.str() + ".root";
   if(!update)  { out = TFile::Open(outfile.c_str(), "RECREATE"); }  //RECREATE
   else           out = TFile::Open(outfile.c_str(), "UPDATE");   
@@ -77,6 +79,7 @@ void makeDistros5D(){
   bench *ev = new bench[ns]; 
 
   char htitle2[20];
+  char htitle3[20];
 
       //string samplename = std::to_string(nhist); // go with ordering only.
       TH1D pt[2], pt2[2], pzl[2], pzh[2], mhh[2];
@@ -148,9 +151,15 @@ void makeDistros5D(){
       TH2D *bin2dumb = new TH2D(htitle2, htitle2,13,binsx,3,binsy);
       bin2.push_back(bin2dumb);
 
-      Float_t binsySim[6]  = { 0.0,0.4,0.6,0.8, 0.9,1.0 };
-      sprintf (htitle2,"H%sbin4",samplename.c_str()); //debug
-      TH2D *bin4dumb = new TH2D(htitle2, htitle2,15,binsxM,5,binsySim);
+      Float_t binsxM2[60]  = { 250,260,270,280,290,300,310,320,330,340,
+                               350,360,370,380,390,400,410,420,430,440, 
+                               450,460,470,480,490,500,510,520,530,540,
+                               550,560,570,580,590,600,610,620,630,640,
+                               650,660,670,680,690,700,750,800,850,900,
+                               950,1000,1100,1200,1300,1400,1500.,1750,2000,50000}; 
+      Float_t binsySim[5]  = {  0.0,0.4,0.6,0.8, 1.0};
+      sprintf (htitle3,"H%sbin4",samplename.c_str()); //debug
+      TH2D *bin4dumb = new TH2D(htitle3, htitle3,59,binsxM2,4,binsySim);
       bin4.push_back(bin4dumb);
 
       //bin1[f].SetName(htitle2);
@@ -172,6 +181,7 @@ void makeDistros5D(){
   ifstream infile;
   int nf = 0;
   for(int f=0; f<13; ++f) { // ns
+  //for(int f=0; f<5; ++f) { // ns
     cout << "Reading file # " << f << endl;
     ostringstream fnumber;
     string filename;
@@ -247,7 +257,7 @@ void makeDistros5D(){
         thetast = P1boost.Theta();  
         costhetast = P1boost.CosTheta();
         hths[nhist].Fill(thetast); 		
-        hcths[nhist].Fill(abs(costhetast)); 
+        hcths[nhist].Fill(costhetast); 
 
         costhetast = P1boost.CosTheta(); // this is the costTheta
         bin1[nhist]->Fill(P12.M(),costhetast); 
@@ -276,7 +286,7 @@ void makeDistros5D(){
     }
   cout << " " << nf << " files read" << endl;
 
-//  cout << outfile << " wrote."<< endl;
+  cout << outfile << " wrote."<< endl;
   out->Write();
   out->Close();
   delete out;
